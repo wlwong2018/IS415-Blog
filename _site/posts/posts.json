@@ -11,9 +11,9 @@
     ],
     "date": "2021-08-23",
     "categories": [],
-    "contents": "\r\nGetting Started\r\nThis code chunk performs 3 tasks:  * Create a list of R packages needed.\r\n\r\n\r\npackages <- c('sf', 'tidyverse')\r\nfor (p in packages){\r\n  if (!require(p, character.only = T)) {\r\n    install.packages(p)\r\n  }\r\n  library(p, character.only = T)\r\n}\r\n\r\n\r\n\r\n\r\n\r\n\r\n",
+    "contents": "\r\nGetting Started\r\nThis code chunk performs 3 tasks:  * Create a list of R packages needed.\r\n\r\n\r\npackages <- c('sf', 'tidyverse')\r\nfor (p in packages){\r\n  if (!require(p, character.only = T)) {\r\n    install.packages(p)\r\n  }\r\n  library(p, character.only = T)\r\n}\r\n\r\n\r\n\r\nTest\r\n\r\n[1] \"test\"\r\n\r\n\r\n\r\n\r\n",
     "preview": {},
-    "last_modified": "2021-08-23T11:28:49+08:00",
+    "last_modified": "2021-08-23T11:52:04+08:00",
     "input_file": {}
   },
   {
