@@ -1,0 +1,16 @@
+name: "IS415 Blog"
+title: "My Blog"
+description: |
+  My Blog
+output_dir: "_site"
+navbar:
+  right:
+    - text: "Take-home Exercise"
+      menu: 
+      - text: "Take-home Exercise 1"
+    -   href: 
+    - text: "In-Class Exercise"
+      href: index.html
+    - text: "About"
+      href: about.html
+output: distill::distill_article
