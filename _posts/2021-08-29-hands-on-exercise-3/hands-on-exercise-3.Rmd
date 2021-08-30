@@ -21,7 +21,7 @@ knitr::opts_chunk$set(echo = FALSE)
 
 <left> Load required packages </left>
 ``` {r echo=TRUE, eval=TRUE}
-packages <- c('sf', 'tidyverse', 'tmap')
+packages <- c('sf', 'tidyverse', 'readr', 'tmap')
 for (p in packages){
   if (!require(p, character.only = T)) {
     install.packages(p)
@@ -86,6 +86,21 @@ popdata2020 <- popdata2020 %>%
 ```{r echo=TRUE, eval=TRUE}
 mpsz_pop2020 <- left_join(mpsz, popdata2020,
                           by = c("SUBZONE_N" = "SZ"))
+```
+
+```{r echo=TRUE, eval=TRUE}
+mpsz_pop2020
+```
+
+
+<left> After getting finalised data, save in r data format. (this is to not take up so much bandwidth) </left>
+```{r echo=TRUE, eval=TRUE}
+mpszpop2020 <- write_rds(mpsz_pop2020, "data/rds/mpszpop2020.rds")
+```
+
+<left> Read finalised data </left>
+```{r echo=TRUE, eval=TRUE}
+mpszpop2020
 ```
 
 ## Choropleth Mapping Geospatial Data Using tmap
