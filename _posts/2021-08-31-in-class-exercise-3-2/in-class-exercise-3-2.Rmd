@@ -1,11 +1,11 @@
 ---
-title: "In-class Exercise 3"
+title: "In-class Exercise 3 - 2"
 description: |
   A short description of the post.
 author:
   - name: Wong Wei Ling
     url: www.google.com
-date: 08-30-2021
+date: 08-31-2021
 output:
   distill::distill_article:
     self_contained: false
@@ -15,7 +15,6 @@ output:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
 ```
-
 
 ## 1. Load required packages
 ```{r echo=TRUE, eval=TRUE}
@@ -42,7 +41,6 @@ ggplot(data=mpszpop2020,
     geom_boxplot()
 ```
 
-
 ```{r echo=TRUE, eval=TRUE}
 mpszpop2020a <- mpszpop2020 %>%
   drop_na()
@@ -55,7 +53,6 @@ var <- mpszpop2020a["DEPENDENCY"] %>%
   st_set_geometry(NULL)
 quantile(var[,1], percent)
 ```
-
 
 ## 4. Create get.var function
 ```{r echo=TRUE, eval=TRUE}
@@ -91,6 +88,7 @@ percentmap <- function(vnam, df, legtitle=NA, mtitle="Percentile Map") {
 }
 ```
 
+
 ### Test the percentile mapping function - 1
 ```{r echo=TRUE,  eval=TRUE}
 percentmap("YOUNG", mpszpop2020a)
@@ -101,6 +99,7 @@ percentmap("YOUNG", mpszpop2020a)
 percentmap("AGED", mpszpop2020a)
 
 ```
+
 *Note: Boxmap is able to show outliers. Percentile map only shows the percentage, not outliers.
 
 ## 6. Create box breaks function
@@ -141,7 +140,6 @@ mpszpop2020a <- mpszpop2020 %>%
 var <- get.var("AGED", mpszpop2020a)
 boxbreaks(var)
 ```
-
 ## 7. Create Boxmap function
 ```{r echo=TRUE,  eval=TRUE}
 boxmap <- function(vnam, df,
@@ -167,11 +165,11 @@ boxmap <- function(vnam, df,
 }
 ```
 
-
 ## 8. Box map of AGED Population
 ```{r echo=TRUE,  eval=TRUE}
 boxmap("ECONOMY ACTIVE", mpszpop2020a)
 ```
+
 
 ## 9. Map distribution of total population 2020
 ```{r echo=TRUE,  eval=TRUE}
@@ -183,6 +181,7 @@ boxmap("TOTAL", mpszpop2020a)
 boxmap("AGED", mpszpop2020a)
 
 ```
+
 
 ## 11. Raw rate Map
 ### Compute raw rate
@@ -198,12 +197,3 @@ var <- get.var("AGED%", mpszpop2020a)
 boxbreaks(var)
 boxmap("AGED%", mpszpop2020a)
 ```
-
-
-
-
-
-
-
-
-
