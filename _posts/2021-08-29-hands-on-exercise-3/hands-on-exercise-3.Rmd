@@ -1,7 +1,7 @@
 ---
 title: "Hands-on-exercise-3"
 description: |
-  A short description of the post.
+  In Hands-on Exercise 3, I learnt how to plot functional and truthful choropleth maps by using tmap package.
 author:
   - name: Wong Wei Ling
     url: www.google.com
