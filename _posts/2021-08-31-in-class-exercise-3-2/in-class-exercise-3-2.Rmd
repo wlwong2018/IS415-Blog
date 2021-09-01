@@ -1,7 +1,7 @@
 ---
 title: "In-class Exercise 3"
 description: |
-  In in-class Exercise 3, I have learnt how to plot maps using tmap package.
+  In in-class Exercise 3, I have learnt how to plot maps by using tmap package.
 author:
   - name: Wong Wei Ling
     url: www.google.com
