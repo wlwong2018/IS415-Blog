@@ -1,0 +1,728 @@
+---
+title: "Hands-on Exercise 4"
+description: |
+  A short description of the post.
+author:
+  - name: Wong Wei Ling
+    url: www.google.com
+date: 09-04-2021
+output:
+  distill::distill_article:
+    self_contained: false
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+# Installing and Loading the R packages
+
+```{r echo=TRUE, eval=TRUE}
+packages = c('maptools', 'sf', 'raster','spatstat', 'tmap')
+for (p in packages){
+  if(!require(p, character.only = T)){
+    install.packages(p)
+  }
+    library(p,character.only = T)
+  }
+```
+
+# Spatial Data Wrangling
+## Importing the spatial data
+```{r echo=TRUE, eval=TRUE}
+childcare_sf <- st_read("data/child-care-services-geojson.geojson") %>%
+  st_transform(crs = 3414)
+```
+
+```{r echo=TRUE, eval=TRUE}
+# cannot find data
+sg_sf <- st_read(dsn = "data", layer="CostalOutline")
+
+```
+
+```{r echo=TRUE, eval=TRUE}
+mpsz_sf <- st_read(dsn = "data", 
+                layer = "MP14_SUBZONE_WEB_PL")
+```
+
+```{r echo=TRUE, eval=TRUE}
+st_crs(childcare_sf)
+```
+
+```{r echo=TRUE, eval=TRUE}
+st_crs(sg_sf)
+```
+
+```{r echo=TRUE, eval=TRUE}
+st_crs(mpsz_sf)
+```
+
+### Assign the correct crs to mpsz_sf and sg_sf
+```{r echo=TRUE, eval=TRUE}
+sg_sf <- st_as_sf(sg_sf) %>% 
+  st_transform(sg_sf, crs= 3414)
+
+mpsz_sf <- st_as_sf(mpsz_sf) %>% 
+  st_transform(mpsz_sf, crs= 3414)
+```
+
+```{r echo=TRUE, eval=TRUE}
+st_crs(sg_sf)
+```
+
+### Mapping the geospatial data sets
+```{r echo=TRUE, eval=TRUE}
+tm_shape(sg_sf) +
+  tm_polygons() +
+tm_shape(mpsz_sf) +
+  tm_polygons() +
+tm_shape(childcare_sf)+
+  tm_dots()
+
+```
+
+```{r echo=TRUE, eval=TRUE}
+tmap_mode('view')
+tm_shape(childcare_sf)+
+  tm_dots()
+```
+<left> REMEMBER to switch back to plot mode afer plotting interactive maps </left> 
+```{r echo=TRUE, eval=TRUE}
+tmap_mode('plot')
+
+```
+## Geospatial Data wrangling
+### Converting sf data frames to sp’s Spatial* class
+
+```{r echo=TRUE, eval=TRUE}
+childcare <- as_Spatial(childcare_sf)
+mpsz <- as_Spatial(mpsz_sf)
+sg <- as_Spatial(sg_sf)
+
+```
+
+<left> Display information of 3 spatial classes </left>
+```{r echo=TRUE, eval=TRUE}
+print(childcare)
+print(mpsz)
+print(sg)
+```
+
+### Converting the Spatial* class into generic sp format
+```{r echo=TRUE, eval=TRUE}
+# CONVERTS Spatial* classes into generic sp objects
+childcare_sp <- as(childcare, "SpatialPoints")
+sg_sp <- as(sg, "SpatialPolygons")
+
+childcare_sp
+
+sg_sp
+```
+Challenge: Do you know what are the differences between Spatial* classes and generic sp object?
+
+
+
+
+### Converting the generic sp format into spatstat’s ppp format
+```{r echo=TRUE, eval=TRUE}
+childcare_ppp <- as(childcare_sp, "ppp")
+childcare_ppp
+
+```
+
+```{r echo=TRUE, eval=TRUE}
+plot(childcare_ppp)
+```
+
+```{r echo=TRUE, eval=TRUE}
+summary(childcare_ppp)
+
+```
+
+### Handling duplicated points
+
+```{r echo=TRUE, eval=TRUE}
+any(duplicated(childcare_ppp))
+
+```
+<left> Count the number of co-indicence point </left>
+```{r echo=TRUE, eval=TRUE}
+multiplicity(childcare_ppp)
+
+```
+
+<left> Number of locations with more than one point event </left>
+```{r echo=TRUE, eval=TRUE}
+sum(multiplicity(childcare_ppp) > 1)
+
+```
+<left> View the locations of these duplicate point events </left>
+```{r echo=TRUE, eval=TRUE}
+tmap_mode('view')
+tm_shape(childcare) +
+  tm_dots(alpha=0.4, 
+          size=0.05)
+```
+
+
+```{r echo=TRUE, eval=TRUE}
+tmap_mode('plot')
+```
+
+Challenge: Do you know how to spot the duplicate points from the map shown above?
+
+3 Ways to overcome duplicate points: 
+1) Delete the duplicates. But, some useful point events will be lost.
+
+2) Jittering, which will add a small perturbation to the duplicate points so that they do not occupy the exact same space.
+
+3) Make each point “unique” and then attach the duplicates of the points to the patterns as marks, as attributes of the points. (need nalytical techniques that take into account these marks.)
+
+
+#### Jitering Approach
+```{r echo=TRUE, eval=TRUE}
+childcare_ppp_jit <- rjitter(childcare_ppp, 
+                             retry=TRUE, 
+                             nsim=1, 
+                             drop=TRUE)
+
+```
+
+# Check for duplicated points
+```{r echo=TRUE, eval=TRUE}
+any(duplicated(childcare_ppp_jit))
+
+```
+
+### Creating owin object
+<left> To confine the analysis with a geographical area like SG boundary (good practice) </left>
+```{r echo=TRUE, eval=TRUE}
+sg_owin <- as(sg_sp, "owin")
+
+```
+
+```{r echo=TRUE, eval=TRUE}
+plot(sg_owin)
+
+```
+
+```{r echo=TRUE, eval=TRUE}
+summary(sg_owin)
+
+```
+
+
+### Combining point events object and owin object
+<left> Extract childcare events that are located within Singapore </left>
+```{r echo=TRUE, eval=TRUE}
+childcareSG_ppp = childcare_ppp[sg_owin]
+
+```
+
+```{r echo=TRUE, eval=TRUE}
+summary(childcareSG_ppp)
+```
+
+```{r echo=TRUE, eval=TRUE}
+# DIY - check if it is right
+plot(childcareSG_ppp)
+
+```
+
+# First-order Spatial Point Patterns Analysis
+1) Derive kernel density estimation (KDE) layer for visualising and exploring the intensity of point processes,
+2) Performing Confirmatory Spatial Point Patterns Analysis by using Nearest Neighbour statistics.
+
+## Kernel Density Estimation
+### Computing kernel density estimation using automatic bandwidth selection method
+```{r echo=TRUE, eval=TRUE}
+kde_childcareSG_bw <- density(childcareSG_ppp,
+                              sigma=bw.diggle, # auto bandwidth selection. Others:  bw.CvL(), bw.scott() or bw.ppl().
+                              edge=TRUE,
+                            kernel="gaussian") # default is gaussian. Others: “epanechnikov”, “quartic” or “disc”.
+
+```
+
+<left> The density values of the output range from 0 to 0.000035 which is way too small to comprehend. Because the default unit of measurement of svy21 is in meter. As a result, the density values computed is in “number of points per square meter”. </left>
+```{r echo=TRUE, eval=TRUE}
+plot(kde_childcareSG_bw)
+```
+<left> Retrieve bandwidth used to compute kde layer</left> 
+```{r echo=TRUE, eval=TRUE}
+bw <- bw.diggle(childcareSG_ppp)
+bw
+
+```
+
+### Recalling KDE values
+
+```{r echo=TRUE, eval=TRUE}
+childcareSG_ppp.km <- rescale(childcareSG_ppp, 1000, "km") # convert m to km
+
+```
+
+<left> Notice that output image looks identical to the earlier version, the only changes in the data values (refer to the legend). </left>
+```{r echo=TRUE, eval=TRUE}
+kde_childcareSG.bw <- density(childcareSG_ppp.km, sigma=bw.diggle, edge=TRUE, kernel="gaussian")
+plot(kde_childcareSG.bw)
+
+```
+<left>Results look similar to previous map, only changes in data values. (see legend) </left>
+<br>
+<br>
+
+### Working with different automatic bandwidth methods
+```{r echo=TRUE, eval=TRUE}
+bw.CvL(childcareSG_ppp.km)
+```
+
+```{r echo=TRUE, eval=TRUE}
+bw.scott(childcareSG_ppp.km)
+```
+
+```{r echo=TRUE, eval=TRUE}
+bw.ppl(childcareSG_ppp.km)
+```
+
+```{r echo=TRUE, eval=TRUE}
+bw.diggle(childcareSG_ppp.km)
+```
+
+```{r echo=TRUE, eval=TRUE}
+#  if the purpose of the study is to detect a single tight cluster in the midst of random noise then the bw.diggle() method seems to work best.
+kde_childcareSG.ppl <- density(childcareSG_ppp.km,
+                               sigma=bw.ppl,
+                               edge=TRUE,
+                               kernel="gaussian")
+par(mfrow=c(1,2))
+plot(kde_childcareSG.bw, main = "bw.diggle")
+plot(kde_childcareSG.ppl, main = "bw.ppl")
+
+```
+
+### Working with different kernel methods
+```{r echo=TRUE, eval=TRUE}
+par(mfrow=c(2,2))
+plot(density(childcareSG_ppp.km,
+             sigma=bw.ppl,
+             edge=TRUE,
+             kernel="gaussian"),
+     main="Gaussian")
+plot(density(childcareSG_ppp.km,
+             sigma=bw.ppl,
+             edge=TRUE,
+             kernel="epanechnikov"),
+     main="Epanechnikov")
+plot(density(childcareSG_ppp.km,
+             sigma=bw.ppl,
+             edge=TRUE,
+             kernel="quartic"),
+     main="Quartic")
+plot(density(childcareSG_ppp.km,
+             sigma=bw.ppl,
+             edge=TRUE,
+             kernel="disc"),
+     main="Disc")
+
+
+```
+
+
+### Fixed and Adaptive KDE
+#### COMPUTING KDE BY USING FIXED BANDWIDTH
+<left> Sigma value used is 0.6. This is because the unit of measurement of childcareSG_ppp.km object is in kilometer, hence the 600m is 0.6km. </left>
+```{r echo=TRUE, eval=TRUE}
+kde_childcareSG_600 <- density(childcareSG_ppp.km, sigma=0.6, edge=TRUE, kernel="gaussian")
+plot(kde_childcareSG_600)
+
+```
+
+#### COMPUTING KDE BY USING ADAPTIVE BANDWIDTH
+```{r echo=TRUE, eval=TRUE}
+kde_childcareSG_adaptive <- adaptive.density(childcareSG_ppp.km, method="kernel")
+plot(kde_childcareSG_adaptive)
+
+```
+<left>Compare fixed & adaption kernel density estimation outputs </left> 
+```{r echo=TRUE, eval=TRUE}
+par(mfrow=c(1,2))
+plot(kde_childcareSG.bw, main = "Fixed bandwidth")
+plot(kde_childcareSG_adaptive, main = "Adaptive bandwidth")
+
+```
+
+### Converting KDE output into grid object.
+```{r echo=TRUE, eval=TRUE}
+gridded_kde_childcareSG_bw <- as.SpatialGridDataFrame.im(kde_childcareSG.bw)
+spplot(gridded_kde_childcareSG_bw)
+
+```
+
+#### CONVERTING GRIDDED OUTPUT INTO RASTER
+```{r echo=TRUE, eval=TRUE}
+kde_childcareSG_bw_raster <- raster(gridded_kde_childcareSG_bw)
+kde_childcareSG_bw_raster
+
+```
+<left>Notice crs property is NA </left>
+<br>
+<br>
+
+#### ASSIGNING PROJECTION SYSTEMS
+```{r echo=TRUE, eval=TRUE}
+projection(kde_childcareSG_bw_raster) <- CRS("+init=EPSG:3414")
+kde_childcareSG_bw_raster
+
+```
+<left>Notice crs property is completed </left>
+<br>
+<br>
+
+### Visualising the output in tmap
+```{r echo=TRUE, eval=TRUE}
+tm_shape(kde_childcareSG_bw_raster) +
+  tm_raster("v") +
+  tm_layout(legend.position = c("right", "bottom"), frame = FALSE)
+
+```
+<left>raster values are encoded explicitly onto the raster pixel using the values in “v”" field </left>
+<br>
+<br>
+
+
+
+### Comparing Spatial Point Patterns using KDE
+
+<left>Compare KDE of childcare  at Ponggol, Tampines, Chua Chu Kang and Jurong West planning areas. </left>
+
+#### EXTRACTING STUDY AREA
+```{r echo=TRUE, eval=TRUE}
+pg = mpsz[mpsz@data$PLN_AREA_N == "PUNGGOL",]
+tm = mpsz[mpsz@data$PLN_AREA_N == "TAMPINES",]
+ck = mpsz[mpsz@data$PLN_AREA_N == "CHOA CHU KANG",]
+jw = mpsz[mpsz@data$PLN_AREA_N == "JURONG WEST",]
+
+par(mfrow=c(2,2))
+plot(pg, main = "Ponggol")
+plot(tm, main = "Tampines")
+plot(ck, main = "Choa Chu Kang")
+plot(jw, main = "Jurong West")
+```
+
+#### CONVERTING THE SPATIAL POINT DATA FRAME INTO GENERIC SP FORMAT
+```{r echo=TRUE, eval=TRUE}
+pg_sp = as(pg, "SpatialPolygons")
+tm_sp = as(tm, "SpatialPolygons")
+ck_sp = as(ck, "SpatialPolygons")
+jw_sp = as(jw, "SpatialPolygons")
+
+```
+
+#### CREATING OWIN OBJECT
+<left> convert these SpatialPolygons objects into owin objects that is required by spatstat </left>
+```{r echo=TRUE, eval=TRUE}
+pg_owin = as(pg_sp, "owin")
+tm_owin = as(tm_sp, "owin")
+ck_owin = as(ck_sp, "owin")
+jw_owin = as(jw_sp, "owin")
+
+```
+
+#### COMBINING CHILDCARE POINTS AND THE STUDY AREA
+<left> Extract childcare that is within the specific region to do our analysis later </left>
+```{r echo=TRUE, eval=TRUE}
+childcare_pg_ppp = childcare_ppp_jit[pg_owin]
+childcare_tm_ppp = childcare_ppp_jit[tm_owin]
+childcare_ck_ppp = childcare_ppp_jit[ck_owin]
+childcare_jw_ppp = childcare_ppp_jit[jw_owin]
+
+```
+
+
+<left> Transform the unit of measurement from metre to kilometre </left> 
+```{r echo=TRUE, eval=TRUE}
+childcare_pg_ppp.km = rescale(childcare_pg_ppp, 1000, "km")
+childcare_tm_ppp.km = rescale(childcare_tm_ppp, 1000, "km")
+childcare_ck_ppp.km = rescale(childcare_ck_ppp, 1000, "km")
+childcare_jw_ppp.km = rescale(childcare_jw_ppp, 1000, "km")
+
+```
+
+
+```{r echo=TRUE, eval=TRUE}
+par(mfrow=c(2,2))
+plot(childcare_pg_ppp.km, main="Punggol")
+plot(childcare_tm_ppp.km, main="Tampines")
+plot(childcare_ck_ppp.km, main="Choa Chu Kang")
+plot(childcare_jw_ppp.km, main="Jurong West")
+
+```
+
+#### COMPUTING KDE
+<left> bw.diggle method is used to derive the bandwidth of each </left>
+```{r echo=TRUE, eval=TRUE}
+par(mfrow=c(2,2))
+plot(density(childcare_pg_ppp.km,
+             sigma=bw.diggle,
+             edge=TRUE,
+             kernel="gaussian"),
+     main="Punggol")
+plot(density(childcare_tm_ppp.km,
+             sigma=bw.diggle,
+             edge=TRUE,
+             kernel="gaussian"),
+     main="Tempines")
+plot(density(childcare_ck_ppp.km,
+             sigma=bw.diggle,
+             edge=TRUE,
+             kernel="gaussian"),
+     main="Choa Chu Kang")
+plot(density(childcare_jw_ppp.km,
+             sigma=bw.diggle,
+             edge=TRUE,
+             kernel="gaussian"),
+     main="JUrong West")
+
+```
+
+#### COMPUTING FIXED BANDWIDTH KDE
+<left> comparison purposes, we will use 250m as the bandwidth.</left>
+```{r echo=TRUE, eval=TRUE}
+par(mfrow=c(2,2))
+plot(density(childcare_ck_ppp.km,
+             sigma=0.25,
+             edge=TRUE,
+             kernel="gaussian"),
+     main="Chou Chu Kang")
+plot(density(childcare_jw_ppp.km,
+             sigma=0.25,
+             edge=TRUE,
+             kernel="gaussian"),
+     main="JUrong West")
+plot(density(childcare_pg_ppp.km,
+             sigma=0.25,
+             edge=TRUE,
+             kernel="gaussian"),
+     main="Punggol")
+plot(density(childcare_tm_ppp.km,
+             sigma=0.25,
+             edge=TRUE,
+             kernel="gaussian"),
+     main="Tampines")
+
+```
+
+
+## Nearest Neighbour Analysis
+The test hypotheses are:
+
+Ho = The distribution of childcare services are randomly distributed.
+
+H1= The distribution of childcare services are not randomly distributed.
+
+The 95% confident interval will be used.
+
+### Testing spatial point patterns using Clark and Evans Test
+```{r echo=TRUE, eval=TRUE}
+clarkevans.test(childcareSG_ppp,
+                correction="none",
+                clipregion="sg_owin",
+                alternative=c("clustered"),
+                nsim=99)
+```
+What conclusion can you draw from the test result?
+
+
+
+
+### Clark and Evans Test: Choa Chu Kang planning area
+<left> clarkevans.test() of spatstat is used to perform Clark-Evans test of aggregation for childcare centre in Choa Chu Kang planning area. </left>
+```{r echo=TRUE, eval=TRUE}
+clarkevans.test(childcare_ck_ppp,
+                correction="none",
+                clipregion=NULL,
+                alternative=c("two.sided"),
+                nsim=999)
+
+```
+
+### Clark and Evans Test: Tampines planning area
+<left> Likewise, this is for Tampines planning area </left>
+```{r echo=TRUE, eval=TRUE}
+clarkevans.test(childcare_tm_ppp,
+                correction="none",
+                clipregion=NULL,
+                alternative=c("two.sided"),
+                nsim=999)
+
+```
+
+# Second-order Spatial Point Patterns Analysis
+## Analysing Spatial Point Process Using G-Function
+### Choa Chu Kang planning area
+#### COMPUTING G-FUNCTION ESTIMATION
+```{r echo=TRUE, eval=TRUE}
+G_CK = Gest(childcare_ck_ppp, correction = "border")
+plot(G_CK, xlim=c(0,500))
+
+```
+
+#### PERFORMING COMPLETE SPATIAL RANDOMNESS TEST
+To confirm the observed spatial patterns above, a hypothesis test will be conducted. The hypothesis and test are as follows:
+
+Ho = The distribution of childcare services at Choa Chu Kang are randomly distributed.
+
+H1 = The distribution of childcare services at Choa Chu Kang are not randomly distributed.
+
+The null hypothesis will be rejected if p-value is smaller than alpha value of 0.001.
+
+<left> Monte Carlo test with G-function <left>
+
+```{r echo=TRUE, eval=TRUE}
+G_CK.csr <- envelope(childcare_ck_ppp, Gest, nsim = 999)
+```
+
+```{r echo=TRUE, eval=TRUE}
+plot(G_CK.csr)
+
+```
+
+
+### Tampines planning area
+#### COMPUTING G-FUNCTION ESTIMATION
+```{r echo=TRUE, eval=TRUE}
+G_tm = Gest(childcare_tm_ppp, correction = "best")
+plot(G_tm)
+```
+
+#### PERFORMING COMPLETE SPATIAL RANDOMNESS TEST
+```{r echo=TRUE, eval=TRUE}
+G_tm.csr <- envelope(childcare_tm_ppp, Gest, correction = "all", nsim = 999)
+
+```
+
+```{r echo=TRUE, eval=TRUE}
+plot(G_tm.csr)
+
+```
+
+## Analysing Spatial Point Process Using F-Function
+### Choa Chu Kang planning area
+#### COMPUTING F-FUNCTION ESTIMATION
+```{r echo=TRUE, eval=TRUE}
+# compute f function
+F_CK = Fest(childcare_ck_ppp)
+plot(F_CK)
+```
+
+### Performing Complete Spatial Randomness Test
+```{r echo=TRUE, eval=TRUE}
+F_CK.csr <- envelope(childcare_ck_ppp, Fest, nsim = 999)
+
+```
+
+```{r echo=TRUE, eval=TRUE}
+plot(F_CK.csr)
+
+```
+
+### Tampines planning area
+#### COMPUTING F-FUNCTION ESTIMATION
+```{r echo=TRUE, eval=TRUE}
+F_tm = Fest(childcare_tm_ppp, correction = "best")
+plot(F_tm)
+```
+
+#### PERFORMING COMPLETE SPATIAL RANDOMNESS TEST
+
+```{r echo=TRUE, eval=TRUE}
+F_tm.csr <- envelope(childcare_tm_ppp, Fest, correction = "all", nsim = 999)
+
+```
+
+```{r echo=TRUE, eval=TRUE}
+plot(F_tm.csr)
+
+```
+
+## Analysing Spatial Point Process Using K-Function
+### Choa Chu Kang planning area
+#### COMPUTING K-FUCNTION ESTIMATE
+```{r echo=TRUE, eval=TRUE}
+K_ck = Kest(childcare_ck_ppp, correction = "Ripley")
+plot(K_ck, . -r ~ r, ylab= "K(d)-r", xlab = "d(m)")
+```
+
+### PERFORMING COMPLETE SPATIAL RANDOMNESS TEST
+```{r echo=TRUE, eval=TRUE}
+K_ck.csr <- envelope(childcare_ck_ppp, Kest, nsim = 99, rank = 1, glocal=TRUE)
+
+```
+
+```{r echo=TRUE, eval=TRUE}
+plot(K_ck.csr, . - r ~ r, xlab="d", ylab="K(d)-r")
+
+```
+
+### Tampines planning area
+#### COMPUTING K-FUCNTION ESTIMATION
+```{r echo=TRUE, eval=TRUE}
+K_tm = Kest(childcare_tm_ppp, correction = "Ripley")
+plot(K_tm, . -r ~ r,
+     ylab= "K(d)-r", xlab = "d(m)",
+     xlim=c(0,1000))
+```
+
+#### PERFORMING COMPLETE SPATIAL RANDOMNESS TEST
+```{r echo=TRUE, eval=TRUE}
+K_tm.csr <- envelope(childcare_tm_ppp, Kest, nsim = 99, rank = 1, glocal=TRUE)
+
+```
+
+```{r echo=TRUE, eval=TRUE}
+plot(K_tm.csr, . - r ~ r,
+     xlab="d", ylab="K(d)-r", xlim=c(0,500))
+```
+
+## Analysing Spatial Point Process Using L-Function
+### Choa Chu Kang planning area
+#### COMPUTING L-FUCNTION ESTIMATE
+```{r echo=TRUE, eval=TRUE}
+L_ck = Lest(childcare_ck_ppp, correction = "Ripley")
+plot(L_ck, . -r ~ r,
+     ylab= "L(d)-r", xlab = "d(m)")
+```
+
+### PERFORMING COMPLETE SPATIAL RANDOMNESS TEST
+```{r echo=TRUE, eval=TRUE}
+L_ck.csr <- envelope(childcare_ck_ppp, Lest, nsim = 99, rank = 1, glocal=TRUE)
+
+```
+
+```{r echo=TRUE, eval=TRUE}
+plot(L_ck.csr, . - r ~ r, xlab="d", ylab="L(d)-r")
+
+```
+
+### Tampines planning area
+#### COMPUTING K-FUCNTION ESTIMATION
+```{r echo=TRUE, eval=TRUE}
+L_tm = Lest(childcare_tm_ppp, correction = "Ripley")
+plot(L_tm, . -r ~ r,
+     ylab= "L(d)-r", xlab = "d(m)",
+     xlim=c(0,1000))
+```
+
+### PERFORMING COMPLETE SPATIAL RANDOMNESS TEST
+
+```{r echo=TRUE, eval=TRUE}
+L_tm.csr <- envelope(childcare_tm_ppp, Lest, nsim = 99, rank = 1, glocal=TRUE)
+```
+
+```{r echo=TRUE, eval=TRUE}
+plot(L_tm.csr, . - r ~ r,
+     xlab="d", ylab="L(d)-r", xlim=c(0,500))
+```
+
+
