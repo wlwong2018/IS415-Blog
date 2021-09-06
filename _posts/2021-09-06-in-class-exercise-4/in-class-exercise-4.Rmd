@@ -22,12 +22,12 @@ knitr::opts_chunk$set(echo = FALSE)
 # get_theme(token, "hotels") # hotels = query name
 ```
 
-# 1. Installing Packages
-- sf: import geospatial data
-- maptools convert spatial object class to ppp(Spatstat) format 
-- raster: handle raster data
-- spatstat: spatial point analysis
-- tidyverse: non-spatial data
+# 1. Installing Packages and Importing Data
+<left>  - sf: import geospatial data </left> 
+<left>  - maptools convert spatial object class to ppp(Spatstat) format </left>
+<left>  - raster: handle raster data </left>
+<left>  - spatstat: spatial point analysis </left>
+<left>  - tidyverse: non-spatial data </left>
 ```{r echo=TRUE, eval=TRUE}
 packages = c('maptools', 'sf', 'raster','spatstat', 'tmap', 'tidyverse')
 for (p in packages){
@@ -40,120 +40,66 @@ for (p in packages){
 
 ## 1.1 Importing Geospatial Data
 ```{r echo=TRUE, eval=TRUE}
+sg_sf <- st_read(dsn = "data/shapefile", layer="CostalOutline")
 
+mpsz_sf <- st_read(dsn = "data/shapefile", 
+                layer = "MP14_SUBZONE_WEB_PL")
 ```
 
+## 1.2 Importing Aspatial Data
+```{r echo=TRUE, eval=TRUE}
+# rds format ensures that geometry features are still there
+childcare <- read_rds("data/rds/childcare.rds")
+CHAS <- read_rds("data/rds/CHAS.rds") # use read_rds not readRDS. readRDS is rbase
 
+# ensure that data is in tibbler format by using tidyverse package
+```
+
+## 1.3 Convert from Aspatial to Geospatial Data
+<left> CHAS: there are X and Y coordinates, shows that dataset is in SVG21 already, so just assign epsg code of 3414 </left>
 ```{r echo=TRUE, eval=TRUE}
 
+CHAS_sf <- st_as_sf(CHAS,
+                    coords = c("X_COORDINATE", "Y_COORDINATE"),
+                    crs=3414)
 ```
 
+
+<left> Childcare: lat and long columns are in decimal degrees, shows that  dataset is in wgs84, so need to assign epsg code of 4326 before transforming the decimal degrees to metres using st_transform. In this case, 3414 as SG is using SVY21 </left>
 ```{r echo=TRUE, eval=TRUE}
+childcare$Lat <- as.numeric(childcare$Lat)
+childcare$Lng <- as.numeric(childcare$Lng)
+childcare_sf <-st_as_sf(childcare,
+                    coords = c("Lng", "Lat"),
+                    crs=4326) %>%
+  st_transform(crs = 3414)
 
 ```
 
+# 2 Geospatial Data Wrangling
+## 2.1 Converting from sf to Spatial Classes 
 ```{r echo=TRUE, eval=TRUE}
+childcare <- as_Spatial(childcare_sf)
+CHAS <- as_Spatial(CHAS_sf)
+mpsz <- as_Spatial(mpsz_sf)
+sg <- as_Spatial(sg_sf)
 
 ```
 
-
+## 2.2 Converting from Spatial to sp Classes
+<left> sp layer: data will be dropped, only X Y coordinates, projection, geometry are left </left>
 ```{r echo=TRUE, eval=TRUE}
+childcare_sp <- as(childcare, "SpatialPoints")
+CHAS_sp <- as(CHAS, "SpatialPoints")
+sg_sp <- as(sg, "SpatialPolygons")
 
 ```
 
+## 2.3 Converting from sp to spatstat ppp format
+<left> ppp format: projections would be dropped </left>
+<left> When converting back to raster: need to specify the projections </left>
 ```{r echo=TRUE, eval=TRUE}
-
+childcare_ppp <- as(childcare_sp, "ppp")
+CHAS_ppp <- as(CHAS_sp, "ppp")
 ```
-
-
-```{r echo=TRUE, eval=TRUE}
-
-```
-
-
-```{r echo=TRUE, eval=TRUE}
-
-```
-
-
-```{r echo=TRUE, eval=TRUE}
-
-```
-
-```{r echo=TRUE, eval=TRUE}
-
-```
-
-
-```{r echo=TRUE, eval=TRUE}
-
-```
-
-
-```{r echo=TRUE, eval=TRUE}
-
-```
-
-
-```{r echo=TRUE, eval=TRUE}
-
-```
-
-```{r echo=TRUE, eval=TRUE}
-
-```
-
-
-```{r echo=TRUE, eval=TRUE}
-
-```
-
-
-```{r echo=TRUE, eval=TRUE}
-
-```
-
-
-```{r echo=TRUE, eval=TRUE}
-
-```
-
-```{r echo=TRUE, eval=TRUE}
-
-```
-
-
-```{r echo=TRUE, eval=TRUE}
-
-```
-
-
-```{r echo=TRUE, eval=TRUE}
-
-```
-
-
-```{r echo=TRUE, eval=TRUE}
-
-```
-
-```{r echo=TRUE, eval=TRUE}
-
-```
-
-
-```{r echo=TRUE, eval=TRUE}
-
-```
-
-
-```{r echo=TRUE, eval=TRUE}
-
-```
-
-
-```{r echo=TRUE, eval=TRUE}
-
-```
-
 
