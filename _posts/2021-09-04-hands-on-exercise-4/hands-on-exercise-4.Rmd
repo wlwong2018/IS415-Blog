@@ -87,7 +87,7 @@ tmap_mode('view')
 tm_shape(childcare_sf)+
   tm_dots()
 ```
-<left> REMEMBER to switch back to plot mode afer plotting interactive maps </left> 
+<left> REMEMBER to switch back to plot mode after plotting interactive maps </left> 
 ```{r echo=TRUE, eval=TRUE}
 tmap_mode('plot')
 
@@ -177,7 +177,7 @@ Challenge: Do you know how to spot the duplicate points from the map shown above
 
 2) Jittering, which will add a small perturbation to the duplicate points so that they do not occupy the exact same space.
 
-3) Make each point “unique” and then attach the duplicates of the points to the patterns as marks, as attributes of the points. (need nalytical techniques that take into account these marks.)
+3) Make each point “unique” and then attach the duplicates of the points to the patterns as marks, as attributes of the points. (need analytical techniques that take into account these marks.)
 
 
 #### Jitering Approach

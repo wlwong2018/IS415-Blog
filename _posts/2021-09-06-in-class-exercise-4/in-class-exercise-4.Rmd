@@ -1,0 +1,159 @@
+---
+title: "In-class Exercise 4"
+description: |
+  A short description of the post.
+author:
+  - name: Wong Wei Ling
+    url: www.google.com
+date: 09-06-2021
+output:
+  distill::distill_article:
+    self_contained: false
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+```{r echo=TRUE, eval=TRUE}
+# https://cran.r-project.org/web/packages/onemapsgapi/vignettes/onemapsgapi_vignette.html
+# return all hotel data
+# get_theme(token, "hotels") # hotels = query name
+```
+
+# 1. Installing Packages
+- sf: import geospatial data
+- maptools convert spatial object class to ppp(Spatstat) format 
+- raster: handle raster data
+- spatstat: spatial point analysis
+- tidyverse: non-spatial data
+```{r echo=TRUE, eval=TRUE}
+packages = c('maptools', 'sf', 'raster','spatstat', 'tmap', 'tidyverse')
+for (p in packages){
+  if(!require(p, character.only = T)){
+    install.packages(p)
+  }
+    library(p,character.only = T)
+  }
+```
+
+## 1.1 Importing Geospatial Data
+```{r echo=TRUE, eval=TRUE}
+
+```
+
+
+```{r echo=TRUE, eval=TRUE}
+
+```
+
+```{r echo=TRUE, eval=TRUE}
+
+```
+
+```{r echo=TRUE, eval=TRUE}
+
+```
+
+
+```{r echo=TRUE, eval=TRUE}
+
+```
+
+```{r echo=TRUE, eval=TRUE}
+
+```
+
+
+```{r echo=TRUE, eval=TRUE}
+
+```
+
+
+```{r echo=TRUE, eval=TRUE}
+
+```
+
+
+```{r echo=TRUE, eval=TRUE}
+
+```
+
+```{r echo=TRUE, eval=TRUE}
+
+```
+
+
+```{r echo=TRUE, eval=TRUE}
+
+```
+
+
+```{r echo=TRUE, eval=TRUE}
+
+```
+
+
+```{r echo=TRUE, eval=TRUE}
+
+```
+
+```{r echo=TRUE, eval=TRUE}
+
+```
+
+
+```{r echo=TRUE, eval=TRUE}
+
+```
+
+
+```{r echo=TRUE, eval=TRUE}
+
+```
+
+
+```{r echo=TRUE, eval=TRUE}
+
+```
+
+```{r echo=TRUE, eval=TRUE}
+
+```
+
+
+```{r echo=TRUE, eval=TRUE}
+
+```
+
+
+```{r echo=TRUE, eval=TRUE}
+
+```
+
+
+```{r echo=TRUE, eval=TRUE}
+
+```
+
+```{r echo=TRUE, eval=TRUE}
+
+```
+
+
+```{r echo=TRUE, eval=TRUE}
+
+```
+
+
+```{r echo=TRUE, eval=TRUE}
+
+```
+
+
+```{r echo=TRUE, eval=TRUE}
+
+```
+
+
