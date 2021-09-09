@@ -1,0 +1,153 @@
+---
+title: "Take Home Exercise 1"
+description: |
+  A short description of the post.
+author:
+  - name: Wong Wei Ling
+    url: www.google.com
+date: 09-09-2021
+output:
+  distill::distill_article:
+    self_contained: false
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+
+# 1 Overview
+This analysis aims to determine the sub-district with relatively higher number of confirmed cases rate and death rate by using appropriate thematic mapping technique provided by tmap package. This is done by plotting maps to show the spatio-temporal distribution of cumulative confirmed cases and death rate. 
+
+# 2 Dataset
+To perform the analysis, data sets from 2 sources are used:
+
+
+1. Cumulative cases are updated daily from https://riwayat-file-covid-19-dki-jakarta-jakartagis.hub.arcgis.com/. A total of 17 .xlsx files are downloaded from March 2020 to July 2021. For files that do not contain NA values, the last day of the month's file is used i.e. 31/30, else, the next available day is used. Also, this analysis focuses on sub-district level, the data in the "data" worksheet is used. 
+
+
+2. A collection of geospatial data in a ESRI shapefile format at different goegraphical levels is available at https://www.indonesia-geospasial.com/. Only shapefile Batas Desa Provinsi DKI Jakarta at https://www.indonesia-geospasial.com/2020/04/download-shapefile-shp-batas-desa.html will be used.
+
+# 3 Install and Load Packages
+
+```{r echo=TRUE, eval=TRUE}
+packages <- c('readxl', 'tidyr', 'dplyr', 'readr', 'ggplot2', 'ggpubr', 'sf', 'tmap') #'fs', 'rmapshaper', 'rgdal' , 'ggpubr'
+for (p in packages){
+  if(!require(p, character.only = T)){
+    install.packages(p)
+  }
+  library(p,character.only = T)
+}
+```
+
+# 4 Data Extraction & Wrangling
+
+## 4.1 Data Wrangling for Aspatial Data
+
+### 4.1.1 Create function to remove duplicated rows
+
+- Get path of aspatial data sets stored
+- Read Excel file with argument .name_repair = minimal to avoid renaming of duplicated columns to e.g. "...31"
+- Remove duplicated columns with argument fromLast=TRUE to extract the 2nd duplicated column, else, extract the first.
+- Apply function to the datasets
+
+```{r echo=TRUE, eval=FALSE}
+filenames_list <- list.files(path= "data/aspatial", full.names=TRUE) 
+
+clean.func <-  function(filename, filenames_list) {
+  files <- read_excel(filename, .name_repair = "minimal") 
+  files <- files[, !duplicated(colnames(files), fromLast=TRUE)]
+}
+
+All <- lapply(filenames_list, clean.func)
+
+```
+
+### 4.1.2 Add Date (consists of month and year) column for analysis in later steps
+
+- Define values of new column for Date
+- Add Date column in a list
+- Extract necessary columns
+- Create a DF for each list i.e. dataset
+- Bind all DFs as a single DF
+
+```{r echo=TRUE, eval=FALSE}
+
+new_col <-c("Apr_2021", "Dec_2020", "Jun_2021", "Feb_2021", "Mar_2021", "May_2021", "Apr_2020", "Jan_2021", "Jun_2020", 
+            "Nov_2020", "Sep_2020", "Aug_2020", "Jul_2020", "Jul_2021", "Mar_2020", "May_2020", "Oct_2020")
+
+data_list <- Map(cbind, All, Date = new_col) 
+
+col <- c('Date', 'ID_KEL', 'Nama_provinsi','nama_kota', 'nama_kecamatan', 'nama_kelurahan', 'POSITIF', 'Meninggal')
+final <- lapply(data_list,"[", col)
+
+aspatial_final <- do.call(rbind, final)
+
+```
+
+### 4.1.3 Check for NA values
+
+```{r echo=TRUE, eval=FALSE}
+print(aspatial_final[rowSums(is.na(aspatial_final)) > 0,])
+```
+
+### 4.1.4 Remove rows with NA values & Ensure that it has been removed
+
+```{r echo=TRUE, eval=FALSE}
+aspatial_final <- drop_na(aspatial_final)
+print(aspatial_final[rowSums(is.na(aspatial_final)) > 0,])
+```
+
+
+### 4.1.5 Remove rows with incorrect data 
+
+- e.g. "LUAR DKI JAKARTA", "PROSES UPDATE DATA" & "BELUM DIKETAHUI" in columns
+
+```{r echo=TRUE, eval=FALSE}
+aspatial_final <- filter(aspatial_final, ID_KEL!="LUAR DKI JAKARTA")
+aspatial_final <- filter(aspatial_final, ID_KEL!="PROSES UPDATE DATA")
+aspatial_final <- filter(aspatial_final, ID_KEL!="BELUM DIKETAHUI")
+```
+
+
+### 4.1.6 Pivot date values to columns for calculation of cumulative positive cases & deaths
+
+```{r echo=TRUE, eval=FALSE}
+aspatial_final <- aspatial_final %>%
+  group_by(Date, ID_KEL, Nama_provinsi, nama_kota, nama_kecamatan, nama_kelurahan) %>%
+  summarise(`POSITIF` = sum(`POSITIF`), `Meninggal` = sum(`Meninggal`)) %>%
+  ungroup() %>%
+  pivot_wider(names_from = Date, values_from = c(POSITIF, Meninggal))
+```
+
+
+### 4.1.7 Remove rows with NA values & Ensure that it has been removed 
+
+```{r echo=TRUE, eval=FALSE}
+aspatial_final <- drop_na(aspatial_final)
+aspatial_final[rowSums(is.na(aspatial_final)) > 0, ]  
+
+```
+
+### 4.1.8 Re-order Positive and Deaths Columns to be sequential
+
+```{r echo=TRUE, eval=FALSE}
+aspatial_final <- aspatial_final[, c(1, 2, 3, 4, 5,
+                                     16, 6, 18, 14, 12, 8, 22, 21, 20, 9, 11, 10, 17, 7, 19, 15, 13, 
+                                     33, 23, 35, 31, 29, 25, 39, 38, 37, 26, 28, 27, 34, 24, 36, 32, 30)]
+```
+
+### 4.1.9 Write finalised data as rds format
+
+```{r echo=TRUE, eval=FALSE}
+aspatial_final_rds <- write_rds(aspatial_final, "data/aspatial_final_rds.rds")
+```
+
+### 4.1.10 Import clean aspatial data
+
+```{r echo=TRUE, eval=TRUE}
+aspatial_final_rds <- read_rds("data/aspatial_final_rds.rds")
+
+```
+
