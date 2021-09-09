@@ -32,7 +32,7 @@ To perform the analysis, data sets from 2 sources are used:
 # 3 Install and Load Packages
 
 ```{r echo=TRUE, eval=TRUE}
-packages <- c('readxl', 'tidyr', 'dplyr', 'readr', 'ggplot2', 'ggpubr', 'sf', 'tmap') #'fs', 'rmapshaper', 'rgdal' , 'ggpubr'
+packages <- c('readxl', 'tidyr', 'dplyr', 'readr', 'ggplot2', 'ggpubr', 'sf', 'tmap')
 for (p in packages){
   if(!require(p, character.only = T)){
     install.packages(p)
