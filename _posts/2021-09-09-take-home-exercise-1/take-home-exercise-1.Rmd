@@ -528,3 +528,81 @@ tmap_arrange(custom_map_death("Meninggal_Mar_2020", dki_aspatial_rate),
 - To deal with the challenge mentioned (custom breaks with equal intervals might lead to a loss of spatial patterns) , hence, Jenks data classification method will be used. Jenks is selected as it is a natural break classification. With that, it is able to reveal the spatial temporal patterns monthly. 
 
 
+## 7.2 Choropleth Map with Jenks Data Classification
+
+- Jenks data classification method would be used to plot choropleth maps for the cumulative positive cases rate and death rate to aid in revealing spatial patterns.
+
+### 7.2.1 Function for Jenks Data Classification
+
+```{r echo=TRUE, eval=TRUE}
+jenksmap <- function(vnam, df, legtitle=NA){
+  tm_shape(dki_aspatial_rate) +
+     tm_fill(vnam,
+             title=legtitle,
+             n = 5,
+             style = "jenks",
+             palette="Reds")  +
+  tm_borders() +
+  tm_layout(main.title = vnam,
+            main.title.position = c("center","top"),
+            main.title.size = 0.7,
+            frame = FALSE,
+            legend.show = FALSE)
+}
+
+```
+
+
+### 7.2.2 Plot choropleth maps with Jenks Data Classification (Positive Cases Rate)
+
+```{r echo=TRUE, eval=TRUE}
+tmap_arrange(jenksmap("POSITIF_Mar_2020", dki_aspatial_rate),
+             jenksmap("POSITIF_Apr_2020", dki_aspatial_rate),
+             jenksmap("POSITIF_May_2020", dki_aspatial_rate),
+             jenksmap("POSITIF_Jun_2020", dki_aspatial_rate),
+             jenksmap("POSITIF_Jul_2020", dki_aspatial_rate),
+             jenksmap("POSITIF_Aug_2020", dki_aspatial_rate),
+             jenksmap("POSITIF_Sep_2020", dki_aspatial_rate),
+             jenksmap("POSITIF_Oct_2020", dki_aspatial_rate),
+             jenksmap("POSITIF_Nov_2020", dki_aspatial_rate),
+             jenksmap("POSITIF_Dec_2020", dki_aspatial_rate),
+             jenksmap("POSITIF_Jan_2021", dki_aspatial_rate),
+             jenksmap("POSITIF_Feb_2021", dki_aspatial_rate),
+             jenksmap("POSITIF_Mar_2021", dki_aspatial_rate),
+             jenksmap("POSITIF_Apr_2021", dki_aspatial_rate),
+             jenksmap("POSITIF_May_2021", dki_aspatial_rate),
+             jenksmap("POSITIF_Jun_2021", dki_aspatial_rate),
+             jenksmap("POSITIF_Jul_2021", dki_aspatial_rate))
+```
+- By plotting the maps with Jenks data classification method, we can see the dark orange and dark red sub-districts slightly clearer in all the months. This means that the cumulative positive cases rate were already forming and are rising since Mar 2020. This differs from the choropleth maps plotted using custom breaks. 
+- Additionally, on the bottom right of each map, we can now see that the sub-district started off with orange (Mar 2020 to Sep 2020), then dark orange (Oct 2020 to Dec 2020) then dark red (Jan 2021 to Feb 2021), then dark orange (Mar 2021 to Jul 2021). This means that the positive cases rate of the sub districts at the bottom right of the map started off with a low number, then surged as it turned to dark red, it then decreased to a low number in Jul 2021, but cumulative positive cases rate was still higher than the cases in the first few months. This observation was also unable to be seen with the custom breaks previously.     
+
+
+### 7.2.3 Plot choropleth maps with Jenks Data Classification (Death Rate)
+
+```{r echo=TRUE, eval=TRUE}
+tmap_arrange(jenksmap("Meninggal_Mar_2020", dki_aspatial_rate),
+             jenksmap("Meninggal_Apr_2020", dki_aspatial_rate),
+             jenksmap("Meninggal_May_2020", dki_aspatial_rate),
+             jenksmap("Meninggal_Jun_2020", dki_aspatial_rate),
+             jenksmap("Meninggal_Jul_2020", dki_aspatial_rate),
+             jenksmap("Meninggal_Aug_2020", dki_aspatial_rate),
+             jenksmap("Meninggal_Sep_2020", dki_aspatial_rate),
+             jenksmap("Meninggal_Oct_2020", dki_aspatial_rate),
+             jenksmap("Meninggal_Nov_2020", dki_aspatial_rate),
+             jenksmap("Meninggal_Dec_2020", dki_aspatial_rate),
+             jenksmap("Meninggal_Jan_2021", dki_aspatial_rate),
+             jenksmap("Meninggal_Feb_2021", dki_aspatial_rate),
+             jenksmap("Meninggal_Mar_2021", dki_aspatial_rate),
+             jenksmap("Meninggal_Apr_2021", dki_aspatial_rate),
+             jenksmap("Meninggal_May_2021", dki_aspatial_rate),
+             jenksmap("Meninggal_Jun_2021", dki_aspatial_rate),
+             jenksmap("Meninggal_Jul_2021", dki_aspatial_rate))
+```
+- Similar to the explanation above, sub-districts with higher cumulative death rates can be seen slightly clearer now. 
+- It can be observed that the high death rates (dark red) did not only start in Jul 2021 (as seen in custom breaks map), but started as early as Apr 2020 and it several other districts.
+
+<br>
+
+- Additionally, to identify outliers, box maps will be plotted as well. Box maps can reveal any outliers that might not be prominent in custom breaks and Jenks data classification choropleth maps. Hence, the section below employs box maps to reveal the patterns. 
+
