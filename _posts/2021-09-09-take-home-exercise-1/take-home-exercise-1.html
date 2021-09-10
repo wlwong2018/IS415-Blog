@@ -116,7 +116,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   <!--/radix_placeholder_rmarkdown_metadata-->
   
   <script type="text/json" id="radix-resource-manifest">
-  {"type":"character","attributes":{},"value":["data/aspatial_final_rds.rds","data/dki_final_rds.rds","take-home-exercise-1_files/anchor-4.2.2/anchor.min.js","take-home-exercise-1_files/bowser-1.9.3/bowser.min.js","take-home-exercise-1_files/distill-2.2.21/template.v2.js","take-home-exercise-1_files/header-attrs-2.10/header-attrs.js","take-home-exercise-1_files/jquery-1.11.3/jquery.min.js","take-home-exercise-1_files/popper-2.6.0/popper.min.js","take-home-exercise-1_files/tippy-6.2.7/tippy-bundle.umd.min.js","take-home-exercise-1_files/tippy-6.2.7/tippy-light-border.css","take-home-exercise-1_files/tippy-6.2.7/tippy.css","take-home-exercise-1_files/tippy-6.2.7/tippy.umd.min.js","take-home-exercise-1_files/webcomponents-2.0.0/webcomponents.js"]}
+  {"type":"character","attributes":{},"value":["data/aspatial_final_rds.rds","data/dki_final_rds.rds","take-home-exercise-1_files/anchor-4.2.2/anchor.min.js","take-home-exercise-1_files/bowser-1.9.3/bowser.min.js","take-home-exercise-1_files/distill-2.2.21/template.v2.js","take-home-exercise-1_files/figure-html5/unnamed-chunk-30-1.png","take-home-exercise-1_files/figure-html5/unnamed-chunk-31-1.png","take-home-exercise-1_files/header-attrs-2.10/header-attrs.js","take-home-exercise-1_files/jquery-1.11.3/jquery.min.js","take-home-exercise-1_files/popper-2.6.0/popper.min.js","take-home-exercise-1_files/tippy-6.2.7/tippy-bundle.umd.min.js","take-home-exercise-1_files/tippy-6.2.7/tippy-light-border.css","take-home-exercise-1_files/tippy-6.2.7/tippy.css","take-home-exercise-1_files/tippy-6.2.7/tippy.umd.min.js","take-home-exercise-1_files/webcomponents-2.0.0/webcomponents.js"]}
   </script>
   <!--radix_placeholder_navigation_in_header-->
   <!--/radix_placeholder_navigation_in_header-->
@@ -1479,11 +1479,11 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 
 <div class="d-article">
 <h1 id="overview">1 Overview</h1>
-<p>This analysis aims to determine the sub-district with relatively higher number of confirmed cases rate and death rate by using appropriate thematic mapping technique provided by tmap package. This is done by plotting maps to show the spatio-temporal distribution of cumulative confirmed cases and death rate.</p>
+<p>This analysis aims to determine the sub-district with relatively higher number of positive cases rate and death rate by using appropriate thematic mapping technique provided by tmap package. This is done by plotting maps to show the spatial temporal distribution of cumulative positive cases and death rate.</p>
 <h1 id="dataset">2 Dataset</h1>
 <p>To perform the analysis, data sets from 2 sources are used:</p>
 <ol type="1">
-<li><p>Cumulative cases are updated daily from <a href="https://riwayat-file-covid-19-dki-jakarta-jakartagis.hub.arcgis.com/" class="uri">https://riwayat-file-covid-19-dki-jakarta-jakartagis.hub.arcgis.com/</a>. A total of 17 .xlsx files are downloaded from March 2020 to July 2021. For files that do not contain NA values, the last day of the month’s file is used i.e. 31/30, else, the next available day is used. Also, this analysis focuses on sub-district level, the data in the “data” worksheet is used. In particular, the files that I have used are:</p>
+<li><p>Cumulative cases are updated daily from <a href="https://riwayat-file-covid-19-dki-jakarta-jakartagis.hub.arcgis.com/" class="uri">https://riwayat-file-covid-19-dki-jakarta-jakartagis.hub.arcgis.com/</a>. A total of 17 .xlsx files are downloaded from March 2020 to July 2021. For files that do not contain NA values, the last day of the month’s file is used i.e. 31/30, else, the next available day is used. Also, as this analysis focuses on sub-district level, the data in the “data” worksheet is used. In particular, the files that I have used are:</p>
 <ul>
 <li>Standar Kelurahan Data Corona (24 April 2021 Pukul 10.00)</li>
 <li>Standar Kelurahan Data Corona (26 Desember 2020 Pukul 10.00)</li>
@@ -1503,9 +1503,20 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <li>Standar Kelurahan Data Corona (31 MEI 2020 Pukul 09.00)</li>
 <li>Standar Kelurahan Data Corona (31 Oktober 2020 Pukul 10.00)</li>
 </ul></li>
-<li><p>A collection of geospatial data in a ESRI shapefile format at different goegraphical levels is available at <a href="https://www.indonesia-geospasial.com/" class="uri">https://www.indonesia-geospasial.com/</a>. Only shapefile Batas Desa Provinsi DKI Jakarta at <a href="https://www.indonesia-geospasial.com/2020/04/download-shapefile-shp-batas-desa.html" class="uri">https://www.indonesia-geospasial.com/2020/04/download-shapefile-shp-batas-desa.html</a> will be used.</p></li>
+<li><p>A collection of geospatial data in a ESRI shapefile format at different geegraphical levels is available at <a href="https://www.indonesia-geospasial.com/" class="uri">https://www.indonesia-geospasial.com/</a>. Only shapefile Batas Desa Provinsi DKI Jakarta at <a href="https://www.indonesia-geospasial.com/2020/04/download-shapefile-shp-batas-desa.html" class="uri">https://www.indonesia-geospasial.com/2020/04/download-shapefile-shp-batas-desa.html</a> will be used.</p></li>
 </ol>
 <h1 id="install-and-load-packages">3 Install and Load Packages</h1>
+<p>Short explanation for the packages used:</p>
+<ul>
+<li>readxl: to read data in .xlsx format</li>
+<li>tidyverse: to tidy non-spatial data</li>
+<li>dplyr: to transform data</li>
+<li>readr: to read data in .rds format</li>
+<li>ggplot2: to plot boxplots</li>
+<li>ggpubr: to arrange plots generated by ggplot2</li>
+<li>sf: import geospatial data</li>
+<li>tmap: to plot choropleth maps</li>
+</ul>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>packages</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>'readxl'</span>, <span class='st'>'tidyr'</span>, <span class='st'>'dplyr'</span>, <span class='st'>'readr'</span>, <span class='st'>'ggplot2'</span>, <span class='st'>'ggpubr'</span>, <span class='st'>'sf'</span>, <span class='st'>'tmap'</span><span class='op'>)</span>
@@ -1545,7 +1556,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <li>Define values of new column for Date</li>
 <li>Add Date column in a list</li>
 <li>Extract necessary columns</li>
-<li>Create a DF for each list i.e. dataset</li>
+<li>Create a DF for each list</li>
 <li>Bind all DFs as a single DF</li>
 </ul>
 <div class="layout-chunk" data-layout="l-body">
@@ -1711,7 +1722,293 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 </code></pre>
 </div>
 </div>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<h1 id="data-integration-calculations">5 Data Integration &amp; Calculations</h1>
+<h2 id="join-apsatial-geospatial-data">5.1 Join apsatial &amp; geospatial data</h2>
+<ul>
+<li>Join by ID_KEL &amp; KODE_DESA as values in other columns have some differences in spelling, but means the same e.g. nama_kelurahan -&gt; KRAMAT JATI, DESA_KELUR -&gt; KRAMATJATI</li>
+</ul>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>dki_aspatial</span> <span class='op'>&lt;-</span> <span class='fu'>right_join</span><span class='op'>(</span><span class='va'>aspatial_final_rds</span>, <span class='va'>dki_final_rds</span>,
+                          by <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"ID_KEL"</span> <span class='op'>=</span> <span class='st'>"KODE_DESA"</span><span class='op'>)</span><span class='op'>)</span>
+</code></pre>
+</div>
+</div>
+<h2 id="calculate-cumulative-positive-cases-and-death-rate">5.2 Calculate cumulative positive cases and death rate</h2>
+<ul>
+<li>The number of cumulative positive cases and death rates per 10,000 population monthly would be used for this analysis.</li>
+</ul>
+<h3 id="calculate-total-postive-cases-and-death-rates-for-each-month">5.2.1 Calculate total postive cases and death rates for each month</h3>
+<ul>
+<li>Create derived columns for total number of positive cases and total deaths respectively.</li>
+</ul>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>dki_aspatial</span> <span class='op'>&lt;-</span> <span class='va'>dki_aspatial</span> <span class='op'>%&gt;%</span>
+  <span class='fu'>mutate</span><span class='op'>(</span>`TOTAL_POSITIF` <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/colSums.html'>rowSums</a></span><span class='op'>(</span><span class='va'>.</span><span class='op'>[</span><span class='fl'>6</span><span class='op'>:</span><span class='fl'>22</span><span class='op'>]</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
+  <span class='fu'>mutate</span><span class='op'>(</span>`TOTAL_MENINGGAL` <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/colSums.html'>rowSums</a></span><span class='op'>(</span><span class='va'>.</span><span class='op'>[</span><span class='fl'>23</span><span class='op'>:</span><span class='fl'>39</span><span class='op'>]</span><span class='op'>)</span><span class='op'>)</span>
+</code></pre>
+</div>
+</div>
+<h3 id="calculate-cumulative-positive-cases-and-death-rate-per-10000">5.2.2 Calculate cumulative positive cases and death rate per 10,000</h3>
+<ul>
+<li>Cumulative positive cases rate per month per sub district = (Total positive cases in the month/Population)*10000</li>
+<li>Cumulative death rate per month per sub district = (Total deaths in the month/Population)*10000</li>
+</ul>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>dki_aspatial_rate</span> <span class='op'>&lt;-</span> <span class='va'>dki_aspatial</span>
+
+<span class='va'>dki_aspatial_rate</span><span class='op'>[</span><span class='fl'>6</span><span class='op'>:</span><span class='fl'>22</span><span class='op'>]</span> <span class='op'>&lt;-</span> <span class='op'>(</span><span class='va'>dki_aspatial_rate</span><span class='op'>[</span><span class='fl'>6</span><span class='op'>:</span><span class='fl'>22</span><span class='op'>]</span> <span class='op'>/</span> <span class='va'>dki_aspatial_rate</span><span class='op'>$</span><span class='va'>JUMLAH_PEN</span><span class='op'>)</span> <span class='op'>*</span> <span class='fl'>10000</span> 
+
+<span class='va'>dki_aspatial_rate</span><span class='op'>[</span><span class='fl'>23</span><span class='op'>:</span><span class='fl'>39</span><span class='op'>]</span> <span class='op'>&lt;-</span> <span class='op'>(</span><span class='va'>dki_aspatial_rate</span><span class='op'>[</span><span class='fl'>23</span><span class='op'>:</span><span class='fl'>39</span><span class='op'>]</span> <span class='op'>/</span> <span class='va'>dki_aspatial_rate</span><span class='op'>$</span><span class='va'>JUMLAH_PEN</span><span class='op'>)</span> <span class='op'>*</span> <span class='fl'>10000</span>
+</code></pre>
+</div>
+</div>
+<h2 id="calculate-relative-risk">5.3 Calculate relative risk</h2>
+<ul>
+<li>Relative risk would be used for this analysis as well. This is to compare number of deaths and number of expected deaths when a reference risk is being applied.</li>
+</ul>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>dki_aspatial_risk</span> <span class='op'>&lt;-</span> <span class='va'>dki_aspatial</span> <span class='op'>%&gt;%</span>
+  <span class='fu'>mutate</span><span class='op'>(</span>`RELATIVE_RISK` <span class='op'>=</span> <span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/colSums.html'>rowSums</a></span><span class='op'>(</span><span class='va'>.</span><span class='op'>[</span><span class='fl'>23</span><span class='op'>:</span><span class='fl'>39</span><span class='op'>]</span><span class='op'>)</span><span class='op'>*</span><span class='fl'>100</span><span class='op'>)</span> <span class='op'>/</span> <span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/colSums.html'>rowSums</a></span><span class='op'>(</span><span class='va'>.</span><span class='op'>[</span><span class='fl'>23</span><span class='op'>:</span><span class='fl'>39</span><span class='op'>]</span><span class='op'>)</span><span class='op'>*</span><span class='va'>dki_aspatial</span><span class='op'>$</span><span class='va'>JUMLAH_PEN</span><span class='op'>)</span> <span class='op'>)</span>
+</code></pre>
+</div>
+</div>
+<h1 id="exploratory-data-analysis-eda">6 Exploratory Data Analysis (EDA)</h1>
+<h2 id="descriptive-statistics">6.1 Descriptive statistics</h2>
+<ul>
+<li>Descriptive statistics for whole data set</li>
+</ul>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>dki_aspatial_rate</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>    ID_KEL          Nama_provinsi       nama_kota        
+ Length:261         Length:261         Length:261        
+ Class :character   Class :character   Class :character  
+ Mode  :character   Mode  :character   Mode  :character  
+                                                         
+                                                         
+                                                         
+ nama_kecamatan     nama_kelurahan     POSITIF_Mar_2020 
+ Length:261         Length:261         Min.   : 0.0000  
+ Class :character   Class :character   1st Qu.: 0.0000  
+ Mode  :character   Mode  :character   Median : 0.3264  
+                                       Mean   : 0.7609  
+                                       3rd Qu.: 0.6928  
+                                       Max.   :49.8826  
+ POSITIF_Apr_2020 POSITIF_May_2020 POSITIF_Jun_2020 
+ Min.   : 0.000   Min.   : 0.000   Min.   :  0.000  
+ 1st Qu.: 1.393   1st Qu.: 2.646   1st Qu.:  4.179  
+ Median : 2.220   Median : 4.198   Median :  6.515  
+ Mean   : 3.370   Mean   : 5.458   Mean   :  8.728  
+ 3rd Qu.: 4.016   3rd Qu.: 6.796   3rd Qu.: 10.631  
+ Max.   :49.883   Max.   :49.883   Max.   :105.336  
+ POSITIF_Jul_2020  POSITIF_Aug_2020  POSITIF_Sep_2020 
+ Min.   :  1.518   Min.   :  2.429   Min.   :  6.681  
+ 1st Qu.:  7.477   1st Qu.: 14.134   1st Qu.: 32.867  
+ Median : 10.690   Median : 19.532   Median : 41.312  
+ Mean   : 14.002   Mean   : 25.203   Mean   : 51.530  
+ 3rd Qu.: 15.758   3rd Qu.: 31.381   3rd Qu.: 58.183  
+ Max.   :112.243   Max.   :210.492   Max.   :511.658  
+ POSITIF_Oct_2020 POSITIF_Nov_2020 POSITIF_Dec_2020 
+ Min.   : 13.82   Min.   : 28.85   Min.   :  40.85  
+ 1st Qu.: 54.17   1st Qu.: 75.33   1st Qu.: 101.13  
+ Median : 64.34   Median : 88.97   Median : 117.50  
+ Mean   : 76.97   Mean   :103.09   Mean   : 134.74  
+ 3rd Qu.: 85.28   3rd Qu.:110.95   3rd Qu.: 143.32  
+ Max.   :605.57   Max.   :783.68   Max.   :1010.36  
+ POSITIF_Jan_2021  POSITIF_Feb_2021  POSITIF_Mar_2021 
+ Min.   :  59.22   Min.   :  74.51   Min.   :  81.87  
+ 1st Qu.: 163.49   1st Qu.: 215.35   1st Qu.: 244.44  
+ Median : 192.08   Median : 254.66   Median : 291.74  
+ Mean   : 212.31   Mean   : 278.28   Mean   : 315.05  
+ 3rd Qu.: 229.76   3rd Qu.: 307.30   3rd Qu.: 345.77  
+ Max.   :1318.01   Max.   :1628.89   Max.   :1810.23  
+ POSITIF_Apr_2021  POSITIF_May_2021  POSITIF_Jun_2021
+ Min.   :  89.58   Min.   :  91.76   Min.   : 111.4  
+ 1st Qu.: 261.89   1st Qu.: 275.06   1st Qu.: 337.1  
+ Median : 312.88   Median : 332.16   Median : 398.0  
+ Mean   : 338.72   Mean   : 360.74   Mean   : 435.1  
+ 3rd Qu.: 370.19   3rd Qu.: 391.74   3rd Qu.: 473.9  
+ Max.   :1988.34   Max.   :2075.78   Max.   :2590.7  
+ POSITIF_Jul_2021 Meninggal_Mar_2020 Meninggal_Apr_2020
+ Min.   : 187.3   Min.   :0.00000    Min.   :0.0000    
+ 1st Qu.: 545.1   1st Qu.:0.00000    1st Qu.:0.0000    
+ Median : 658.3   Median :0.00000    Median :0.2074    
+ Mean   : 705.3   Mean   :0.08094    Mean   :0.3482    
+ 3rd Qu.: 779.7   3rd Qu.:0.00000    3rd Qu.:0.4854    
+ Max.   :3808.3   Max.   :3.05344    Max.   :6.1069    
+ Meninggal_May_2020 Meninggal_Jun_2020 Meninggal_Jul_2020
+ Min.   :0.0000     Min.   :0.0000     Min.   :0.0000    
+ 1st Qu.:0.0000     1st Qu.:0.0000     1st Qu.:0.2155    
+ Median :0.3372     Median :0.4144     Median :0.5490    
+ Mean   :0.4611     Mean   :0.5579     Mean   :0.6912    
+ 3rd Qu.:0.6447     3rd Qu.:0.7939     3rd Qu.:0.9707    
+ Max.   :6.1069     Max.   :6.1069     Max.   :6.1069    
+ Meninggal_Aug_2020 Meninggal_Sep_2020 Meninggal_Oct_2020
+ Min.   :0.0000     Min.   :0.0000     Min.   :0.0000    
+ 1st Qu.:0.3321     1st Qu.:0.5694     1st Qu.:0.9442    
+ Median :0.6899     Median :0.9934     Median :1.4868    
+ Mean   :0.8827     Mean   :1.2192     Mean   :1.6846    
+ 3rd Qu.:1.2247     3rd Qu.:1.6270     3rd Qu.:2.2127    
+ Max.   :6.1069     Max.   :6.1069     Max.   :6.1069    
+ Meninggal_Nov_2020 Meninggal_Dec_2020 Meninggal_Jan_2021
+ Min.   :0.000      Min.   :0.000      Min.   : 0.000    
+ 1st Qu.:1.166      1st Qu.:1.607      1st Qu.: 2.415    
+ Median :1.839      Median :2.321      Median : 3.266    
+ Mean   :2.022      Mean   :2.480      Mean   : 3.506    
+ 3rd Qu.:2.639      3rd Qu.:3.136      3rd Qu.: 4.337    
+ Max.   :6.107      Max.   :9.160      Max.   :16.192    
+ Meninggal_Feb_2021 Meninggal_Mar_2021 Meninggal_Apr_2021
+ Min.   : 1.318     Min.   : 1.388     Min.   : 1.679    
+ 1st Qu.: 3.228     1st Qu.: 3.993     1st Qu.: 4.243    
+ Median : 4.411     Median : 5.201     Median : 5.572    
+ Mean   : 4.598     Mean   : 5.376     Mean   : 5.679    
+ 3rd Qu.: 5.541     3rd Qu.: 6.406     3rd Qu.: 6.796    
+ Max.   :19.430     Max.   :25.907     Max.   :25.907    
+ Meninggal_May_2021 Meninggal_Jun_2021 Meninggal_Jul_2021
+ Min.   : 1.964     Min.   : 2.244     Min.   : 3.439    
+ 1st Qu.: 4.688     1st Qu.: 5.339     1st Qu.: 8.446    
+ Median : 6.124     Median : 7.036     Median :10.298    
+ Mean   : 6.323     Mean   : 7.145     Mean   :10.602    
+ 3rd Qu.: 7.534     3rd Qu.: 8.375     3rd Qu.:12.508    
+ Max.   :29.145     Max.   :29.145     Max.   :42.098    
+   OBJECT_ID         DESA                KODE       
+ Min.   :25384   Length:261         Min.   :317101  
+ 1st Qu.:25449   Class :character   1st Qu.:317204  
+ Median :25514   Mode  :character   Median :317308  
+ Mean   :25514                      Mean   :317334  
+ 3rd Qu.:25579                      3rd Qu.:317410  
+ Max.   :25644                      Max.   :317510  
+   PROVINSI           KAB_KOTA          KECAMATAN        
+ Length:261         Length:261         Length:261        
+ Class :character   Class :character   Class :character  
+ Mode  :character   Mode  :character   Mode  :character  
+                                                         
+                                                         
+                                                         
+  DESA_KELUR          JUMLAH_PEN              geometry  
+ Length:261         Min.   :  3088   MULTIPOLYGON :261  
+ Class :character   1st Qu.: 26177   epsg:23845   :  0  
+ Mode  :character   Median : 38845   +proj=tmer...:  0  
+                    Mean   : 42082                      
+                    3rd Qu.: 52424                      
+                    Max.   :167523                      
+ TOTAL_POSITIF   TOTAL_MENINGGAL
+ Min.   :  967   Min.   :  8    
+ 1st Qu.: 7588   1st Qu.:129    
+ Median :10833   Median :192    
+ Mean   :11371   Mean   :207    
+ 3rd Qu.:14503   3rd Qu.:263    
+ Max.   :27221   Max.   :729    </code></pre>
+</div>
+<p><br> <br></p>
+<ul>
+<li>Descriptive statistics for both positive rates and death rates to get the range for thematic mapping.</li>
+</ul>
+<p><left>Descriptive statistics for Mar 2020 positive cases </left></p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>dki_aspatial_rate</span><span class='op'>$</span><span class='va'>POSITIF_Mar_2020</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+ 0.0000  0.0000  0.3264  0.7609  0.6928 49.8826 </code></pre>
+</div>
+<p><left>Descriptive statistics for Jul 2021 positive cases </left></p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>dki_aspatial_rate</span><span class='op'>$</span><span class='va'>POSITIF_Jul_2021</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  187.3   545.1   658.3   705.3   779.7  3808.3 </code></pre>
+</div>
+<ul>
+<li>From the above results, the range for cumulative positive cases rates is 0 to 3808.</li>
+</ul>
+<p><br> <br></p>
+<p><left>Descriptive statistics for Mar 2020 death rates </left></p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>dki_aspatial_rate</span><span class='op'>$</span><span class='va'>Meninggal_Mar_2020</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+0.00000 0.00000 0.00000 0.08094 0.00000 3.05344 </code></pre>
+</div>
+<p><left>Descriptive statistics for Jul 2021 death rates </left></p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>dki_aspatial_rate</span><span class='op'>$</span><span class='va'>Meninggal_Jul_2021</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  3.439   8.446  10.298  10.602  12.508  42.098 </code></pre>
+</div>
+<ul>
+<li>From the above results, the range for cumulative death rates is 0 to 42.</li>
+</ul>
+<h2 id="time-series-box-plot">6.2 Time-series Box Plot</h2>
+<h3 id="cumulative-positive-cases">6.2.1 Cumulative Positive Cases</h3>
+<ul>
+<li>Box plots for positive cases to check for outliers.</li>
+</ul>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>boxplot_1</span> <span class='op'>&lt;-</span> <span class='fu'>ggplot</span><span class='op'>(</span>data<span class='op'>=</span><span class='va'>dki_aspatial</span>,
+  <span class='fu'>aes</span><span class='op'>(</span>x <span class='op'>=</span> <span class='st'>""</span>, y <span class='op'>=</span> <span class='va'>POSITIF_Mar_2020</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>+</span>
+  <span class='fu'>geom_boxplot</span><span class='op'>(</span><span class='op'>)</span>
+
+<span class='va'>boxplot_2</span> <span class='op'>&lt;-</span> <span class='fu'>ggplot</span><span class='op'>(</span>data<span class='op'>=</span><span class='va'>dki_aspatial</span>,
+  <span class='fu'>aes</span><span class='op'>(</span>x <span class='op'>=</span> <span class='st'>""</span>, y <span class='op'>=</span> <span class='va'>POSITIF_Dec_2020</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>+</span>
+  <span class='fu'>geom_boxplot</span><span class='op'>(</span><span class='op'>)</span>
+
+
+<span class='va'>boxplot_3</span> <span class='op'>&lt;-</span> <span class='fu'>ggplot</span><span class='op'>(</span>data<span class='op'>=</span><span class='va'>dki_aspatial</span>,
+  <span class='fu'>aes</span><span class='op'>(</span>x <span class='op'>=</span> <span class='st'>""</span>, y <span class='op'>=</span> <span class='va'>POSITIF_Jul_2021</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>+</span>
+  <span class='fu'>geom_boxplot</span><span class='op'>(</span><span class='op'>)</span>
+
+<span class='fu'>ggarrange</span><span class='op'>(</span><span class='va'>boxplot_1</span>, <span class='va'>boxplot_2</span>, <span class='va'>boxplot_3</span>, nrow <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span>
+</code></pre>
+</div>
+<p><img src="take-home-exercise-1_files/figure-html5/unnamed-chunk-30-1.png" width="624" /></p>
+</div>
+<ul>
+<li>From the above box plots, positive cases rise sharply from March 2020 to July 2021 and multiple outliers can be seen.</li>
+</ul>
+<h3 id="cumulative-death">6.2.2 Cumulative Death</h3>
+<ul>
+<li>Box plots for death cases to check for outliers.</li>
+</ul>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>boxplot_1_m</span> <span class='op'>&lt;-</span> <span class='fu'>ggplot</span><span class='op'>(</span>data<span class='op'>=</span><span class='va'>dki_aspatial</span>,
+  <span class='fu'>aes</span><span class='op'>(</span>x <span class='op'>=</span> <span class='st'>""</span>, y <span class='op'>=</span> <span class='va'>Meninggal_Mar_2020</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>+</span>
+  <span class='fu'>geom_boxplot</span><span class='op'>(</span><span class='op'>)</span>
+
+<span class='va'>boxplot_2_m</span> <span class='op'>&lt;-</span> <span class='fu'>ggplot</span><span class='op'>(</span>data<span class='op'>=</span><span class='va'>dki_aspatial</span>,
+  <span class='fu'>aes</span><span class='op'>(</span>x <span class='op'>=</span> <span class='st'>""</span>, y <span class='op'>=</span> <span class='va'>Meninggal_Dec_2020</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>+</span>
+  <span class='fu'>geom_boxplot</span><span class='op'>(</span><span class='op'>)</span>
+
+<span class='va'>boxplot_3_m</span> <span class='op'>&lt;-</span> <span class='fu'>ggplot</span><span class='op'>(</span>data<span class='op'>=</span><span class='va'>dki_aspatial</span>,
+  <span class='fu'>aes</span><span class='op'>(</span>x <span class='op'>=</span> <span class='st'>""</span>, y <span class='op'>=</span> <span class='va'>Meninggal_Jul_2021</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>+</span>
+  <span class='fu'>geom_boxplot</span><span class='op'>(</span><span class='op'>)</span>
+
+<span class='fu'>ggarrange</span><span class='op'>(</span><span class='va'>boxplot_1_m</span>, <span class='va'>boxplot_2_m</span>, <span class='va'>boxplot_3_m</span>, nrow <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span>
+</code></pre>
+</div>
+<p><img src="take-home-exercise-1_files/figure-html5/unnamed-chunk-31-1.png" width="624" /></p>
+</div>
+<ul>
+<li>For the death rates in Mar 2020, it can be seen that most of the data points are all 0. Since there are only 3 data points in Mar 2020, it would be excluded for box map analysis for death rates in Mar 2020.</li>
+<li>It can be observed that death rates are also on the rise from Mar 2020 to Jul 2021, but not as sharply as the positive cases.</li>
+</ul>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->
 </div>
