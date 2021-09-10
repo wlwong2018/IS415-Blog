@@ -169,3 +169,79 @@ aspatial_final_rds <- read_rds("data/aspatial_final_rds.rds")
 
 ```
 
+
+
+## 4.2 Data Wrangling for Geospatial Data
+
+### 4.2.1 Import polygon feature data in shapefile format
+
+``` {r echo=TRUE, eval=FALSE}
+library(sf)
+dki <- st_read(dsn = "data/geospatial", 
+                layer = "BATAS_DESA_DESEMBER_2019_DUKCAPIL_DKI_JAKARTA")
+
+```
+
+### 4.2.2 Check CRS
+
+```{r echo=TRUE, eval=FALSE}
+st_crs(dki)
+
+```
+
+### 4.2.3 Convert WGS84 to national PCS of Indonesia
+
+- DGN95 / Indonesia TM-3 zone 54.1) -> EPSG:23845 (Reference: https://epsg.io/23845)
+
+```{r echo=TRUE, eval=FALSE}
+dki <- st_transform(dki, 23845)
+st_crs(dki)
+```
+
+### 4.2.4 Plot map to check for outer islands
+
+```{r echo=TRUE, eval=FALSE}
+tmap_mode('view')
+tm_shape(dki) +
+  tm_dots(alpha=0.4,
+          col="blue",
+          size=0.05)
+```
+- Results: After plotting, there are 6 points identified as the outer islands. When hovering over the points, the common "KAB_KOTA" is "KEPULAUAN SERIBU". These rows are to be removed in the later steps.
+
+
+### 4.2.5 Switch back to plot mode after plotting interactive maps 
+
+```{r echo=TRUE, eval=FALSE}
+tmap_mode('plot')
+```
+
+### 4.2.6 Exclude outer islands, drop NA values, extract necessary fields and ensure that NA values have been dropped
+
+```{r echo=TRUE, eval=FALSE}
+dki <- dki[!dki$KAB_KOTA == "KEPULAUAN SERIBU", ] %>%
+       drop_na() %>%
+      select(OBJECT_ID, KODE_DESA, DESA, KODE, PROVINSI, KAB_KOTA, KECAMATAN, DESA_KELUR, JUMLAH_PEN)
+print(dki[rowSums(is.na(dki)) > 0,])
+```
+
+### 4.2.7 Check features and fields of dki
+
+```{r echo=TRUE, eval=FALSE}
+print(dki)
+
+```
+
+### 4.2.8 Write finalised geospatial data as rds format
+
+```{r echo=TRUE, eval=FALSE}
+dki_final_rds <- write_rds(dki, "data/dki_final_rds.rds")
+```
+
+### 4.2.9 Import clean Geosptial Data
+
+```{r echo=TRUE, eval=TRUE}
+dki_final_rds <- read_rds("data/dki_final_rds.rds")
+
+```
+
