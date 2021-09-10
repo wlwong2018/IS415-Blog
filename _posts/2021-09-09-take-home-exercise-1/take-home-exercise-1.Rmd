@@ -24,7 +24,25 @@ This analysis aims to determine the sub-district with relatively higher number o
 To perform the analysis, data sets from 2 sources are used:
 
 
-1. Cumulative cases are updated daily from https://riwayat-file-covid-19-dki-jakarta-jakartagis.hub.arcgis.com/. A total of 17 .xlsx files are downloaded from March 2020 to July 2021. For files that do not contain NA values, the last day of the month's file is used i.e. 31/30, else, the next available day is used. Also, this analysis focuses on sub-district level, the data in the "data" worksheet is used. 
+1. Cumulative cases are updated daily from https://riwayat-file-covid-19-dki-jakarta-jakartagis.hub.arcgis.com/. A total of 17 .xlsx files are downloaded from March 2020 to July 2021. For files that do not contain NA values, the last day of the month's file is used i.e. 31/30, else, the next available day is used. Also, this analysis focuses on sub-district level, the data in the "data" worksheet is used. In particular, the files that I have used are:
+
+    + Standar Kelurahan Data Corona (24 April 2021 Pukul 10.00)
+    + Standar Kelurahan Data Corona (26 Desember 2020 Pukul 10.00)
+    + Standar Kelurahan Data Corona (26 Juni 2021 Pukul 10.00)
+    + Standar Kelurahan Data Corona (27 Februari 2021 Pukul 10.00)
+    + Standar Kelurahan Data Corona (27 Maret 2021 Pukul 10.00)
+    + Standar Kelurahan Data Corona (29 Mei 2021 Pukul 10.00)
+    + Standar Kelurahan Data Corona (30 April 2020 Pukul 09.00)
+    + Standar Kelurahan Data Corona (30 Januari 2021 Pukul 10.00)
+    + Standar Kelurahan Data Corona (30 Juni 2020 Pukul 09.00)
+    + Standar Kelurahan Data Corona (30 November 2020 Pukul 10.00)
+    + Standar Kelurahan Data Corona (30 September 2020 Pukul 10.00)
+    + Standar Kelurahan Data Corona (31 Agustus 2020 Pukul 10.00)
+    + Standar Kelurahan Data Corona (31 Juli 2020 Pukul 09.00)
+    + Standar Kelurahan Data Corona (31 Juli 2021 Pukul 10.00)
+    + Standar Kelurahan Data Corona (31 Maret 2020 Pukul 08.00)
+    + Standar Kelurahan Data Corona (31 MEI 2020 Pukul 09.00)
+    + Standar Kelurahan Data Corona (31 Oktober 2020 Pukul 10.00)
 
 
 2. A collection of geospatial data in a ESRI shapefile format at different goegraphical levels is available at https://www.indonesia-geospasial.com/. Only shapefile Batas Desa Provinsi DKI Jakarta at https://www.indonesia-geospasial.com/2020/04/download-shapefile-shp-batas-desa.html will be used.
@@ -50,7 +68,7 @@ for (p in packages){
 - Get path of aspatial data sets stored
 - Read Excel file with argument .name_repair = minimal to avoid renaming of duplicated columns to e.g. "...31"
 - Remove duplicated columns with argument fromLast=TRUE to extract the 2nd duplicated column, else, extract the first.
-- Apply function to the datasets
+- Apply function to the data sets
 
 ```{r echo=TRUE, eval=FALSE}
 filenames_list <- list.files(path= "data/aspatial", full.names=TRUE) 
@@ -111,7 +129,7 @@ aspatial_final <- filter(aspatial_final, ID_KEL!="BELUM DIKETAHUI")
 ```
 
 
-### 4.1.6 Pivot date values to columns for calculation of cumulative positive cases & deaths
+### 4.1.6 Prepare data for calculation of cumulative positive cases & deaths
 
 ```{r echo=TRUE, eval=FALSE}
 aspatial_final <- aspatial_final %>%
@@ -122,7 +140,7 @@ aspatial_final <- aspatial_final %>%
 ```
 
 
-### 4.1.7 Remove rows with NA values & Ensure that it has been removed 
+### 4.1.7 Remove rows with NA values & ensure that it has been removed 
 
 ```{r echo=TRUE, eval=FALSE}
 aspatial_final <- drop_na(aspatial_final)
@@ -130,7 +148,7 @@ aspatial_final[rowSums(is.na(aspatial_final)) > 0, ]
 
 ```
 
-### 4.1.8 Re-order Positive and Deaths Columns to be sequential
+### 4.1.8 Re-order positive and deaths columns to be sequential
 
 ```{r echo=TRUE, eval=FALSE}
 aspatial_final <- aspatial_final[, c(1, 2, 3, 4, 5,

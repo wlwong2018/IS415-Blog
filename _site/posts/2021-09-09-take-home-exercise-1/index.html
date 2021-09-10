@@ -2125,7 +2125,26 @@ Hands-on Exercise
 <h1 id="dataset">2 Dataset</h1>
 <p>To perform the analysis, data sets from 2 sources are used:</p>
 <ol type="1">
-<li><p>Cumulative cases are updated daily from <a href="https://riwayat-file-covid-19-dki-jakarta-jakartagis.hub.arcgis.com/" class="uri">https://riwayat-file-covid-19-dki-jakarta-jakartagis.hub.arcgis.com/</a>. A total of 17 .xlsx files are downloaded from March 2020 to July 2021. For files that do not contain NA values, the last day of the month’s file is used i.e. 31/30, else, the next available day is used. Also, this analysis focuses on sub-district level, the data in the “data” worksheet is used.</p></li>
+<li><p>Cumulative cases are updated daily from <a href="https://riwayat-file-covid-19-dki-jakarta-jakartagis.hub.arcgis.com/" class="uri">https://riwayat-file-covid-19-dki-jakarta-jakartagis.hub.arcgis.com/</a>. A total of 17 .xlsx files are downloaded from March 2020 to July 2021. For files that do not contain NA values, the last day of the month’s file is used i.e. 31/30, else, the next available day is used. Also, this analysis focuses on sub-district level, the data in the “data” worksheet is used. In particular, the files that I have used are:</p>
+<ul>
+<li>Standar Kelurahan Data Corona (24 April 2021 Pukul 10.00)</li>
+<li>Standar Kelurahan Data Corona (26 Desember 2020 Pukul 10.00)</li>
+<li>Standar Kelurahan Data Corona (26 Juni 2021 Pukul 10.00)</li>
+<li>Standar Kelurahan Data Corona (27 Februari 2021 Pukul 10.00)</li>
+<li>Standar Kelurahan Data Corona (27 Maret 2021 Pukul 10.00)</li>
+<li>Standar Kelurahan Data Corona (29 Mei 2021 Pukul 10.00)</li>
+<li>Standar Kelurahan Data Corona (30 April 2020 Pukul 09.00)</li>
+<li>Standar Kelurahan Data Corona (30 Januari 2021 Pukul 10.00)</li>
+<li>Standar Kelurahan Data Corona (30 Juni 2020 Pukul 09.00)</li>
+<li>Standar Kelurahan Data Corona (30 November 2020 Pukul 10.00)</li>
+<li>Standar Kelurahan Data Corona (30 September 2020 Pukul 10.00)</li>
+<li>Standar Kelurahan Data Corona (31 Agustus 2020 Pukul 10.00)</li>
+<li>Standar Kelurahan Data Corona (31 Juli 2020 Pukul 09.00)</li>
+<li>Standar Kelurahan Data Corona (31 Juli 2021 Pukul 10.00)</li>
+<li>Standar Kelurahan Data Corona (31 Maret 2020 Pukul 08.00)</li>
+<li>Standar Kelurahan Data Corona (31 MEI 2020 Pukul 09.00)</li>
+<li>Standar Kelurahan Data Corona (31 Oktober 2020 Pukul 10.00)</li>
+</ul></li>
 <li><p>A collection of geospatial data in a ESRI shapefile format at different goegraphical levels is available at <a href="https://www.indonesia-geospasial.com/" class="uri">https://www.indonesia-geospasial.com/</a>. Only shapefile Batas Desa Provinsi DKI Jakarta at <a href="https://www.indonesia-geospasial.com/2020/04/download-shapefile-shp-batas-desa.html" class="uri">https://www.indonesia-geospasial.com/2020/04/download-shapefile-shp-batas-desa.html</a> will be used.</p></li>
 </ol>
 <h1 id="install-and-load-packages">3 Install and Load Packages</h1>
@@ -2148,7 +2167,7 @@ Hands-on Exercise
 <li>Get path of aspatial data sets stored</li>
 <li>Read Excel file with argument .name_repair = minimal to avoid renaming of duplicated columns to e.g. “…31”</li>
 <li>Remove duplicated columns with argument fromLast=TRUE to extract the 2nd duplicated column, else, extract the first.</li>
-<li>Apply function to the datasets</li>
+<li>Apply function to the data sets</li>
 </ul>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
@@ -2212,7 +2231,7 @@ Hands-on Exercise
 </code></pre>
 </div>
 </div>
-<h3 id="pivot-date-values-to-columns-for-calculation-of-cumulative-positive-cases-deaths">4.1.6 Pivot date values to columns for calculation of cumulative positive cases &amp; deaths</h3>
+<h3 id="prepare-data-for-calculation-of-cumulative-positive-cases-deaths">4.1.6 Prepare data for calculation of cumulative positive cases &amp; deaths</h3>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>aspatial_final</span> <span class='op'>&lt;-</span> <span class='va'>aspatial_final</span> <span class='op'>%&gt;%</span>
@@ -2223,7 +2242,7 @@ Hands-on Exercise
 </code></pre>
 </div>
 </div>
-<h3 id="remove-rows-with-na-values-ensure-that-it-has-been-removed-1">4.1.7 Remove rows with NA values &amp; Ensure that it has been removed</h3>
+<h3 id="remove-rows-with-na-values-ensure-that-it-has-been-removed-1">4.1.7 Remove rows with NA values &amp; ensure that it has been removed</h3>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>aspatial_final</span> <span class='op'>&lt;-</span> <span class='fu'>drop_na</span><span class='op'>(</span><span class='va'>aspatial_final</span><span class='op'>)</span>
@@ -2231,7 +2250,7 @@ Hands-on Exercise
 </code></pre>
 </div>
 </div>
-<h3 id="re-order-positive-and-deaths-columns-to-be-sequential">4.1.8 Re-order Positive and Deaths Columns to be sequential</h3>
+<h3 id="re-order-positive-and-deaths-columns-to-be-sequential">4.1.8 Re-order positive and deaths columns to be sequential</h3>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>aspatial_final</span> <span class='op'>&lt;-</span> <span class='va'>aspatial_final</span><span class='op'>[</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>2</span>, <span class='fl'>3</span>, <span class='fl'>4</span>, <span class='fl'>5</span>,
