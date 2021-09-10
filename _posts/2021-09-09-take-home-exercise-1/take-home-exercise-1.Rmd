@@ -1,7 +1,7 @@
 ---
 title: "Take Home Exercise 1"
 description: |
-  A short description of the post.
+   To reveal the spatial temporal patterns of monthly cumulative confirmed COVID-19 rate and death rate at sub district level in Jarkata, Indonesia.
 author:
   - name: Wong Wei Ling
     url: www.google.com
@@ -578,6 +578,7 @@ tmap_arrange(jenksmap("POSITIF_Mar_2020", dki_aspatial_rate),
 - Additionally, on the bottom right of each map, we can now see that the sub-district started off with orange (Mar 2020 to Sep 2020), then dark orange (Oct 2020 to Dec 2020) then dark red (Jan 2021 to Feb 2021), then dark orange (Mar 2021 to Jul 2021). This means that the positive cases rate of the sub districts at the bottom right of the map started off with a low number, then surged as it turned to dark red, it then decreased to a low number in Jul 2021, but cumulative positive cases rate was still higher than the cases in the first few months. This observation was also unable to be seen with the custom breaks previously.     
 
 
+
 ### 7.2.3 Plot choropleth maps with Jenks Data Classification (Death Rate)
 
 ```{r echo=TRUE, eval=TRUE}
@@ -605,4 +606,144 @@ tmap_arrange(jenksmap("Meninggal_Mar_2020", dki_aspatial_rate),
 <br>
 
 - Additionally, to identify outliers, box maps will be plotted as well. Box maps can reveal any outliers that might not be prominent in custom breaks and Jenks data classification choropleth maps. Hence, the section below employs box maps to reveal the patterns. 
+
+
+
+
+# 8 Analytical Mapping
+
+1. Box maps will be used to identify sub districts with outliers of cumulative positive cases rates and death rates.
+
+    * The groups specified are: "Lower outlier", "< 25%", "25% - 50%", "50% - 75%","> 75%", "Upper outlier". Values would be considered as outliers if they are 1.5 times higher than the interquartile range. With box maps, *significant* spatial patterns are more likely to be revealed. 
+
+2. Relative risk map will also be plotted to compare the observed mortality to the expected mortality.
+
+## 8.1 Functions needed to plot box maps
+
+- Get var function: to extract the variable as vector out of the dataframe.
+- Box breaks function: to classify the data points by creating break points for the box map into 6 classes, namely, "Lower outlier", "1 - 25%", "25% - 50%", "50% - 75%","> 75%", "Upper outlier".
+- Box map function: To plot box maps.
+
+```{r echo=TRUE, eval=TRUE}
+# Extract variable as vector out of sf dataframe
+get.var <- function(vname, df) {
+  v <- df[vname]
+  v <- unname(v[[1]])
+  return(v)
+}
+
+# To create break points for box map
+boxbreaks <- function(v, mult=1.5) {
+  qv <- unname(quantile(v))
+  iqr <- qv[4] - qv[2]
+  upfence <- qv[4] + mult * iqr
+  lofence <- qv[2] - mult * iqr
+
+  # initialize break points vector
+  bb <- vector(mode="numeric",length=7)
+
+  # logic for lower and upper fences
+  if (lofence < qv[1]) { # no lower outliers
+    bb[1] <- lofence
+    bb[2] <- floor(qv[1])
+  } else {
+    bb[2] <- lofence
+    bb[1] <- qv[1]
+  }
+  if (upfence > qv[5]) { # no upper outliers
+    bb[7] <- upfence
+    bb[6] <- ceiling(qv[5])
+  } else {
+    bb[6] <- upfence
+    bb[7] <- qv[5]
+  }
+  bb[3:5] <- qv[2:4]
+  return(bb)
+}
+
+
+# Boxmap function
+boxmap <- function(vnam, df, mtitle, legtitle=NA, mult=1.5, palette='Reds') {
+  df1 <- drop_na(df)
+  var <- get.var(vnam,df1)
+  bb <- boxbreaks(var)
+  tm_shape(df) +
+    tm_fill(vnam,
+            title=legtitle,
+            breaks=bb,
+            palette=palette,
+            labels = c("Lower outlier", "< 25%", "25% - 50%", "50% - 75%","> 75%", "Upper outlier")) +
+  tm_borders(lwd=0.1, alpha=1) +
+  tm_layout(main.title = vnam,
+            main.title.position = 'center',
+            main.title.size = 0.7,
+            frame = FALSE,
+            legend.show = FALSE) +
+  tm_scale_bar(width = 0.15)
+}
+
+```
+
+## 8.2 Test boxbreaks function 
+
+```{r echo=TRUE,  eval=TRUE}
+var <- get.var("Meninggal_Mar_2020", dki_aspatial_rate)
+boxbreaks(var)
+```
+
+## 8.3 Time-series box map of cumulative positive cases rates
+
+```{r echo=TRUE, eval=TRUE}
+tmap_arrange(boxmap("POSITIF_Mar_2020", dki_aspatial_rate),
+            boxmap("POSITIF_Apr_2020", dki_aspatial_rate),
+            boxmap("POSITIF_May_2020", dki_aspatial_rate),
+            boxmap("POSITIF_Jun_2020", dki_aspatial_rate),
+            boxmap("POSITIF_Jul_2020", dki_aspatial_rate),
+            boxmap("POSITIF_Aug_2020", dki_aspatial_rate),
+            boxmap("POSITIF_Sep_2020", dki_aspatial_rate),
+            boxmap("POSITIF_Oct_2020", dki_aspatial_rate),
+            boxmap("POSITIF_Nov_2020", dki_aspatial_rate),
+            boxmap("POSITIF_Dec_2020", dki_aspatial_rate),
+            boxmap("POSITIF_Jan_2021", dki_aspatial_rate),
+            boxmap("POSITIF_Feb_2021", dki_aspatial_rate),
+            boxmap("POSITIF_Mar_2021", dki_aspatial_rate),
+            boxmap("POSITIF_Apr_2021", dki_aspatial_rate),
+            boxmap("POSITIF_May_2021", dki_aspatial_rate),
+            boxmap("POSITIF_Jun_2021", dki_aspatial_rate),
+            boxmap("POSITIF_Jul_2021", dki_aspatial_rate))
+```
+- From the above box maps, more dark red sub districts can be seen. This means that there were more sub districts that were in the upper outlier class and the severity of COVID-19 was already quite high in Mar 2020. 
+- The previous choropleth maps plotted using custom breaks & jenks slightly misrepresented the situation in Jarkata as there are not many dark red sub districts shown. 
+- It can also be observed that the situation of sub districts at the bottom part of the map gets increasingly serious from Mar 2020 to Jul 2021.
+- Also, with respect to the bottom right sub-district, it started off being within the ">75%" class then to the "50%-75%" class then slowly increased to the upper outlier class. This observation differs slightly from the choropleth maps plotted using jenks data classification.
+- With these box maps, we are able to better tell the severity of the sub-districts in Jarkata.
+
+
+## 8.4 Time-series box map of cumulative death rates
+
+- Excluded Mar 2020 column for death rates as most of the data points are 0.
+
+```{r echo=TRUE, eval=TRUE}
+tmap_arrange(boxmap("Meninggal_Apr_2020", dki_aspatial_rate),
+            boxmap("Meninggal_May_2020", dki_aspatial_rate),
+            boxmap("Meninggal_Jun_2020", dki_aspatial_rate),
+            boxmap("Meninggal_Jul_2020", dki_aspatial_rate),
+            boxmap("Meninggal_Aug_2020", dki_aspatial_rate),
+            boxmap("Meninggal_Sep_2020", dki_aspatial_rate),
+            boxmap("Meninggal_Oct_2020", dki_aspatial_rate),
+            boxmap("Meninggal_Nov_2020", dki_aspatial_rate),
+            boxmap("Meninggal_Dec_2020", dki_aspatial_rate),
+            boxmap("Meninggal_Jan_2021", dki_aspatial_rate),
+            boxmap("Meninggal_Feb_2021", dki_aspatial_rate),
+            boxmap("Meninggal_Mar_2021", dki_aspatial_rate),
+            boxmap("Meninggal_Apr_2021", dki_aspatial_rate),
+            boxmap("Meninggal_May_2021", dki_aspatial_rate),
+            boxmap("Meninggal_Jun_2021", dki_aspatial_rate),
+            boxmap("Meninggal_Jul_2021", dki_aspatial_rate))
+
+```
+
+- Similar to the cumulative positive cases rate box maps, more sub-districts that fall in the upper outlier class can be seen.
+- An interesting finding is that the sub-districts at the bottom gets increasingly serious whereas, the sub districts at the top gets less serious as months passed. 
+- To reiterate, the custom breaks and jenks choropleth maps have slightly misrepresented the severity of the situation in Jarkata as many red sub districts can be seen in the box maps. 
 
