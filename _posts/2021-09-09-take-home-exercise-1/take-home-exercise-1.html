@@ -116,7 +116,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   <!--/radix_placeholder_rmarkdown_metadata-->
   
   <script type="text/json" id="radix-resource-manifest">
-  {"type":"character","attributes":{},"value":["data/aspatial_final_rds.rds","data/dki_final_rds.rds","take-home-exercise-1_files/anchor-4.2.2/anchor.min.js","take-home-exercise-1_files/bowser-1.9.3/bowser.min.js","take-home-exercise-1_files/distill-2.2.21/template.v2.js","take-home-exercise-1_files/figure-html5/unnamed-chunk-30-1.png","take-home-exercise-1_files/figure-html5/unnamed-chunk-31-1.png","take-home-exercise-1_files/header-attrs-2.10/header-attrs.js","take-home-exercise-1_files/jquery-1.11.3/jquery.min.js","take-home-exercise-1_files/popper-2.6.0/popper.min.js","take-home-exercise-1_files/tippy-6.2.7/tippy-bundle.umd.min.js","take-home-exercise-1_files/tippy-6.2.7/tippy-light-border.css","take-home-exercise-1_files/tippy-6.2.7/tippy.css","take-home-exercise-1_files/tippy-6.2.7/tippy.umd.min.js","take-home-exercise-1_files/webcomponents-2.0.0/webcomponents.js"]}
+  {"type":"character","attributes":{},"value":["data/aspatial_final_rds.rds","data/dki_final_rds.rds","take-home-exercise-1_files/anchor-4.2.2/anchor.min.js","take-home-exercise-1_files/bowser-1.9.3/bowser.min.js","take-home-exercise-1_files/distill-2.2.21/template.v2.js","take-home-exercise-1_files/figure-html5/unnamed-chunk-30-1.png","take-home-exercise-1_files/figure-html5/unnamed-chunk-31-1.png","take-home-exercise-1_files/figure-html5/unnamed-chunk-33-1.png","take-home-exercise-1_files/figure-html5/unnamed-chunk-34-1.png","take-home-exercise-1_files/header-attrs-2.10/header-attrs.js","take-home-exercise-1_files/jquery-1.11.3/jquery.min.js","take-home-exercise-1_files/popper-2.6.0/popper.min.js","take-home-exercise-1_files/tippy-6.2.7/tippy-bundle.umd.min.js","take-home-exercise-1_files/tippy-6.2.7/tippy-light-border.css","take-home-exercise-1_files/tippy-6.2.7/tippy.css","take-home-exercise-1_files/tippy-6.2.7/tippy.umd.min.js","take-home-exercise-1_files/webcomponents-2.0.0/webcomponents.js"]}
   </script>
   <!--radix_placeholder_navigation_in_header-->
   <!--/radix_placeholder_navigation_in_header-->
@@ -2007,6 +2007,134 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <ul>
 <li>For the death rates in Mar 2020, it can be seen that most of the data points are all 0. Since there are only 3 data points in Mar 2020, it would be excluded for box map analysis for death rates in Mar 2020.</li>
 <li>It can be observed that death rates are also on the rise from Mar 2020 to Jul 2021, but not as sharply as the positive cases.</li>
+</ul>
+<h1 id="thematic-mapping">7 Thematic Mapping</h1>
+<p>Choropleth maps would be used to better understand the spatial temporal distribution of the monthly cumulative positive cases rate and cumulative death rates at sub district level.</p>
+<ul>
+<li>Convert to sf object</li>
+</ul>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>dki_aspatial</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://r-spatial.github.io/sf/reference/st_as_sf.html'>st_as_sf</a></span><span class='op'>(</span><span class='va'>dki_aspatial</span><span class='op'>)</span>
+<span class='va'>dki_aspatial_rate</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://r-spatial.github.io/sf/reference/st_as_sf.html'>st_as_sf</a></span><span class='op'>(</span><span class='va'>dki_aspatial_rate</span><span class='op'>)</span>
+<span class='va'>dki_aspatial_risk</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://r-spatial.github.io/sf/reference/st_as_sf.html'>st_as_sf</a></span><span class='op'>(</span><span class='va'>dki_aspatial_risk</span><span class='op'>)</span>
+</code></pre>
+</div>
+</div>
+<h2 id="choropleth-map-with-custom-break">7.1 Choropleth Map with Custom Break</h2>
+<ul>
+<li>To have a common basis of comparison of monthly cumulative positive cases rate and cumulative death rates, custom breaks with equal intervals will be used. By classifying each map with the same intervals, comparison can easily be made.</li>
+</ul>
+<h3 id="positive-cases-rate">7.1.1 Positive Cases Rate</h3>
+<ul>
+<li>From the descriptive statistics shown in section 6.1, the positive cases rates range from 0 to 3808, from month Mar 2020 to Jul 2021.</li>
+<li>We can have 8 data classes, with intervals of 476.</li>
+<li>In the earlier months, the positive cases are generally lower and 8 data classes can be used but this might lead to over-generalising of the data, which can result in the loss of spatial patterns.</li>
+<li>While it is possible to split it into more classes (such as 8 in this case), it will also be tough for the readers to differentiate the colours used in the maps.</li>
+<li>For the purpose of this analysis however, these custom breaks with equal intervals of 476 will be used.</li>
+</ul>
+<h4 id="function-for-custom-break-plot-choropleth-map-using-function">7.1.1.1 Function for custom break &amp; plot choropleth map using function</h4>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>custom_map_pos</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>vnam</span>, <span class='va'>df</span>, <span class='va'>legtitle</span><span class='op'>=</span><span class='cn'>NA</span><span class='op'>)</span><span class='op'>{</span>
+  <span class='fu'>tm_shape</span><span class='op'>(</span><span class='va'>dki_aspatial_rate</span><span class='op'>)</span> <span class='op'>+</span>
+     <span class='fu'>tm_fill</span><span class='op'>(</span><span class='va'>vnam</span>,
+             title<span class='op'>=</span><span class='va'>legtitle</span>,
+             n <span class='op'>=</span> <span class='fl'>5</span>,
+             breaks <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0</span>, <span class='fl'>476</span>, <span class='fl'>952</span>, <span class='fl'>1428</span>, <span class='fl'>1904</span>, <span class='fl'>2380</span>, <span class='fl'>2856</span>, <span class='fl'>3332</span>, <span class='fl'>3808</span><span class='op'>)</span>,
+             palette<span class='op'>=</span><span class='st'>"Reds"</span><span class='op'>)</span>  <span class='op'>+</span>
+  <span class='fu'>tm_borders</span><span class='op'>(</span><span class='op'>)</span> <span class='op'>+</span>
+  <span class='fu'>tm_layout</span><span class='op'>(</span>main.title <span class='op'>=</span> <span class='va'>vnam</span>,
+            main.title.position <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"center"</span>,<span class='st'>"top"</span><span class='op'>)</span>,
+            main.title.size <span class='op'>=</span> <span class='fl'>0.7</span>,
+            frame <span class='op'>=</span> <span class='cn'>FALSE</span>,
+            legend.show <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
+<span class='op'>}</span>
+
+<span class='fu'>tmap_arrange</span><span class='op'>(</span><span class='fu'>custom_map_pos</span><span class='op'>(</span><span class='st'>"POSITIF_Mar_2020"</span>, <span class='va'>dki_aspatial_rate</span><span class='op'>)</span>,
+             <span class='fu'>custom_map_pos</span><span class='op'>(</span><span class='st'>"POSITIF_Apr_2020"</span>, <span class='va'>dki_aspatial_rate</span><span class='op'>)</span>,
+             <span class='fu'>custom_map_pos</span><span class='op'>(</span><span class='st'>"POSITIF_May_2020"</span>, <span class='va'>dki_aspatial_rate</span><span class='op'>)</span>,
+             <span class='fu'>custom_map_pos</span><span class='op'>(</span><span class='st'>"POSITIF_Jun_2020"</span>, <span class='va'>dki_aspatial_rate</span><span class='op'>)</span>,
+             <span class='fu'>custom_map_pos</span><span class='op'>(</span><span class='st'>"POSITIF_Jul_2020"</span>, <span class='va'>dki_aspatial_rate</span><span class='op'>)</span>,
+             <span class='fu'>custom_map_pos</span><span class='op'>(</span><span class='st'>"POSITIF_Aug_2020"</span>, <span class='va'>dki_aspatial_rate</span><span class='op'>)</span>,
+             <span class='fu'>custom_map_pos</span><span class='op'>(</span><span class='st'>"POSITIF_Sep_2020"</span>, <span class='va'>dki_aspatial_rate</span><span class='op'>)</span>,
+             <span class='fu'>custom_map_pos</span><span class='op'>(</span><span class='st'>"POSITIF_Oct_2020"</span>, <span class='va'>dki_aspatial_rate</span><span class='op'>)</span>,
+             <span class='fu'>custom_map_pos</span><span class='op'>(</span><span class='st'>"POSITIF_Nov_2020"</span>, <span class='va'>dki_aspatial_rate</span><span class='op'>)</span>,
+             <span class='fu'>custom_map_pos</span><span class='op'>(</span><span class='st'>"POSITIF_Dec_2020"</span>, <span class='va'>dki_aspatial_rate</span><span class='op'>)</span>,
+             <span class='fu'>custom_map_pos</span><span class='op'>(</span><span class='st'>"POSITIF_Jan_2021"</span>, <span class='va'>dki_aspatial_rate</span><span class='op'>)</span>,
+             <span class='fu'>custom_map_pos</span><span class='op'>(</span><span class='st'>"POSITIF_Feb_2021"</span>, <span class='va'>dki_aspatial_rate</span><span class='op'>)</span>,
+             <span class='fu'>custom_map_pos</span><span class='op'>(</span><span class='st'>"POSITIF_Mar_2021"</span>, <span class='va'>dki_aspatial_rate</span><span class='op'>)</span>,
+             <span class='fu'>custom_map_pos</span><span class='op'>(</span><span class='st'>"POSITIF_Apr_2021"</span>, <span class='va'>dki_aspatial_rate</span><span class='op'>)</span>,
+             <span class='fu'>custom_map_pos</span><span class='op'>(</span><span class='st'>"POSITIF_May_2021"</span>, <span class='va'>dki_aspatial_rate</span><span class='op'>)</span>,
+             <span class='fu'>custom_map_pos</span><span class='op'>(</span><span class='st'>"POSITIF_Jun_2021"</span>, <span class='va'>dki_aspatial_rate</span><span class='op'>)</span>,
+             <span class='fu'>custom_map_pos</span><span class='op'>(</span><span class='st'>"POSITIF_Jul_2021"</span>, <span class='va'>dki_aspatial_rate</span><span class='op'>)</span><span class='op'>)</span>
+</code></pre>
+</div>
+<p><img src="take-home-exercise-1_files/figure-html5/unnamed-chunk-33-1.png" width="624" /></p>
+</div>
+<ul>
+<li>Dark red indicates higher cumulative positive cases rate per month.</li>
+<li>No dark red sub-districts that can be seen from Mar 2020 to Jun 2021.</li>
+<li>It can subtly be observed that the cases are starting to form in the middle, then slowly spread out.</li>
+<li>Finally, the dark red sub-district in the middle appeared in July 2021.</li>
+<li>As previously mentioned, since the range for each month is so different (earlier months have much fewer cases compared to later months), using custom breaks across all months can be tough to reveal any significant spatial patterns.</li>
+</ul>
+<h3 id="death-rates">7.1.2 Death Rates</h3>
+<ul>
+<li>Explanations for cumulative death rates are the same as above.</li>
+<li>Only the custom breaks differ due to the descriptive statistics obtained from section 6.1.</li>
+<li>The range for death rates from Mar 2020 to Jul 2021 is 0 to 42.</li>
+<li>There will be 7 classes of intervals of 6.</li>
+</ul>
+<h4 id="function-for-custom-break-plot-choropleth-map-using-function-1">7.1.2.1 Function for custom break &amp; plot choropleth map using function</h4>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>custom_map_death</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>vnam</span>, <span class='va'>df</span>, <span class='va'>legtitle</span><span class='op'>=</span><span class='cn'>NA</span><span class='op'>)</span><span class='op'>{</span>
+  <span class='fu'>tm_shape</span><span class='op'>(</span><span class='va'>dki_aspatial_rate</span><span class='op'>)</span> <span class='op'>+</span>
+     <span class='fu'>tm_fill</span><span class='op'>(</span><span class='va'>vnam</span>,
+             title<span class='op'>=</span><span class='va'>legtitle</span>,
+             n <span class='op'>=</span> <span class='fl'>5</span>,
+             breaks <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0</span>, <span class='fl'>6</span>, <span class='fl'>12</span>, <span class='fl'>18</span>, <span class='fl'>24</span>, <span class='fl'>30</span>, <span class='fl'>36</span>, <span class='fl'>42</span><span class='op'>)</span>,
+             palette<span class='op'>=</span><span class='st'>"Reds"</span><span class='op'>)</span>  <span class='op'>+</span>
+  <span class='fu'>tm_borders</span><span class='op'>(</span><span class='op'>)</span> <span class='op'>+</span>
+  <span class='fu'>tm_layout</span><span class='op'>(</span>main.title <span class='op'>=</span> <span class='va'>vnam</span>,
+            main.title.position <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"center"</span>,<span class='st'>"top"</span><span class='op'>)</span>,
+            main.title.size <span class='op'>=</span> <span class='fl'>0.7</span>,
+            frame <span class='op'>=</span> <span class='cn'>FALSE</span>,
+            legend.show <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
+<span class='op'>}</span>
+
+<span class='fu'>tmap_arrange</span><span class='op'>(</span><span class='fu'>custom_map_death</span><span class='op'>(</span><span class='st'>"Meninggal_Mar_2020"</span>, <span class='va'>dki_aspatial_rate</span><span class='op'>)</span>,
+             <span class='fu'>custom_map_death</span><span class='op'>(</span><span class='st'>"Meninggal_Apr_2020"</span>, <span class='va'>dki_aspatial_rate</span><span class='op'>)</span>,
+             <span class='fu'>custom_map_death</span><span class='op'>(</span><span class='st'>"Meninggal_May_2020"</span>, <span class='va'>dki_aspatial_rate</span><span class='op'>)</span>,
+             <span class='fu'>custom_map_death</span><span class='op'>(</span><span class='st'>"Meninggal_Jun_2020"</span>, <span class='va'>dki_aspatial_rate</span><span class='op'>)</span>,
+             <span class='fu'>custom_map_death</span><span class='op'>(</span><span class='st'>"Meninggal_Jul_2020"</span>, <span class='va'>dki_aspatial_rate</span><span class='op'>)</span>,
+             <span class='fu'>custom_map_death</span><span class='op'>(</span><span class='st'>"Meninggal_Aug_2020"</span>, <span class='va'>dki_aspatial_rate</span><span class='op'>)</span>,
+             <span class='fu'>custom_map_death</span><span class='op'>(</span><span class='st'>"Meninggal_Sep_2020"</span>, <span class='va'>dki_aspatial_rate</span><span class='op'>)</span>,
+             <span class='fu'>custom_map_death</span><span class='op'>(</span><span class='st'>"Meninggal_Oct_2020"</span>, <span class='va'>dki_aspatial_rate</span><span class='op'>)</span>,
+             <span class='fu'>custom_map_death</span><span class='op'>(</span><span class='st'>"Meninggal_Nov_2020"</span>, <span class='va'>dki_aspatial_rate</span><span class='op'>)</span>,
+             <span class='fu'>custom_map_death</span><span class='op'>(</span><span class='st'>"Meninggal_Dec_2020"</span>, <span class='va'>dki_aspatial_rate</span><span class='op'>)</span>,
+             <span class='fu'>custom_map_death</span><span class='op'>(</span><span class='st'>"Meninggal_Jan_2021"</span>, <span class='va'>dki_aspatial_rate</span><span class='op'>)</span>,
+             <span class='fu'>custom_map_death</span><span class='op'>(</span><span class='st'>"Meninggal_Feb_2021"</span>, <span class='va'>dki_aspatial_rate</span><span class='op'>)</span>,
+             <span class='fu'>custom_map_death</span><span class='op'>(</span><span class='st'>"Meninggal_Mar_2021"</span>, <span class='va'>dki_aspatial_rate</span><span class='op'>)</span>,
+             <span class='fu'>custom_map_death</span><span class='op'>(</span><span class='st'>"Meninggal_Apr_2021"</span>, <span class='va'>dki_aspatial_rate</span><span class='op'>)</span>,
+             <span class='fu'>custom_map_death</span><span class='op'>(</span><span class='st'>"Meninggal_May_2021"</span>, <span class='va'>dki_aspatial_rate</span><span class='op'>)</span>,
+             <span class='fu'>custom_map_death</span><span class='op'>(</span><span class='st'>"Meninggal_Jun_2021"</span>, <span class='va'>dki_aspatial_rate</span><span class='op'>)</span>,
+             <span class='fu'>custom_map_death</span><span class='op'>(</span><span class='st'>"Meninggal_Jul_2021"</span>, <span class='va'>dki_aspatial_rate</span><span class='op'>)</span><span class='op'>)</span>
+</code></pre>
+</div>
+<p><img src="take-home-exercise-1_files/figure-html5/unnamed-chunk-34-1.png" width="624" /></p>
+</div>
+<ul>
+<li>Similar trend as above where the death rates started to form in the middle and slowly spread out to the sub-districts around it.</li>
+<li>Consistent with the cumulative positive cases rate, not many significant spatial patterns can be seen.</li>
+<li>Dark red sub-district only appeared in the center of the map in Jul 2021.<br />
+</li>
+<li>As mentioned earlier, these custom breaks may not be very useful in revealing spatial patterns in these months.</li>
+</ul>
+<p><br></p>
+<ul>
+<li>To deal with the challenge mentioned (custom breaks with equal intervals might lead to a loss of spatial patterns) , hence, Jenks data classification method will be used. Jenks is selected as it is a natural break classification. With that, it is able to reveal the spatial temporal patterns monthly.</li>
 </ul>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->
