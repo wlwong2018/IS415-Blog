@@ -18,4 +18,30 @@ knitr::opts_chunk$set(echo = FALSE)
 
 
 
+# 1 Installing and launching the R packages
+
+```{r echo=TRUE, eval=TRUE}
+packages = c('sp', 'rgdal', 'spNetwork', 'tmap')
+
+for (p in packages){
+if(!require(p, character.only = T)){
+  install.packages(p)
+}
+  library(p,character.only = T)
+}
+```
+
+# 2 Data Import and Preparation
+
+- readOGD() of rgdal package to import Punggol_St and Punggol_CC geospatial data sets as SpatialLinesDataFrame and SpatialPointsDataFrame respectively
+
+```{r echo=TRUE, eval=TRUE}
+network <- readOGR(dsn="data/geospatial", 
+                   layer="Punggol_St",
+                   verbose = FALSE)
+childcare <- readOGR(dsn="data/geospatial",
+                     layer="Punggol_CC",
+                     verbose = FALSE)
+```
+
 

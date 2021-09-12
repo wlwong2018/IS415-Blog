@@ -116,7 +116,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   <!--/radix_placeholder_rmarkdown_metadata-->
   
   <script type="text/json" id="radix-resource-manifest">
-  {"type":"character","attributes":{},"value":["data/Punggol_CC.cpg","data/Punggol_CC.dbf","data/Punggol_CC.prj","data/Punggol_CC.shp","data/Punggol_CC.shx","data/Punggol_St.cpg","data/Punggol_St.dbf","data/Punggol_St.prj","data/Punggol_St.shp","data/Punggol_St.shx"]}
+  {"type":"character","attributes":{},"value":["data/geospatial/Punggol_CC.cpg","data/geospatial/Punggol_CC.dbf","data/geospatial/Punggol_CC.prj","data/geospatial/Punggol_CC.shp","data/geospatial/Punggol_CC.shx","data/geospatial/Punggol_St.cpg","data/geospatial/Punggol_St.dbf","data/geospatial/Punggol_St.prj","data/geospatial/Punggol_St.shp","data/geospatial/Punggol_St.shx","hands-on-exercise-5_files/anchor-4.2.2/anchor.min.js","hands-on-exercise-5_files/bowser-1.9.3/bowser.min.js","hands-on-exercise-5_files/distill-2.2.21/template.v2.js","hands-on-exercise-5_files/header-attrs-2.10/header-attrs.js","hands-on-exercise-5_files/jquery-1.11.3/jquery.min.js","hands-on-exercise-5_files/popper-2.6.0/popper.min.js","hands-on-exercise-5_files/tippy-6.2.7/tippy-bundle.umd.min.js","hands-on-exercise-5_files/tippy-6.2.7/tippy-light-border.css","hands-on-exercise-5_files/tippy-6.2.7/tippy.css","hands-on-exercise-5_files/tippy-6.2.7/tippy.umd.min.js","hands-on-exercise-5_files/webcomponents-2.0.0/webcomponents.js"]}
   </script>
   <!--radix_placeholder_navigation_in_header-->
   <!--/radix_placeholder_navigation_in_header-->
@@ -1478,6 +1478,35 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 </div>
 
 <div class="d-article">
+<h1 id="installing-and-launching-the-r-packages">1 Installing and launching the R packages</h1>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>packages</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>'sp'</span>, <span class='st'>'rgdal'</span>, <span class='st'>'spNetwork'</span>, <span class='st'>'tmap'</span><span class='op'>)</span>
+
+<span class='kw'>for</span> <span class='op'>(</span><span class='va'>p</span> <span class='kw'>in</span> <span class='va'>packages</span><span class='op'>)</span><span class='op'>{</span>
+<span class='kw'>if</span><span class='op'>(</span><span class='op'>!</span><span class='kw'><a href='https://rdrr.io/r/base/library.html'>require</a></span><span class='op'>(</span><span class='va'>p</span>, character.only <span class='op'>=</span> <span class='cn'>T</span><span class='op'>)</span><span class='op'>)</span><span class='op'>{</span>
+  <span class='fu'><a href='https://rdrr.io/r/utils/install.packages.html'>install.packages</a></span><span class='op'>(</span><span class='va'>p</span><span class='op'>)</span>
+<span class='op'>}</span>
+  <span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'>p</span>,character.only <span class='op'>=</span> <span class='cn'>T</span><span class='op'>)</span>
+<span class='op'>}</span>
+</code></pre>
+</div>
+</div>
+<h1 id="data-import-and-preparation">2 Data Import and Preparation</h1>
+<ul>
+<li>readOGD() of rgdal package to import Punggol_St and Punggol_CC geospatial data sets as SpatialLinesDataFrame and SpatialPointsDataFrame respectively</li>
+</ul>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>network</span> <span class='op'>&lt;-</span> <span class='fu'>readOGR</span><span class='op'>(</span>dsn<span class='op'>=</span><span class='st'>"data/geospatial"</span>, 
+                   layer<span class='op'>=</span><span class='st'>"Punggol_St"</span>,
+                   verbose <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
+<span class='va'>childcare</span> <span class='op'>&lt;-</span> <span class='fu'>readOGR</span><span class='op'>(</span>dsn<span class='op'>=</span><span class='st'>"data/geospatial"</span>,
+                     layer<span class='op'>=</span><span class='st'>"Punggol_CC"</span>,
+                     verbose <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
+</code></pre>
+</div>
+</div>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->
