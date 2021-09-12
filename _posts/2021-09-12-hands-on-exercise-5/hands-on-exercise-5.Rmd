@@ -117,3 +117,49 @@ samples <- lines_center(lixels)
 ```
 
 - The points are located at center of the line based on the length of the line.
+
+
+## 4.3 Performing NetKDE
+
+- Compute NETKDE
+
+Understanding the code:
+
+- Other kernel_name available: triangle, gaussian, scaled gaussian, tricube, cosine ,triweight, epanechnikov or uniform.
+- method argument:
+
+    + simple:  The distances between events and sampling points are replaced by network distances, and the formula of the kernel is adapted to calculate the density over a linear unit instead of an areal unit.
+    + discontinuous: equally “divides” the mass density of an event at intersections of lixels.(If the discontinuous method is unbiased, it leads to a discontinuous kernel function which is a bit counter-intuitive.)
+    + continuous: divide the mass of the density at intersection but adjusts the density before the intersection to make the function continuous.
+    
+```{r echo=TRUE, eval=TRUE}
+densities <- nkde(network, 
+                  events = childcare,
+                  w = rep(1,nrow(childcare)),
+                  samples = samples,
+                  kernel_name = "quartic",
+                  bw = 300, 
+                  div= "bw", 
+                  method = "simple", 
+                  digits = 1, 
+                  tol = 1,
+                  grid_shape = c(1,1), 
+                  max_depth = 8,
+                  agg = 5, #we aggregate events within a 5m radius (faster calculation)
+                  sparse = TRUE,
+                  verbose = FALSE)
+```
+
+# 5 Visualising NetKDE
+
+## 5.1 Insert the computed density values
+
+- Insert the computed density values (i.e. densities) into samples and lixels objects as density field.
+
+```{r echo=TRUE, eval=TRUE}
+samples$density <- densities
+lixels$density <- densities
+```
+
+
+
