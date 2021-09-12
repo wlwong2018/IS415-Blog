@@ -163,3 +163,89 @@ lixels$density <- densities
 
 
 
+## 5.2 Rescale the density values
+
+- Since svy21 projection system is in meter, the computed density values are very small i.e. 0.0000005. 
+- Resale the density values from number of events per meter to number of events per kilometer.
+
+```{r echo=TRUE, eval=TRUE}
+# rescaling to help the mapping
+samples$density <- samples$density*1000
+lixels$density <- lixels$density*1000
+```
+
+
+## 5.3 Prepare interactive and high cartographic quality map visualisation.
+
+- Interactive map below  reveals road segments (darker color) with relatively higher density of childcare centres than road segments with relatively lower density of childcare centres (lighter color)
+
+```{r echo=TRUE, eval=TRUE}
+tmap_mode('view')
+tm_shape(lixels)+
+  tm_lines(col="density")+
+tm_shape(childcare)+
+  tm_dots()
+```
+
+
+```{r echo=TRUE, eval=TRUE}
+tmap_mode('plot')
+```
+
+
+# 6 Network Constrained G- and K-Function Analysis
+
+- To perform complete spatial randomness (CSR) test by using kfunctions() of spNetwork package. The null hypothesis is defined as:The null hypothesis is defined as:
+    + **Ho: The observed spatial point events (i.e distribution of childcare centres) are uniformly distributed over a street network in Punggol Planning Area.**
+- Assumption: binomial point process which implies the hypothesis that the childcare centres are randomly and independently distributed over the street network.
+- If this hypothesis is rejected, we may infer that the distribution of childcare centres are spatially interacting and dependent on each other; as a result, they may form nonrandom patterns.
+
+<br>
+
+Understanding the code chunk:
+
+- lines: A SpatialLinesDataFrame with the sampling points. The geometries must be a SpatialLinesDataFrame (may crash if some geometries are invalid).
+- points: A SpatialPointsDataFrame representing the points on the network. These points will be snapped on the network.
+- start: A double, the start value for evaluating the k and g functions.
+- end: A double, the last value for evaluating the k and g functions.
+- step: A double, the jump between two evaluations of the k and g function.
+- width: The width of each donut for the g-function.
+- nsim: An integer indicating the number of Monte Carlo simulations required. In the above example, 50 simulation was performed. Note: most of the time, more simulations are required for inference
+- resolution: When simulating random points on the network, selecting a resolution will reduce greatly the calculation time. When resolution is null the random points can occur everywhere on the graph. If a value is specified, the edges are split according to this value and the random points are selected vertices on the new network.
+- conf_int: A double indicating the width confidence interval (default = 0.05).
+
+```{r echo=TRUE, eval=TRUE}
+kfun_childcare <- kfunctions(network, 
+                             childcare,
+                             start = 0, 
+                             end = 1000, 
+                             step = 50, 
+                             width = 50, 
+                             nsim = 50, 
+                             resolution = 50,
+                             verbose = FALSE, 
+                             conf_int = 0.05)
+```
+
+
+
+The output of kfunctions() is a list with the following values:
+
+- plotkA, a ggplot2 object representing the values of the k-function
+- plotgA, a ggplot2 object representing the values of the g-function
+- valuesA, a DataFrame with the values used to build the plots
+
+
+
+```{r echo=TRUE, eval=TRUE}
+kfun_childcare$plotk
+
+```
+
+Observations:
+
+- The blue line is the empirical network K-function of the childcare centres in Punggol planning area.
+- The gray envelop represents the results of the 50 simulations in the interval 2.5% - 97.5%.
+- Because the blue line between the distance of 250m-400m are below the gray area, we can infer that the childcare centres in Punggol planning area resemble regular pattern at the distance of 250m-400m.
+
+
