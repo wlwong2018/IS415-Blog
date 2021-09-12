@@ -88,3 +88,32 @@ tmap_mode('plot')
 ```
 
 
+# 4 Network Constrained KDE (NetKDE) Analysis
+
+## 4.1 Preparing the lixels objects
+
+- Before computing NetKDE, the SpatialLines object need to be cut into lixels with a specified minimal distance.
+
+    + The length of a lixel, lx_length is set to 700m, and
+    + The minimum length of a lixel, mindist is set to 350m.
+    
+- After cutting, if the length of the final lixel is shorter than the minimum distance, then it is added to the previous lixel.
+- If NULL, then mindist = maxdist/10. Also note that the segments that are already shorter than the minimum distance are not modified
+
+**Note**: There is another function called lixelize_lines.mc() which provide multicore support.
+
+```{r echo=TRUE, eval=TRUE}
+lixels <- lixelize_lines(network,700,mindist = 350)
+```
+
+
+## 4.2 Generating line centre points
+
+- To generate a SpatialPointsDataFrame (i.e. samples) with line centre points
+
+```{r echo=TRUE, eval=TRUE}
+samples <- lines_center(lixels)
+
+```
+
+- The points are located at center of the line based on the length of the line.
