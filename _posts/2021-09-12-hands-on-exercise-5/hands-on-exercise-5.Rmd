@@ -45,3 +45,19 @@ childcare <- readOGR(dsn="data/geospatial",
 ```
 
 
+- Print the content of network SpatialLineDataFrame and childcare SpatialPointsDataFrame
+
+```{r echo=TRUE, eval=TRUE}
+str(network)
+str(childcare)
+```
+
+## Assign CRS
+
+- To assign EPSG code to the SpatialDataFrames. The epsg:3414 is the code for svy21.
+
+```{r echo=TRUE, eval=TRUE}
+childcare <-spTransform(childcare, CRS("+init=epsg:3414"))
+network <- spTransform(network,CRS("+init=epsg:3414"))
+```
+

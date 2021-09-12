@@ -2149,7 +2149,554 @@ Hands-on Exercise
 </code></pre>
 </div>
 </div>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<ul>
+<li>Print the content of network SpatialLineDataFrame and childcare SpatialPointsDataFrame</li>
+</ul>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span><span class='op'>(</span><span class='va'>network</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>Formal class &#39;SpatialLinesDataFrame&#39; [package &quot;sp&quot;] with 4 slots
+  ..@ data       :&#39;data.frame&#39;: 2642 obs. of  2 variables:
+  .. ..$ LINK_ID: chr [1:2642] &quot;116130894&quot; &quot;116130897&quot; &quot;116130901&quot; &quot;116130902&quot; ...
+  .. ..$ ST_NAME: chr [1:2642] &quot;PUNGGOL RD&quot; &quot;PONGGOL TWENTY-FOURTH AVE&quot; &quot;PONGGOL SEVENTEENTH AVE&quot; &quot;PONGGOL SEVENTEENTH AVE&quot; ...
+  ..@ lines      :List of 2642
+  .. ..$ :Formal class &#39;Lines&#39; [package &quot;sp&quot;] with 2 slots
+  .. .. .. ..@ Lines:List of 1
+  .. .. .. .. ..$ :Formal class &#39;Line&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. .. .. .. .. ..@ coords: num [1:2, 1:2] 36547 36559 44575 44614
+  .. .. .. ..@ ID   : chr &quot;0&quot;
+  .. ..$ :Formal class &#39;Lines&#39; [package &quot;sp&quot;] with 2 slots
+  .. .. .. ..@ Lines:List of 1
+  .. .. .. .. ..$ :Formal class &#39;Line&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. .. .. .. .. ..@ coords: num [1:2, 1:2] 36547 36491 44575 44589
+  .. .. .. ..@ ID   : chr &quot;1&quot;
+  .. ..$ :Formal class &#39;Lines&#39; [package &quot;sp&quot;] with 2 slots
+  .. .. .. ..@ Lines:List of 1
+  .. .. .. .. ..$ :Formal class &#39;Line&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. .. .. .. .. ..@ coords: num [1:2, 1:2] 36013 36063 44154 44198
+  .. .. .. ..@ ID   : chr &quot;2&quot;
+  .. ..$ :Formal class &#39;Lines&#39; [package &quot;sp&quot;] with 2 slots
+  .. .. .. ..@ Lines:List of 1
+  .. .. .. .. ..$ :Formal class &#39;Line&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. .. .. .. .. ..@ coords: num [1:2, 1:2] 36063 36087 44198 44214
+  .. .. .. ..@ ID   : chr &quot;3&quot;
+  .. ..$ :Formal class &#39;Lines&#39; [package &quot;sp&quot;] with 2 slots
+  .. .. .. ..@ Lines:List of 1
+  .. .. .. .. ..$ :Formal class &#39;Line&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. .. .. .. .. ..@ coords: num [1:2, 1:2] 36132 36117 42756 42764
+  .. .. .. ..@ ID   : chr &quot;4&quot;
+  .. ..$ :Formal class &#39;Lines&#39; [package &quot;sp&quot;] with 2 slots
+  .. .. .. ..@ Lines:List of 1
+  .. .. .. .. ..$ :Formal class &#39;Line&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. .. .. .. .. ..@ coords: num [1:2, 1:2] 36113 36117 42752 42764
+  .. .. .. ..@ ID   : chr &quot;5&quot;
+  .. ..$ :Formal class &#39;Lines&#39; [package &quot;sp&quot;] with 2 slots
+  .. .. .. ..@ Lines:List of 1
+  .. .. .. .. ..$ :Formal class &#39;Line&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. .. .. .. .. ..@ coords: num [1:2, 1:2] 36127 36113 42745 42752
+  .. .. .. ..@ ID   : chr &quot;6&quot;
+  .. ..$ :Formal class &#39;Lines&#39; [package &quot;sp&quot;] with 2 slots
+  .. .. .. ..@ Lines:List of 1
+  .. .. .. .. ..$ :Formal class &#39;Line&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. .. .. .. .. ..@ coords: num [1:2, 1:2] 35995 35978 42428 42437
+  .. .. .. ..@ ID   : chr &quot;7&quot;
+  .. ..$ :Formal class &#39;Lines&#39; [package &quot;sp&quot;] with 2 slots
+  .. .. .. ..@ Lines:List of 1
+  .. .. .. .. ..$ :Formal class &#39;Line&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. .. .. .. .. ..@ coords: num [1:2, 1:2] 35985 35969 42407 42417
+  .. .. .. ..@ ID   : chr &quot;8&quot;
+  .. ..$ :Formal class &#39;Lines&#39; [package &quot;sp&quot;] with 2 slots
+  .. .. .. ..@ Lines:List of 1
+  .. .. .. .. ..$ :Formal class &#39;Line&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. .. .. .. .. ..@ coords: num [1:2, 1:2] 36201 36216 42219 42241
+  .. .. .. ..@ ID   : chr &quot;9&quot;
+  .. ..$ :Formal class &#39;Lines&#39; [package &quot;sp&quot;] with 2 slots
+  .. .. .. ..@ Lines:List of 1
+  .. .. .. .. ..$ :Formal class &#39;Line&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. .. .. .. .. ..@ coords: num [1:2, 1:2] 36242 36216 42220 42241
+  .. .. .. ..@ ID   : chr &quot;10&quot;
+  .. ..$ :Formal class &#39;Lines&#39; [package &quot;sp&quot;] with 2 slots
+  .. .. .. ..@ Lines:List of 1
+  .. .. .. .. ..$ :Formal class &#39;Line&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. .. .. .. .. ..@ coords: num [1:6, 1:2] 36344 36353 36362 36377 36394 ...
+  .. .. .. ..@ ID   : chr &quot;11&quot;
+  .. ..$ :Formal class &#39;Lines&#39; [package &quot;sp&quot;] with 2 slots
+  .. .. .. ..@ Lines:List of 1
+  .. .. .. .. ..$ :Formal class &#39;Line&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. .. .. .. .. ..@ coords: num [1:3, 1:2] 36344 36469 36491 44505 44493 ...
+  .. .. .. ..@ ID   : chr &quot;12&quot;
+  .. ..$ :Formal class &#39;Lines&#39; [package &quot;sp&quot;] with 2 slots
+  .. .. .. ..@ Lines:List of 1
+  .. .. .. .. ..$ :Formal class &#39;Line&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. .. .. .. .. ..@ coords: num [1:2, 1:2] 36341 36344 44467 44505
+  .. .. .. ..@ ID   : chr &quot;13&quot;
+  .. ..$ :Formal class &#39;Lines&#39; [package &quot;sp&quot;] with 2 slots
+  .. .. .. ..@ Lines:List of 1
+  .. .. .. .. ..$ :Formal class &#39;Line&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. .. .. .. .. ..@ coords: num [1:2, 1:2] 36063 36023 44198 44273
+  .. .. .. ..@ ID   : chr &quot;14&quot;
+  .. ..$ :Formal class &#39;Lines&#39; [package &quot;sp&quot;] with 2 slots
+  .. .. .. ..@ Lines:List of 1
+  .. .. .. .. ..$ :Formal class &#39;Line&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. .. .. .. .. ..@ coords: num [1:2, 1:2] 35955 36023 44233 44273
+  .. .. .. ..@ ID   : chr &quot;15&quot;
+  .. ..$ :Formal class &#39;Lines&#39; [package &quot;sp&quot;] with 2 slots
+  .. .. .. ..@ Lines:List of 1
+  .. .. .. .. ..$ :Formal class &#39;Line&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. .. .. .. .. ..@ coords: num [1:2, 1:2] 36023 36056 44273 44294
+  .. .. .. ..@ ID   : chr &quot;16&quot;
+  .. ..$ :Formal class &#39;Lines&#39; [package &quot;sp&quot;] with 2 slots
+  .. .. .. ..@ Lines:List of 1
+  .. .. .. .. ..$ :Formal class &#39;Line&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. .. .. .. .. ..@ coords: num [1:3, 1:2] 35644 35651 35656 42586 42594 ...
+  .. .. .. ..@ ID   : chr &quot;17&quot;
+  .. ..$ :Formal class &#39;Lines&#39; [package &quot;sp&quot;] with 2 slots
+  .. .. .. ..@ Lines:List of 1
+  .. .. .. .. ..$ :Formal class &#39;Line&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. .. .. .. .. ..@ coords: num [1:2, 1:2] 35858 35846 42923 42929
+  .. .. .. ..@ ID   : chr &quot;18&quot;
+  .. ..$ :Formal class &#39;Lines&#39; [package &quot;sp&quot;] with 2 slots
+  .. .. .. ..@ Lines:List of 1
+  .. .. .. .. ..$ :Formal class &#39;Line&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. .. .. .. .. ..@ coords: num [1:2, 1:2] 35847 35835 42905 42912
+  .. .. .. ..@ ID   : chr &quot;19&quot;
+  .. ..$ :Formal class &#39;Lines&#39; [package &quot;sp&quot;] with 2 slots
+  .. .. .. ..@ Lines:List of 1
+  .. .. .. .. ..$ :Formal class &#39;Line&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. .. .. .. .. ..@ coords: num [1:2, 1:2] 35847 35858 42905 42923
+  .. .. .. ..@ ID   : chr &quot;20&quot;
+  .. ..$ :Formal class &#39;Lines&#39; [package &quot;sp&quot;] with 2 slots
+  .. .. .. ..@ Lines:List of 1
+  .. .. .. .. ..$ :Formal class &#39;Line&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. .. .. .. .. ..@ coords: num [1:2, 1:2] 35656 35671 42600 42623
+  .. .. .. ..@ ID   : chr &quot;21&quot;
+  .. ..$ :Formal class &#39;Lines&#39; [package &quot;sp&quot;] with 2 slots
+  .. .. .. ..@ Lines:List of 1
+  .. .. .. .. ..$ :Formal class &#39;Line&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. .. .. .. .. ..@ coords: num [1:2, 1:2] 35679 35656 42588 42600
+  .. .. .. ..@ ID   : chr &quot;22&quot;
+  .. ..$ :Formal class &#39;Lines&#39; [package &quot;sp&quot;] with 2 slots
+  .. .. .. ..@ Lines:List of 1
+  .. .. .. .. ..$ :Formal class &#39;Line&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. .. .. .. .. ..@ coords: num [1:2, 1:2] 35672 35644 42572 42586
+  .. .. .. ..@ ID   : chr &quot;23&quot;
+  .. ..$ :Formal class &#39;Lines&#39; [package &quot;sp&quot;] with 2 slots
+  .. .. .. ..@ Lines:List of 1
+  .. .. .. .. ..$ :Formal class &#39;Line&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. .. .. .. .. ..@ coords: num [1:2, 1:2] 35632 35644 42564 42586
+  .. .. .. ..@ ID   : chr &quot;24&quot;
+  .. ..$ :Formal class &#39;Lines&#39; [package &quot;sp&quot;] with 2 slots
+  .. .. .. ..@ Lines:List of 1
+  .. .. .. .. ..$ :Formal class &#39;Line&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. .. .. .. .. ..@ coords: num [1:2, 1:2] 36100 36113 42725 42752
+  .. .. .. ..@ ID   : chr &quot;25&quot;
+  .. ..$ :Formal class &#39;Lines&#39; [package &quot;sp&quot;] with 2 slots
+  .. .. .. ..@ Lines:List of 1
+  .. .. .. .. ..$ :Formal class &#39;Line&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. .. .. .. .. ..@ coords: num [1:2, 1:2] 36113 36090 42752 42767
+  .. .. .. ..@ ID   : chr &quot;26&quot;
+  .. ..$ :Formal class &#39;Lines&#39; [package &quot;sp&quot;] with 2 slots
+  .. .. .. ..@ Lines:List of 1
+  .. .. .. .. ..$ :Formal class &#39;Line&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. .. .. .. .. ..@ coords: num [1:2, 1:2] 36090 36004 42767 42820
+  .. .. .. ..@ ID   : chr &quot;27&quot;
+  .. ..$ :Formal class &#39;Lines&#39; [package &quot;sp&quot;] with 2 slots
+  .. .. .. ..@ Lines:List of 1
+  .. .. .. .. ..$ :Formal class &#39;Line&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. .. .. .. .. ..@ coords: num [1:2, 1:2] 36117 36088 42764 42781
+  .. .. .. ..@ ID   : chr &quot;28&quot;
+  .. ..$ :Formal class &#39;Lines&#39; [package &quot;sp&quot;] with 2 slots
+  .. .. .. ..@ Lines:List of 1
+  .. .. .. .. ..$ :Formal class &#39;Line&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. .. .. .. .. ..@ coords: num [1:2, 1:2] 36117 36130 42764 42791
+  .. .. .. ..@ ID   : chr &quot;29&quot;
+  .. ..$ :Formal class &#39;Lines&#39; [package &quot;sp&quot;] with 2 slots
+  .. .. .. ..@ Lines:List of 1
+  .. .. .. .. ..$ :Formal class &#39;Line&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. .. .. .. .. ..@ coords: num [1:2, 1:2] 36156 36127 42724 42745
+  .. .. .. ..@ ID   : chr &quot;30&quot;
+  .. ..$ :Formal class &#39;Lines&#39; [package &quot;sp&quot;] with 2 slots
+  .. .. .. ..@ Lines:List of 1
+  .. .. .. .. ..$ :Formal class &#39;Line&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. .. .. .. .. ..@ coords: num [1:2, 1:2] 36112 36127 42710 42745
+  .. .. .. ..@ ID   : chr &quot;31&quot;
+  .. ..$ :Formal class &#39;Lines&#39; [package &quot;sp&quot;] with 2 slots
+  .. .. .. ..@ Lines:List of 1
+  .. .. .. .. ..$ :Formal class &#39;Line&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. .. .. .. .. ..@ coords: num [1:2, 1:2] 36881 36859 42199 42215
+  .. .. .. ..@ ID   : chr &quot;32&quot;
+  .. ..$ :Formal class &#39;Lines&#39; [package &quot;sp&quot;] with 2 slots
+  .. .. .. ..@ Lines:List of 1
+  .. .. .. .. ..$ :Formal class &#39;Line&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. .. .. .. .. ..@ coords: num [1:2, 1:2] 36859 36836 42215 42232
+  .. .. .. ..@ ID   : chr &quot;33&quot;
+  .. ..$ :Formal class &#39;Lines&#39; [package &quot;sp&quot;] with 2 slots
+  .. .. .. ..@ Lines:List of 1
+  .. .. .. .. ..$ :Formal class &#39;Line&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. .. .. .. .. ..@ coords: num [1:2, 1:2] 36428 36401 42529 42548
+  .. .. .. ..@ ID   : chr &quot;34&quot;
+  .. ..$ :Formal class &#39;Lines&#39; [package &quot;sp&quot;] with 2 slots
+  .. .. .. ..@ Lines:List of 1
+  .. .. .. .. ..$ :Formal class &#39;Line&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. .. .. .. .. ..@ coords: num [1:2, 1:2] 36456 36428 42508 42529
+  .. .. .. ..@ ID   : chr &quot;35&quot;
+  .. ..$ :Formal class &#39;Lines&#39; [package &quot;sp&quot;] with 2 slots
+  .. .. .. ..@ Lines:List of 1
+  .. .. .. .. ..$ :Formal class &#39;Line&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. .. .. .. .. ..@ coords: num [1:2, 1:2] 36409 36428 42505 42529
+  .. .. .. ..@ ID   : chr &quot;36&quot;
+  .. ..$ :Formal class &#39;Lines&#39; [package &quot;sp&quot;] with 2 slots
+  .. .. .. ..@ Lines:List of 1
+  .. .. .. .. ..$ :Formal class &#39;Line&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. .. .. .. .. ..@ coords: num [1:2, 1:2] 36847 36859 42199 42215
+  .. .. .. ..@ ID   : chr &quot;37&quot;
+  .. ..$ :Formal class &#39;Lines&#39; [package &quot;sp&quot;] with 2 slots
+  .. .. .. ..@ Lines:List of 1
+  .. .. .. .. ..$ :Formal class &#39;Line&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. .. .. .. .. ..@ coords: num [1:3, 1:2] 36412 36431 36449 42553 42554 ...
+  .. .. .. ..@ ID   : chr &quot;38&quot;
+  .. ..$ :Formal class &#39;Lines&#39; [package &quot;sp&quot;] with 2 slots
+  .. .. .. ..@ Lines:List of 1
+  .. .. .. .. ..$ :Formal class &#39;Line&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. .. .. .. .. ..@ coords: num [1:3, 1:2] 36460 36452 36449 42520 42538 ...
+  .. .. .. ..@ ID   : chr &quot;39&quot;
+  .. ..$ :Formal class &#39;Lines&#39; [package &quot;sp&quot;] with 2 slots
+  .. .. .. ..@ Lines:List of 1
+  .. .. .. .. ..$ :Formal class &#39;Line&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. .. .. .. .. ..@ coords: num [1:5, 1:2] 36409 36410 36409 36407 36401 ...
+  .. .. .. ..@ ID   : chr &quot;40&quot;
+  .. ..$ :Formal class &#39;Lines&#39; [package &quot;sp&quot;] with 2 slots
+  .. .. .. ..@ Lines:List of 1
+  .. .. .. .. ..$ :Formal class &#39;Line&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. .. .. .. .. ..@ coords: num [1:3, 1:2] 36849 36866 36882 42241 42243 ...
+  .. .. .. ..@ ID   : chr &quot;41&quot;
+  .. ..$ :Formal class &#39;Lines&#39; [package &quot;sp&quot;] with 2 slots
+  .. .. .. ..@ Lines:List of 1
+  .. .. .. .. ..$ :Formal class &#39;Line&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. .. .. .. .. ..@ coords: num [1:3, 1:2] 36889 36883 36882 42212 42227 ...
+  .. .. .. ..@ ID   : chr &quot;42&quot;
+  .. ..$ :Formal class &#39;Lines&#39; [package &quot;sp&quot;] with 2 slots
+  .. .. .. ..@ Lines:List of 1
+  .. .. .. .. ..$ :Formal class &#39;Line&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. .. .. .. .. ..@ coords: num [1:3, 1:2] 36847 36843 36836 42199 42215 ...
+  .. .. .. ..@ ID   : chr &quot;43&quot;
+  .. ..$ :Formal class &#39;Lines&#39; [package &quot;sp&quot;] with 2 slots
+  .. .. .. ..@ Lines:List of 1
+  .. .. .. .. ..$ :Formal class &#39;Line&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. .. .. .. .. ..@ coords: num [1:2, 1:2] 36601 36524 42403 42462
+  .. .. .. ..@ ID   : chr &quot;44&quot;
+  .. ..$ :Formal class &#39;Lines&#39; [package &quot;sp&quot;] with 2 slots
+  .. .. .. ..@ Lines:List of 1
+  .. .. .. .. ..$ :Formal class &#39;Line&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. .. .. .. .. ..@ coords: num [1:2, 1:2] 36216 36199 42241 42256
+  .. .. .. ..@ ID   : chr &quot;45&quot;
+  .. ..$ :Formal class &#39;Lines&#39; [package &quot;sp&quot;] with 2 slots
+  .. .. .. ..@ Lines:List of 1
+  .. .. .. .. ..$ :Formal class &#39;Line&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. .. .. .. .. ..@ coords: num [1:2, 1:2] 36486 36499 41696 41714
+  .. .. .. ..@ ID   : chr &quot;46&quot;
+  .. ..$ :Formal class &#39;Lines&#39; [package &quot;sp&quot;] with 2 slots
+  .. .. .. ..@ Lines:List of 1
+  .. .. .. .. ..$ :Formal class &#39;Line&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. .. .. .. .. ..@ coords: num [1:5, 1:2] 36477 36482 36486 36487 36486 ...
+  .. .. .. ..@ ID   : chr &quot;47&quot;
+  .. ..$ :Formal class &#39;Lines&#39; [package &quot;sp&quot;] with 2 slots
+  .. .. .. ..@ Lines:List of 1
+  .. .. .. .. ..$ :Formal class &#39;Line&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. .. .. .. .. ..@ coords: num [1:4, 1:2] 36477 36471 36466 36464 41671 ...
+  .. .. .. ..@ ID   : chr &quot;48&quot;
+  .. ..$ :Formal class &#39;Lines&#39; [package &quot;sp&quot;] with 2 slots
+  .. .. .. ..@ Lines:List of 1
+  .. .. .. .. ..$ :Formal class &#39;Line&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. .. .. .. .. ..@ coords: num [1:5, 1:2] 36464 36466 36471 36478 36486 ...
+  .. .. .. ..@ ID   : chr &quot;49&quot;
+  .. ..$ :Formal class &#39;Lines&#39; [package &quot;sp&quot;] with 2 slots
+  .. .. .. ..@ Lines:List of 1
+  .. .. .. .. ..$ :Formal class &#39;Line&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. .. .. .. .. ..@ coords: num [1:3, 1:2] 35969 35973 35978 42417 42425 ...
+  .. .. .. ..@ ID   : chr &quot;50&quot;
+  .. ..$ :Formal class &#39;Lines&#39; [package &quot;sp&quot;] with 2 slots
+  .. .. .. ..@ Lines:List of 1
+  .. .. .. .. ..$ :Formal class &#39;Line&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. .. .. .. .. ..@ coords: num [1:3, 1:2] 35985 35989 35995 42407 42416 ...
+  .. .. .. ..@ ID   : chr &quot;51&quot;
+  .. ..$ :Formal class &#39;Lines&#39; [package &quot;sp&quot;] with 2 slots
+  .. .. .. ..@ Lines:List of 1
+  .. .. .. .. ..$ :Formal class &#39;Line&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. .. .. .. .. ..@ coords: num [1:3, 1:2] 36216 36222 36226 42241 42249 ...
+  .. .. .. ..@ ID   : chr &quot;52&quot;
+  .. ..$ :Formal class &#39;Lines&#39; [package &quot;sp&quot;] with 2 slots
+  .. .. .. ..@ Lines:List of 1
+  .. .. .. .. ..$ :Formal class &#39;Line&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. .. .. .. .. ..@ coords: num [1:3, 1:2] 36632 36636 36642 41902 41909 ...
+  .. .. .. ..@ ID   : chr &quot;53&quot;
+  .. ..$ :Formal class &#39;Lines&#39; [package &quot;sp&quot;] with 2 slots
+  .. .. .. ..@ Lines:List of 1
+  .. .. .. .. ..$ :Formal class &#39;Line&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. .. .. .. .. ..@ coords: num [1:3, 1:2] 36633 36636 36645 42816 42821 ...
+  .. .. .. ..@ ID   : chr &quot;54&quot;
+  .. ..$ :Formal class &#39;Lines&#39; [package &quot;sp&quot;] with 2 slots
+  .. .. .. ..@ Lines:List of 1
+  .. .. .. .. ..$ :Formal class &#39;Line&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. .. .. .. .. ..@ coords: num [1:3, 1:2] 37068 37072 37081 42504 42509 ...
+  .. .. .. ..@ ID   : chr &quot;55&quot;
+  .. ..$ :Formal class &#39;Lines&#39; [package &quot;sp&quot;] with 2 slots
+  .. .. .. ..@ Lines:List of 1
+  .. .. .. .. ..$ :Formal class &#39;Line&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. .. .. .. .. ..@ coords: num [1:6, 1:2] 36094 36105 36113 36115 36115 ...
+  .. .. .. ..@ ID   : chr &quot;56&quot;
+  .. ..$ :Formal class &#39;Lines&#39; [package &quot;sp&quot;] with 2 slots
+  .. .. .. ..@ Lines:List of 1
+  .. .. .. .. ..$ :Formal class &#39;Line&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. .. .. .. .. ..@ coords: num [1:2, 1:2] 36094 36088 42065 42073
+  .. .. .. ..@ ID   : chr &quot;57&quot;
+  .. ..$ :Formal class &#39;Lines&#39; [package &quot;sp&quot;] with 2 slots
+  .. .. .. ..@ Lines:List of 1
+  .. .. .. .. ..$ :Formal class &#39;Line&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. .. .. .. .. ..@ coords: num [1:5, 1:2] 36088 36091 36096 36104 36112 ...
+  .. .. .. ..@ ID   : chr &quot;58&quot;
+  .. ..$ :Formal class &#39;Lines&#39; [package &quot;sp&quot;] with 2 slots
+  .. .. .. ..@ Lines:List of 1
+  .. .. .. .. ..$ :Formal class &#39;Line&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. .. .. .. .. ..@ coords: num [1:2, 1:2] 36112 36135 42094 42129
+  .. .. .. ..@ ID   : chr &quot;59&quot;
+  .. ..$ :Formal class &#39;Lines&#39; [package &quot;sp&quot;] with 2 slots
+  .. .. .. ..@ Lines:List of 1
+  .. .. .. .. ..$ :Formal class &#39;Line&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. .. .. .. .. ..@ coords: num [1:2, 1:2] 36135 36142 42129 42141
+  .. .. .. ..@ ID   : chr &quot;60&quot;
+  .. ..$ :Formal class &#39;Lines&#39; [package &quot;sp&quot;] with 2 slots
+  .. .. .. ..@ Lines:List of 1
+  .. .. .. .. ..$ :Formal class &#39;Line&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. .. .. .. .. ..@ coords: num [1:2, 1:2] 36142 36173 42141 42178
+  .. .. .. ..@ ID   : chr &quot;61&quot;
+  .. ..$ :Formal class &#39;Lines&#39; [package &quot;sp&quot;] with 2 slots
+  .. .. .. ..@ Lines:List of 1
+  .. .. .. .. ..$ :Formal class &#39;Line&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. .. .. .. .. ..@ coords: num [1:2, 1:2] 36173 36201 42178 42219
+  .. .. .. ..@ ID   : chr &quot;62&quot;
+  .. ..$ :Formal class &#39;Lines&#39; [package &quot;sp&quot;] with 2 slots
+  .. .. .. ..@ Lines:List of 1
+  .. .. .. .. ..$ :Formal class &#39;Line&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. .. .. .. .. ..@ coords: num [1:2, 1:2] 36226 36206 42255 42271
+  .. .. .. ..@ ID   : chr &quot;63&quot;
+  .. ..$ :Formal class &#39;Lines&#39; [package &quot;sp&quot;] with 2 slots
+  .. .. .. ..@ Lines:List of 1
+  .. .. .. .. ..$ :Formal class &#39;Line&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. .. .. .. .. ..@ coords: num [1:2, 1:2] 36251 36226 42235 42255
+  .. .. .. ..@ ID   : chr &quot;64&quot;
+  .. ..$ :Formal class &#39;Lines&#39; [package &quot;sp&quot;] with 2 slots
+  .. .. .. ..@ Lines:List of 1
+  .. .. .. .. ..$ :Formal class &#39;Line&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. .. .. .. .. ..@ coords: num [1:2, 1:2] 36226 36244 42255 42281
+  .. .. .. ..@ ID   : chr &quot;65&quot;
+  .. ..$ :Formal class &#39;Lines&#39; [package &quot;sp&quot;] with 2 slots
+  .. .. .. ..@ Lines:List of 1
+  .. .. .. .. ..$ :Formal class &#39;Line&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. .. .. .. .. ..@ coords: num [1:2, 1:2] 36567 36588 41808 41840
+  .. .. .. ..@ ID   : chr &quot;66&quot;
+  .. ..$ :Formal class &#39;Lines&#39; [package &quot;sp&quot;] with 2 slots
+  .. .. .. ..@ Lines:List of 1
+  .. .. .. .. ..$ :Formal class &#39;Line&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. .. .. .. .. ..@ coords: num [1:2, 1:2] 36642 36657 41915 41938
+  .. .. .. ..@ ID   : chr &quot;67&quot;
+  .. ..$ :Formal class &#39;Lines&#39; [package &quot;sp&quot;] with 2 slots
+  .. .. .. ..@ Lines:List of 1
+  .. .. .. .. ..$ :Formal class &#39;Line&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. .. .. .. .. ..@ coords: num [1:2, 1:2] 36616 36632 41880 41902
+  .. .. .. ..@ ID   : chr &quot;68&quot;
+  .. ..$ :Formal class &#39;Lines&#39; [package &quot;sp&quot;] with 2 slots
+  .. .. .. ..@ Lines:List of 1
+  .. .. .. .. ..$ :Formal class &#39;Line&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. .. .. .. .. ..@ coords: num [1:2, 1:2] 36632 36614 41902 41916
+  .. .. .. ..@ ID   : chr &quot;69&quot;
+  .. ..$ :Formal class &#39;Lines&#39; [package &quot;sp&quot;] with 2 slots
+  .. .. .. ..@ Lines:List of 1
+  .. .. .. .. ..$ :Formal class &#39;Line&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. .. .. .. .. ..@ coords: num [1:2, 1:2] 36642 36614 41915 41937
+  .. .. .. ..@ ID   : chr &quot;70&quot;
+  .. ..$ :Formal class &#39;Lines&#39; [package &quot;sp&quot;] with 2 slots
+  .. .. .. ..@ Lines:List of 1
+  .. .. .. .. ..$ :Formal class &#39;Line&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. .. .. .. .. ..@ coords: num [1:2, 1:2] 36662 36642 41900 41915
+  .. .. .. ..@ ID   : chr &quot;71&quot;
+  .. ..$ :Formal class &#39;Lines&#39; [package &quot;sp&quot;] with 2 slots
+  .. .. .. ..@ Lines:List of 1
+  .. .. .. .. ..$ :Formal class &#39;Line&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. .. .. .. .. ..@ coords: num [1:2, 1:2] 36657 36632 41881 41902
+  .. .. .. ..@ ID   : chr &quot;72&quot;
+  .. ..$ :Formal class &#39;Lines&#39; [package &quot;sp&quot;] with 2 slots
+  .. .. .. ..@ Lines:List of 1
+  .. .. .. .. ..$ :Formal class &#39;Line&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. .. .. .. .. ..@ coords: num [1:2, 1:2] 36579 36567 41799 41808
+  .. .. .. ..@ ID   : chr &quot;73&quot;
+  .. ..$ :Formal class &#39;Lines&#39; [package &quot;sp&quot;] with 2 slots
+  .. .. .. ..@ Lines:List of 1
+  .. .. .. .. ..$ :Formal class &#39;Line&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. .. .. .. .. ..@ coords: num [1:2, 1:2] 36511 36499 41704 41714
+  .. .. .. ..@ ID   : chr &quot;74&quot;
+  .. ..$ :Formal class &#39;Lines&#39; [package &quot;sp&quot;] with 2 slots
+  .. .. .. ..@ Lines:List of 1
+  .. .. .. .. ..$ :Formal class &#39;Line&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. .. .. .. .. ..@ coords: num [1:2, 1:2] 36588 36570 41840 41853
+  .. .. .. ..@ ID   : chr &quot;75&quot;
+  .. ..$ :Formal class &#39;Lines&#39; [package &quot;sp&quot;] with 2 slots
+  .. .. .. ..@ Lines:List of 1
+  .. .. .. .. ..$ :Formal class &#39;Line&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. .. .. .. .. ..@ coords: num [1:3, 1:2] 37295 37280 37268 41915 41919 ...
+  .. .. .. ..@ ID   : chr &quot;76&quot;
+  .. ..$ :Formal class &#39;Lines&#39; [package &quot;sp&quot;] with 2 slots
+  .. .. .. ..@ Lines:List of 1
+  .. .. .. .. ..$ :Formal class &#39;Line&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. .. .. .. .. ..@ coords: num [1:2, 1:2] 37336 37295 41889 41915
+  .. .. .. ..@ ID   : chr &quot;77&quot;
+  .. ..$ :Formal class &#39;Lines&#39; [package &quot;sp&quot;] with 2 slots
+  .. .. .. ..@ Lines:List of 1
+  .. .. .. .. ..$ :Formal class &#39;Line&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. .. .. .. .. ..@ coords: num [1:3, 1:2] 37046 37042 37039 41576 41584 ...
+  .. .. .. ..@ ID   : chr &quot;78&quot;
+  .. ..$ :Formal class &#39;Lines&#39; [package &quot;sp&quot;] with 2 slots
+  .. .. .. ..@ Lines:List of 1
+  .. .. .. .. ..$ :Formal class &#39;Line&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. .. .. .. .. ..@ coords: num [1:2, 1:2] 36206 36136 42271 42329
+  .. .. .. ..@ ID   : chr &quot;79&quot;
+  .. ..$ :Formal class &#39;Lines&#39; [package &quot;sp&quot;] with 2 slots
+  .. .. .. ..@ Lines:List of 1
+  .. .. .. .. ..$ :Formal class &#39;Line&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. .. .. .. .. ..@ coords: num [1:2, 1:2] 36322 36251 42175 42235
+  .. .. .. ..@ ID   : chr &quot;80&quot;
+  .. ..$ :Formal class &#39;Lines&#39; [package &quot;sp&quot;] with 2 slots
+  .. .. .. ..@ Lines:List of 1
+  .. .. .. .. ..$ :Formal class &#39;Line&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. .. .. .. .. ..@ coords: num [1:2, 1:2] 36012 35985 42391 42407
+  .. .. .. ..@ ID   : chr &quot;81&quot;
+  .. ..$ :Formal class &#39;Lines&#39; [package &quot;sp&quot;] with 2 slots
+  .. .. .. ..@ Lines:List of 1
+  .. .. .. .. ..$ :Formal class &#39;Line&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. .. .. .. .. ..@ coords: num [1:2, 1:2] 36009 35995 42421 42428
+  .. .. .. ..@ ID   : chr &quot;82&quot;
+  .. ..$ :Formal class &#39;Lines&#39; [package &quot;sp&quot;] with 2 slots
+  .. .. .. ..@ Lines:List of 1
+  .. .. .. .. ..$ :Formal class &#39;Line&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. .. .. .. .. ..@ coords: num [1:2, 1:2] 35995 36005 42428 42452
+  .. .. .. ..@ ID   : chr &quot;83&quot;
+  .. ..$ :Formal class &#39;Lines&#39; [package &quot;sp&quot;] with 2 slots
+  .. .. .. ..@ Lines:List of 1
+  .. .. .. .. ..$ :Formal class &#39;Line&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. .. .. .. .. ..@ coords: num [1:2, 1:2] 35978 35988 42437 42458
+  .. .. .. ..@ ID   : chr &quot;84&quot;
+  .. ..$ :Formal class &#39;Lines&#39; [package &quot;sp&quot;] with 2 slots
+  .. .. .. ..@ Lines:List of 1
+  .. .. .. .. ..$ :Formal class &#39;Line&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. .. .. .. .. ..@ coords: num [1:2, 1:2] 35978 35947 42437 42453
+  .. .. .. ..@ ID   : chr &quot;85&quot;
+  .. ..$ :Formal class &#39;Lines&#39; [package &quot;sp&quot;] with 2 slots
+  .. .. .. ..@ Lines:List of 1
+  .. .. .. .. ..$ :Formal class &#39;Line&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. .. .. .. .. ..@ coords: num [1:2, 1:2] 35969 35949 42417 42428
+  .. .. .. ..@ ID   : chr &quot;86&quot;
+  .. ..$ :Formal class &#39;Lines&#39; [package &quot;sp&quot;] with 2 slots
+  .. .. .. ..@ Lines:List of 1
+  .. .. .. .. ..$ :Formal class &#39;Line&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. .. .. .. .. ..@ coords: num [1:2, 1:2] 35959 35969 42394 42417
+  .. .. .. ..@ ID   : chr &quot;87&quot;
+  .. ..$ :Formal class &#39;Lines&#39; [package &quot;sp&quot;] with 2 slots
+  .. .. .. ..@ Lines:List of 1
+  .. .. .. .. ..$ :Formal class &#39;Line&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. .. .. .. .. ..@ coords: num [1:2, 1:2] 35974 35985 42386 42407
+  .. .. .. ..@ ID   : chr &quot;88&quot;
+  .. ..$ :Formal class &#39;Lines&#39; [package &quot;sp&quot;] with 2 slots
+  .. .. .. ..@ Lines:List of 1
+  .. .. .. .. ..$ :Formal class &#39;Line&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. .. .. .. .. ..@ coords: num [1:4, 1:2] 36009 36007 36006 36005 42421 ...
+  .. .. .. ..@ ID   : chr &quot;89&quot;
+  .. ..$ :Formal class &#39;Lines&#39; [package &quot;sp&quot;] with 2 slots
+  .. .. .. ..@ Lines:List of 1
+  .. .. .. .. ..$ :Formal class &#39;Line&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. .. .. .. .. ..@ coords: num [1:2, 1:2] 37031 37039 41580 41590
+  .. .. .. ..@ ID   : chr &quot;90&quot;
+  .. ..$ :Formal class &#39;Lines&#39; [package &quot;sp&quot;] with 2 slots
+  .. .. .. ..@ Lines:List of 1
+  .. .. .. .. ..$ :Formal class &#39;Line&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. .. .. .. .. ..@ coords: num [1:3, 1:2] 37046 37038 37031 41576 41578 ...
+  .. .. .. ..@ ID   : chr &quot;91&quot;
+  .. ..$ :Formal class &#39;Lines&#39; [package &quot;sp&quot;] with 2 slots
+  .. .. .. ..@ Lines:List of 1
+  .. .. .. .. ..$ :Formal class &#39;Line&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. .. .. .. .. ..@ coords: num [1:2, 1:2] 36311 36287 43065 43081
+  .. .. .. ..@ ID   : chr &quot;92&quot;
+  .. ..$ :Formal class &#39;Lines&#39; [package &quot;sp&quot;] with 2 slots
+  .. .. .. ..@ Lines:List of 1
+  .. .. .. .. ..$ :Formal class &#39;Line&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. .. .. .. .. ..@ coords: num [1:2, 1:2] 36287 36272 43081 43092
+  .. .. .. ..@ ID   : chr &quot;93&quot;
+  .. ..$ :Formal class &#39;Lines&#39; [package &quot;sp&quot;] with 2 slots
+  .. .. .. ..@ Lines:List of 1
+  .. .. .. .. ..$ :Formal class &#39;Line&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. .. .. .. .. ..@ coords: num [1:2, 1:2] 36300 36278 43048 43066
+  .. .. .. ..@ ID   : chr &quot;94&quot;
+  .. ..$ :Formal class &#39;Lines&#39; [package &quot;sp&quot;] with 2 slots
+  .. .. .. ..@ Lines:List of 1
+  .. .. .. .. ..$ :Formal class &#39;Line&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. .. .. .. .. ..@ coords: num [1:2, 1:2] 36278 36262 43066 43076
+  .. .. .. ..@ ID   : chr &quot;95&quot;
+  .. ..$ :Formal class &#39;Lines&#39; [package &quot;sp&quot;] with 2 slots
+  .. .. .. ..@ Lines:List of 1
+  .. .. .. .. ..$ :Formal class &#39;Line&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. .. .. .. .. ..@ coords: num [1:2, 1:2] 37498 37471 42220 42237
+  .. .. .. ..@ ID   : chr &quot;96&quot;
+  .. ..$ :Formal class &#39;Lines&#39; [package &quot;sp&quot;] with 2 slots
+  .. .. .. ..@ Lines:List of 1
+  .. .. .. .. ..$ :Formal class &#39;Line&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. .. .. .. .. ..@ coords: num [1:4, 1:2] 36311 36307 36303 36304 43065 ...
+  .. .. .. ..@ ID   : chr &quot;97&quot;
+  .. ..$ :Formal class &#39;Lines&#39; [package &quot;sp&quot;] with 2 slots
+  .. .. .. ..@ Lines:List of 1
+  .. .. .. .. ..$ :Formal class &#39;Line&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. .. .. .. .. ..@ coords: num [1:4, 1:2] 36261 36277 36287 36300 43036 ...
+  .. .. .. ..@ ID   : chr &quot;98&quot;
+  .. .. [list output truncated]
+  ..@ bbox       : num [1:2, 1:2] 34039 40941 38883 44801
+  .. ..- attr(*, &quot;dimnames&quot;)=List of 2
+  .. .. ..$ : chr [1:2] &quot;x&quot; &quot;y&quot;
+  .. .. ..$ : chr [1:2] &quot;min&quot; &quot;max&quot;
+  ..@ proj4string:Formal class &#39;CRS&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. ..@ projargs: chr &quot;+proj=tmerc +lat_0=1.36666666666667 +lon_0=103.833333333333 +k=1 +x_0=28001.642 +y_0=38744.572 +ellps=WGS84 +to&quot;| __truncated__
+  .. .. ..$ comment: chr &quot;PROJCRS[\&quot;SVY21 / Singapore TM\&quot;,\n    BASEGEOGCRS[\&quot;SVY21\&quot;,\n        DATUM[\&quot;SVY21\&quot;,\n            ELLIPSOID[&quot;| __truncated__</code></pre>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span><span class='op'>(</span><span class='va'>childcare</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>Formal class &#39;SpatialPointsDataFrame&#39; [package &quot;sp&quot;] with 5 slots
+  ..@ data       :&#39;data.frame&#39;: 61 obs. of  1 variable:
+  .. ..$ Name: chr [1:61] &quot;kml_10&quot; &quot;kml_99&quot; &quot;kml_100&quot; &quot;kml_101&quot; ...
+  ..@ coords.nrs : num(0) 
+  ..@ coords     : num [1:61, 1:3] 36174 36480 36619 36285 35415 ...
+  .. ..- attr(*, &quot;dimnames&quot;)=List of 2
+  .. .. ..$ : NULL
+  .. .. ..$ : chr [1:3] &quot;coords.x1&quot; &quot;coords.x2&quot; &quot;coords.x3&quot;
+  ..@ bbox       : num [1:3, 1:2] 34424 41504 0 37619 44686 ...
+  .. ..- attr(*, &quot;dimnames&quot;)=List of 2
+  .. .. ..$ : chr [1:3] &quot;coords.x1&quot; &quot;coords.x2&quot; &quot;coords.x3&quot;
+  .. .. ..$ : chr [1:2] &quot;min&quot; &quot;max&quot;
+  ..@ proj4string:Formal class &#39;CRS&#39; [package &quot;sp&quot;] with 1 slot
+  .. .. ..@ projargs: chr &quot;+proj=tmerc +lat_0=1.36666666666667 +lon_0=103.833333333333 +k=1 +x_0=28001.642 +y_0=38744.572 +ellps=WGS84 +to&quot;| __truncated__
+  .. .. ..$ comment: chr &quot;PROJCRS[\&quot;SVY21 / Singapore TM\&quot;,\n    BASEGEOGCRS[\&quot;SVY21\&quot;,\n        DATUM[\&quot;SVY21\&quot;,\n            ELLIPSOID[&quot;| __truncated__</code></pre>
+</div>
+<h2 id="assign-crs">Assign CRS</h2>
+<ul>
+<li>To assign EPSG code to the SpatialDataFrames. The epsg:3414 is the code for svy21.</li>
+</ul>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>childcare</span> <span class='op'>&lt;-</span><span class='fu'>spTransform</span><span class='op'>(</span><span class='va'>childcare</span>, <span class='fu'>CRS</span><span class='op'>(</span><span class='st'>"+init=epsg:3414"</span><span class='op'>)</span><span class='op'>)</span>
+<span class='va'>network</span> <span class='op'>&lt;-</span> <span class='fu'>spTransform</span><span class='op'>(</span><span class='va'>network</span>,<span class='fu'>CRS</span><span class='op'>(</span><span class='st'>"+init=epsg:3414"</span><span class='op'>)</span><span class='op'>)</span>
+</code></pre>
+</div>
+</div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->
 </div>
