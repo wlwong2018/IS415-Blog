@@ -11,9 +11,56 @@ output:
     self_contained: false
 ---
 
-
-```{r setup, include=FALSE}
+```{r setup, include=FALSE, eval=TRUE, echo = TRUE, message = FALSE, error = FALSE, fig.retina=3}
 knitr::opts_chunk$set(echo = FALSE)
 ```
+
+## Installing and Loading the R package
+
+- maptools: to create spatial objects
+- sf: to import geosptial data
+- raster: to create raster object
+- spatstat: to perform spatial point pattern analysis (SPPA)
+- tmap: to plot thematic maps 
+- tidyverse for data handling
+
+```{r eval=TRUE, echo = TRUE}
+packages = c('maptools', 'sf', 'raster', 'spatstat', 'tmap', 'tidyverse')
+
+for (p in packages){
+if(!require(p, character.only = T)){
+  install.packages(p)
+}
+  library(p,character.only = T)
+}
+```
+
+## Importing Geospatial Data
+
+- Import shapefile using *st_read()* of **sf** package. Output object is in tibble sf object class.
+
+```{r eval=TRUE, echo = TRUE}
+mpsz_sf <- st_read(dsn = 'data/shapefile', layer = 'MP14_SUBZONE_WEB_PL')
+  
+```
+
+- Projection is in SVY21. 
+
+## Import aspatial data from rds folder
+
+- *read_rds()* of **readr** package is used instead of *readRDS()* of base R is used. This is because output of **read_rds()** is in tibble object. 
+
+```{r eval=TRUE, echo = TRUE}
+childcare <- read_rds("data/rds/childcare.rds")
+CHAS <- read_rds("data/rds/CHAS.rds")
+
+```
+
+- Note that there are some data issue in childcare data frame because `Lat` and `Lng` should be in numeric data type. The coordinate fields seem to be in decimal degree. Hence wgs referencing system is assumed.
+
+
+
+
+
 
 
