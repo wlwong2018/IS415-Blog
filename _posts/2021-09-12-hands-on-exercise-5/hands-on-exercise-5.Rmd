@@ -1,7 +1,7 @@
 ---
 title: "Hands-on-Exercise-5"
 description: |
-  A short description of the post.
+  In Hands-on Exercise 5, I have learnt the basic concepts of on- and off- network spatial point processes and a family of spatial statistics methods for analysing network constrained spatial point processes.
 author:
   - name: Wong Wei Ling
     url: www.google.com
