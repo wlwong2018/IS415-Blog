@@ -16,7 +16,289 @@ output:
 knitr::opts_chunk$set(echo = FALSE)
 ```
 
+# 1 The Study Area and Data
+
+Two data sets will be used in this hands-on exercise, they are:
+
+- Hunan county boundary layer. This is a geospatial data set in ESRI shapefile format.
+- Hunan_2012.csv: This csv file contains selected Hunan’s local development indicators in 2012.
+
+## 1.2 Getting Started
+
+```{r eval=TRUE, echo = TRUE}
+packages = c('sf', 'spdep', 'tmap', 'tidyverse')
+for (p in packages){
+  if(!require(p, character.only = T)){
+    install.packages(p)
+  }
+  library(p,character.only = T)
+}
+```
+
+# 2  Getting the Data into R Environment
+
+## 2.1 Import shapefile into r environment
+
+```{r eval=TRUE, echo = TRUE}
+hunan <- st_read(dsn = "data/shapefile", 
+                 layer = "Hunan")
+```
+
+## 2.2 Import csv file into r environment
+
+```{r eval=TRUE, echo = TRUE}
+hunan2012 <- read_csv("data/attribute/Hunan_2012.csv")
+
+```
+
+## 2.3 Performing relational join
+
+- Used to update the attribute table of hunan’s SpatialPolygonsDataFrame with the attribute fields of hunan2012 dataframe.
+- This is performed by using left_join() of dplyr package.
+
+```{r eval=TRUE, echo = TRUE}
+hunan <- left_join(hunan,hunan2012)
+
+```
+
+## 2.4 Visualising Regional Development Indicator
+
+- Prepare a choropleth map showing the distribution of GDPPC 2012 by using qtm() of tmap package.
+
+```{r eval=TRUE, echo = TRUE}
+qtm(hunan, "GDPPC")
+```
+
+# 3 Computing Contiguity Spatial Weights
+
+- Use poly2nb() of spdep package to compute contiguity weight matrices for the study area.
+- This function builds a neighbours list based on regions with contiguous boundaries.
+
+## 3.1 Computing (QUEEN) contiguity based neighbours
+
+- Default for 'queen' argument is TRUE. If do not specify to queen = FALSE, this function will return a list of first order neighbours using the Queen criteria.
+
+```{r eval=TRUE, echo = TRUE}
+wm_q <- poly2nb(hunan, queen=TRUE)
+summary(wm_q)
+```
+
+- Report above shows that there are 88 area units in Hunan. The most connected area unit has 11 neighbours.
+- There are two area units with only one neighbours
+
+<br>
+
+- For each polygon in our polygon object, wm_q lists all neighboring polygons.
+- To see the neighbors for the first polygon in the object, type:
+
+
+```{r eval=TRUE, echo = TRUE}
+wm_q[[1]]
+
+```
+
+- Results above show that Polygon 1 has 5 neighbors.
+- The numbers represent the polygon IDs as stored in hunan SpatialPolygonsDataFrame class
+
+<br>
+
+- To retrive the county name of Polygon ID=1:
+
+```{r eval=TRUE, echo = TRUE}
+hunan$County[1]
+```
+
+- To reveal the county names of the five neighboring polygons: 
+
+```{r eval=TRUE, echo = TRUE}
+hunan$NAME_3[c(2,3,4,57,85)]
+```
+
+- Display the complete weight matrix by using str()
+
+```{r eval=TRUE, echo = TRUE}
+str(wm_q)
+```
+
+**NOTE:** Save the trees if you are going to print out the report.
+
+## 3.2 Computing (ROOK) contiguity based neighbours
+
+```{r eval=TRUE, echo = TRUE}
+wm_r <- poly2nb(hunan, queen=FALSE)
+summary(wm_r)
+```
+
+- The summary report above shows that there are 88 area units in Hunan.
+- The most connect area unit has 10 neighbours.
+- There are two area units with only one neighbours.
+
+## 3.3 Visualising contiguity weights
+
+- Since we are working with polygons, we need ot get points in order to make the connectivity graphs. 
+- Most typical method: polygon centroids
+ 
+    + Calculate these in the sf package before moving onto the graphs.
+    + Getting Latitude and Longitude of Polygon Centroids
+
+- Mapping function:  applies a given function to each element of a vector and returns a vector of the same length.
+- Our input vector will be the geometry column of us.bound.
+- Our function will be st_centroid.
+- We will be using map_dbl variation of map from the purrr package.
+- To get our longitude values we map the st_centroid function over the geometry column of us.bound and access the longitude value through double bracket notation [[]] and 1.
+- This allows us to get only the longitude, which is the first value in each centroid.
+
+```{r eval=TRUE, echo = TRUE}
+longitude <- map_dbl(hunan$geometry, ~st_centroid(.x)[[1]])
+
+```
+
+- Do the same for latitude with one key difference.
+- We access the second value per each centroid with [[2]]
+
+```{r eval=TRUE, echo = TRUE}
+latitude <- map_dbl(hunan$geometry, ~st_centroid(.x)[[2]])
+
+```
+
+- Use cbind to put longitude and latitude into the same object.
+
+```{r eval=TRUE, echo = TRUE}
+coords <- cbind(longitude, latitude)
+
+```
+
+- Check the first few observations to see if things are formatted correctly
+
+```{r eval=TRUE, echo = TRUE}
+head(coords)
+
+```
+
+### Plot Queen & Rook contiguity based neighbours maps
+
+
+```{r eval=TRUE, echo = TRUE}
+par(mfrow=c(1,2))
+plot(hunan$geometry, border="lightgrey")
+plot(wm_q, coords, pch = 19, cex = 0.6, add = TRUE, col= "red", main="Queen Contiguity")
+plot(hunan$geometry, border="lightgrey")
+plot(wm_r, coords, pch = 19, cex = 0.6, add = TRUE, col = "red", main="Rook Contiguity")
+```
+
+## 3.4 Computing distance based neighbours
+
+- Learn how to derive distance-based weight matrices by using dnearneigh() of spdep package
+- The function identifies neighbours of region points by Euclidean distance with a distance band with lower d1= and upper d2= bounds controlled by the bounds= argument.
+- If unprojected coordinates are used and either specified in the coordinates object x or with x as a two column matrix and longlat=TRUE, great circle distances in km will be calculated assuming the WGS84 reference ellipsoid.
+
+## 3.4.1 Determine the cut-off distance
+
+- To determine the upper limit for distance band:
+
+    + Return a matrix with the indices of points belonging to the set of the k nearest neighbours of each other by using knearneigh() of spdep.
+    + Convert the knn object returned by knearneigh() into a neighbours list of class nb with a list of integer vectors containing neighbour region number ids by using knn2nb().
+    + Return the length of neighbour relationship edges by using nbdists() of spdep. The function returns in the units of the coordinates if the coordinates are projected, in km otherwise.
+    + Remove the list structure of the returned object by using unlist().
+
+
+```{r eval=TRUE, echo = TRUE}
+#coords <- coordinates(hunan)
+k1 <- knn2nb(knearneigh(coords))
+k1dists <- unlist(nbdists(k1, coords, longlat = TRUE))
+summary(k1dists)
+```
+
+-  Report shows that the largest first nearest neighbour distance is 61.79 km, so using this as the upper threshold gives certainty that all units will have at least one neighbour.
+
+## 3.4.2 Computing fixed distance weight matrix
+
+```{r eval=TRUE, echo = TRUE}
+wm_d62 <- dnearneigh(coords, 0, 62, longlat = TRUE)
+wm_d62
+```
+
+Quiz: What is the meaning of “Average number of links: 3.681818” shown above?
+- Of all regions, the average number of links for all regions are 3.681818. 
+
+<br>
+
+- use str() to display the content of wm_d62 weight matrix
+
+```{r eval=TRUE, echo = TRUE}
+str(wm_d62)
+
+```
+
+- Another way to display the structure of the weight matrix is to combine table() and card() of spdep.
+
+```{r eval=TRUE, echo = TRUE}
+table(hunan$County, card(wm_d62))
+
+```
+
+
+
+```{r eval=TRUE, echo = TRUE}
+n_comp <- n.comp.nb(wm_d62)
+n_comp$nc
+```
+
+
+```{r eval=TRUE, echo = TRUE}
+n_comp <- n.comp.nb(wm_d62)
+n_comp$nc
+```
+
+## 3.4.3 Plotting fixed distance weight matrix
+
+```{r eval=TRUE, echo = TRUE}
+plot(hunan$geometry, border="lightgrey")
+plot(wm_d62, coords, add=TRUE)
+plot(k1, coords, add=TRUE, col="red", length=0.08)
+```
+
+- The red lines above show the links of 1st nearest neighbours and the black lines show the links of neighbours within the cut-off distance of 62km.
+
+<br>
+
+- Alternatively, we can plot both of them next to each other
+
+```{r eval=TRUE, echo = TRUE}
+par(mfrow=c(1,2))
+plot(hunan$geometry, border="lightgrey")
+plot(k1, coords, add=TRUE, col="red", length=0.08, main="1st nearest neighbours")
+plot(hunan$geometry, border="lightgrey")
+plot(wm_d62, coords, add=TRUE, pch = 19, cex = 0.6, main="Distance link")
+```
+
+
 
 ```{r eval=TRUE, echo = TRUE}
 
 ```
+
+
+```{r eval=TRUE, echo = TRUE}
+
+```
+
+
+
+```{r eval=TRUE, echo = TRUE}
+
+```
+
+
+
+
+```{r eval=TRUE, echo = TRUE}
+
+```
+
+
+```{r eval=TRUE, echo = TRUE}
+
+```
+
+
