@@ -1,0 +1,22 @@
+---
+title: "Hands-on-Exercise 6"
+description: |
+  In hands-on exercise 6, I learnt how to derive spatial weights by using functions provided by spdep package and how to apply these spatial weights to compute geographically referenced attributes.
+author:
+  - name: Wong Wei Ling
+    url: www.google.com
+date: 09-18-2021
+output:
+  distill::distill_article:
+    self_contained: false
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+
+```{r eval=TRUE, echo = TRUE}
+
+```
