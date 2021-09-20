@@ -2577,11 +2577,11 @@ W 88 7744 88 37.86334 365.9147</code></pre>
 </ul>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>rswm_q</span><span class='op'>$</span><span class='va'>weights</span><span class='op'>[</span><span class='fl'>10</span><span class='op'>]</span>
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>rswm_q</span><span class='op'>$</span><span class='va'>weights</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>]</span>
 </code></pre>
 </div>
 <pre><code>[[1]]
-[1] 0.125 0.125 0.125 0.125 0.125 0.125 0.125 0.125</code></pre>
+[1] 0.2 0.2 0.2 0.2 0.2</code></pre>
 </div>
 <ul>
 <li>Each neighbor is assigned a 0.2 of the total weight.</li>
@@ -2737,7 +2737,7 @@ Geodetic CRS:  WGS 84
 <span class='fu'>tmap_arrange</span><span class='op'>(</span><span class='va'>gdppc</span>, <span class='va'>lag_gdppc</span>, asp<span class='op'>=</span><span class='fl'>1</span>, ncol<span class='op'>=</span><span class='fl'>2</span><span class='op'>)</span>
 </code></pre>
 </div>
-<p><img src="hands-on-exercise-6_files/figure-html5/unnamed-chunk-37-1.png" width="624" /></p>
+<p><img src="hands-on-exercise-6_files/figure-html5/unnamed-chunk-37-1.png" width="1152" /></p>
 </div>
 <h2 id="spatial-window-sum">4.2 Spatial window sum</h2>
 <ul>
@@ -2826,7 +2826,7 @@ Non-symmetric neighbours list</code></pre>
 <span class='fu'>tmap_arrange</span><span class='op'>(</span><span class='va'>gdppc</span>, <span class='va'>lag_sum_gdppc</span>, asp<span class='op'>=</span><span class='fl'>1</span>, ncol<span class='op'>=</span><span class='fl'>2</span><span class='op'>)</span>
 </code></pre>
 </div>
-<p><img src="hands-on-exercise-6_files/figure-html5/unnamed-chunk-45-1.png" width="624" /></p>
+<p><img src="hands-on-exercise-6_files/figure-html5/unnamed-chunk-45-1.png" width="1152" /></p>
 </div>
 <p><strong>NOTE:</strong> Note: For more effective comparison, it is advicible to use the core tmap mapping functions.</p>
 <div class="sourceCode" id="cb27"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>

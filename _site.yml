@@ -3,6 +3,7 @@ title: "Wei Ling's IS415 Blog"
 description: |
   My Blog
 output_dir: "_site"
+theme: theme.css
 navbar:
   right:
     - text: "Take-home Exercise"
