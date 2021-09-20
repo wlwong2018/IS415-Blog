@@ -1,7 +1,7 @@
 ---
 title: "In-class Exercise 5"
 description: |
-  A short description of the post.
+  In In-class Exercise 5, we revised what was covered in Hands-on Exercise 4, which focuses on spatial point pattern analysis. 
 author:
   - name: Wong Wei Ling
     url: www.google.com

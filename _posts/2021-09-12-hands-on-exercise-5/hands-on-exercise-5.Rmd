@@ -33,7 +33,7 @@ if(!require(p, character.only = T)){
 
 # 2 Data Import and Preparation
 
-- readOGD() of rgdal package to import Punggol_St and Punggol_CC geospatial data sets as SpatialLinesDataFrame and SpatialPointsDataFrame respectively
+- readOGR() of rgdal package to import Punggol_St and Punggol_CC geospatial data sets as SpatialLinesDataFrame and SpatialPointsDataFrame respectively
 
 ```{r echo=TRUE, eval=TRUE}
 network <- readOGR(dsn="data/geospatial", 

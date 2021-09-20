@@ -1,5 +1,5 @@
 name: "IS415 Blog"
-title: "My Blog"
+title: "Wei Ling's IS415 Blog"
 description: |
   My Blog
 output_dir: "_site"
@@ -8,15 +8,37 @@ navbar:
     - text: "Take-home Exercise"
       menu: 
       - text: "Take-home Exercise 1"
-    -   href: 
+      - href: https://wlwong2018-is415-blog.netlify.app/posts/2021-09-09-take-home-exercise-1/
+      - text: "Take-home Exercise 2"
+      - href:
     
     - text: "In-Class Exercise"
-      href: index.html
+      menu:
+      - text: "In-Class Exercise 2"
+      - href: https://wlwong2018-is415-blog.netlify.app/posts/2021-08-23-in-class-exercise-2/
+      - text: "In-Class Exercise 3"
+      - href: https://wlwong2018-is415-blog.netlify.app/posts/2021-08-31-in-class-exercise-3-2/
+      - text: "In-Class Exercise 4"
+      - href: https://wlwong2018-is415-blog.netlify.app/posts/2021-09-06-in-class-exercise-4/
+      - text: "In-Class Exercise 5"
+      - href: https://wlwong2018-is415-blog.netlify.app/posts/2021-09-13-in-class-exercise-5/
+      - text: "In-Class Exercise 6"
+      - href: https://wlwong2018-is415-blog.netlify.app/posts/2021-09-20-in-class-exercise-6/
+      - text: "In-Class Exercise 7"
+      - href: 
       
     - text: "Hands-on Exercise"
       menu: 
       - text: "Hands-on Exercise 3"
-    -   href: 
+      - href: https://wlwong2018-is415-blog.netlify.app/posts/2021-08-29-hands-on-exercise-3/
+      - text: "Hands-on Exercise 4"
+      - href: https://wlwong2018-is415-blog.netlify.app/posts/2021-09-04-hands-on-exercise-4/
+      - text: "Hands-on Exercise 5"
+      - href: https://wlwong2018-is415-blog.netlify.app/posts/2021-09-12-hands-on-exercise-5/
+      - text: "Hands-on Exercise 6"
+      - href: https://wlwong2018-is415-blog.netlify.app/posts/2021-09-18-hands-on-exercise-6/
+      - text: "Hands-on Exercise 7"
+      - href: 
     
     - text: "About"
       href: about.html
