@@ -1,0 +1,21 @@
+---
+title: "Hands-on Exercise 7"
+description: |
+  In Hands-on Exercise 7, I have learnt how to compute Global and Local Measure of Spatial Autocorrelation (GLSA) by using spdep package.
+author:
+  - name: Wong Wei Ling
+    url: www.google.com
+date: 09-26-2021
+output:
+  distill::distill_article:
+    self_contained: false
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+
+
+
