@@ -117,7 +117,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <!--/radix_placeholder_rmarkdown_metadata-->
   
   <script type="text/json" id="radix-resource-manifest">
-  {"type":"character","attributes":{},"value":["data/attribute/Dictionary.xlsx","data/attribute/Hunan_2012.csv","data/shapefile/Hunan.dbf","data/shapefile/Hunan.prj","data/shapefile/Hunan.qpj","data/shapefile/Hunan.shp","data/shapefile/Hunan.shx","hands-on-exercise-7_files/anchor-4.2.2/anchor.min.js","hands-on-exercise-7_files/bowser-1.9.3/bowser.min.js","hands-on-exercise-7_files/distill-2.2.21/template.v2.js","hands-on-exercise-7_files/header-attrs-2.10/header-attrs.js","hands-on-exercise-7_files/jquery-1.11.3/jquery.min.js","hands-on-exercise-7_files/popper-2.6.0/popper.min.js","hands-on-exercise-7_files/tippy-6.2.7/tippy-bundle.umd.min.js","hands-on-exercise-7_files/tippy-6.2.7/tippy-light-border.css","hands-on-exercise-7_files/tippy-6.2.7/tippy.css","hands-on-exercise-7_files/tippy-6.2.7/tippy.umd.min.js","hands-on-exercise-7_files/webcomponents-2.0.0/webcomponents.js"]}
+  {"type":"character","attributes":{},"value":["data/attribute/Dictionary.xlsx","data/attribute/Hunan_2012.csv","data/shapefile/Hunan.dbf","data/shapefile/Hunan.prj","data/shapefile/Hunan.qpj","data/shapefile/Hunan.shp","data/shapefile/Hunan.shx","hands-on-exercise-7_files/anchor-4.2.2/anchor.min.js","hands-on-exercise-7_files/bowser-1.9.3/bowser.min.js","hands-on-exercise-7_files/distill-2.2.21/template.v2.js","hands-on-exercise-7_files/figure-html5/unnamed-chunk-5-1.png","hands-on-exercise-7_files/header-attrs-2.10/header-attrs.js","hands-on-exercise-7_files/jquery-1.11.3/jquery.min.js","hands-on-exercise-7_files/popper-2.6.0/popper.min.js","hands-on-exercise-7_files/tippy-6.2.7/tippy-bundle.umd.min.js","hands-on-exercise-7_files/tippy-6.2.7/tippy-light-border.css","hands-on-exercise-7_files/tippy-6.2.7/tippy.css","hands-on-exercise-7_files/tippy-6.2.7/tippy.umd.min.js","hands-on-exercise-7_files/webcomponents-2.0.0/webcomponents.js"]}
   </script>
   <!--radix_placeholder_navigation_in_header-->
 <meta name="distill:offset" content="../.."/>
@@ -2466,7 +2466,235 @@ Hands-on Exercise
 </div>
 
 <div class="d-article">
-<div class="sourceCode" id="cb1"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<h1 id="objectives">1 Objectives</h1>
+<p>In spatial policy, one of the main development objective of the local govenment and planners is to ensure equal distribution of development in the province. Our task in this study, hence, is to apply appropriate spatial statistical methods to discover if development are even distributed geographically. If the answer is No. Then, our next question will be “is there sign of spatial clustering?”. And, if the answer for this question is yes, then our next question will be “where are these clusters?”</p>
+<p>In this case study, we are interested to examine the spatial pattern of a selected development indicator (i.e. GDP per capita) of Hunan Provice, People Republic of China.(<a href="https://en.wikipedia.org/wiki/Hunan" class="uri">https://en.wikipedia.org/wiki/Hunan</a>)</p>
+<h1 id="data">2 Data</h1>
+<ul>
+<li>Hunan province administrative boundary layer at county level. This is a geospatial data set in ESRI shapefile format.</li>
+<li>Hunan_2012.csv: This csv file contains selected Hunan’s local development indicators in 2012.</li>
+</ul>
+<h1 id="packages-used">3 Packages Used</h1>
+<ul>
+<li>sf is use for importing and handling geospatial data in R,</li>
+<li>tidyverse is mainly use for wrangling attribute data in R,</li>
+<li>spdep will be used to compute spatial weights, global and local spatial autocorrelation statistics, and</li>
+<li>tmap will be used to prepare cartographic quality chropleth map.</li>
+</ul>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>packages</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>'sf'</span>, <span class='st'>'spdep'</span>, <span class='st'>'tmap'</span>, <span class='st'>'tidyverse'</span><span class='op'>)</span>
+<span class='kw'>for</span> <span class='op'>(</span><span class='va'>p</span> <span class='kw'>in</span> <span class='va'>packages</span><span class='op'>)</span><span class='op'>{</span>
+  <span class='kw'>if</span><span class='op'>(</span><span class='op'>!</span><span class='kw'><a href='https://rdrr.io/r/base/library.html'>require</a></span><span class='op'>(</span><span class='va'>p</span>, character.only <span class='op'>=</span> <span class='cn'>T</span><span class='op'>)</span><span class='op'>)</span><span class='op'>{</span>
+    <span class='fu'><a href='https://rdrr.io/r/utils/install.packages.html'>install.packages</a></span><span class='op'>(</span><span class='va'>p</span><span class='op'>)</span>
+  <span class='op'>}</span>
+  <span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'>p</span>,character.only <span class='op'>=</span> <span class='cn'>T</span><span class='op'>)</span>
+<span class='op'>}</span>
+</code></pre>
+</div>
+</div>
+<h1 id="getting-the-data-into-r-environment">4 Getting the Data Into R Environment</h1>
+<p>Bring a geospatial data and its associated attribute table into R environment. The geospatial data is in ESRI shapefile format and the attribute table is in csv format.</p>
+<h1 id="import-shapefile-into-r-environment">4.1 Import shapefile into r environment</h1>
+<ul>
+<li>Uses <em>st_read()</em> of <strong>sf</strong> package to import Hunan shapefile into R.</li>
+<li>The imported shapefile will be simple features Object of sf.</li>
+</ul>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>hunan</span> <span class='op'>&lt;-</span> <span class='fu'>st_read</span><span class='op'>(</span>dsn <span class='op'>=</span> <span class='st'>"data/shapefile"</span>, 
+                 layer <span class='op'>=</span> <span class='st'>"Hunan"</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>Reading layer `Hunan&#39; from data source 
+  `C:\wlwong2018\IS415 Blog\_posts\2021-09-26-hands-on-exercise-7\data\shapefile&#39; 
+  using driver `ESRI Shapefile&#39;
+Simple feature collection with 88 features and 7 fields
+Geometry type: POLYGON
+Dimension:     XY
+Bounding box:  xmin: 108.7831 ymin: 24.6342 xmax: 114.2544 ymax: 30.12812
+Geodetic CRS:  WGS 84</code></pre>
+</div>
+<h1 id="import-csv-file-into-r-environment">4.2 Import csv file into r environment</h1>
+<ul>
+<li>Import Hunan_2012.csv into R by using read_csv() of readr package.</li>
+<li>The output is R data frame class.</li>
+</ul>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>hunan2012</span> <span class='op'>&lt;-</span> <span class='fu'>read_csv</span><span class='op'>(</span><span class='st'>"data/attribute/Hunan_2012.csv"</span><span class='op'>)</span>
+</code></pre>
+</div>
+</div>
+<h1 id="performing-relational-join">4.3 Performing relational join</h1>
+<ul>
+<li>To update the attribute table of hunan’s SpatialPolygonsDataFrame with the attribute fields of hunan2012 dataframe.</li>
+<li>This is performed by using left_join() of dplyr package.</li>
+</ul>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>hunan</span> <span class='op'>&lt;-</span> <span class='fu'>left_join</span><span class='op'>(</span><span class='va'>hunan</span>,<span class='va'>hunan2012</span><span class='op'>)</span>
+</code></pre>
+</div>
+</div>
+<h1 id="visualising-regional-development-indicator">4.4 Visualising Regional Development Indicator</h1>
+<ul>
+<li>Prepare a basemap and a choropleth map showing the distribution of GDPPC 2012 by using qtm() of tmap package.</li>
+</ul>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>basemap</span> <span class='op'>&lt;-</span> <span class='fu'>tm_shape</span><span class='op'>(</span><span class='va'>hunan</span><span class='op'>)</span> <span class='op'>+</span>
+  <span class='fu'>tm_polygons</span><span class='op'>(</span><span class='op'>)</span> <span class='op'>+</span>
+  <span class='fu'>tm_text</span><span class='op'>(</span><span class='st'>"NAME_3"</span>, size<span class='op'>=</span><span class='fl'>0.5</span><span class='op'>)</span>
+
+<span class='va'>gdppc</span> <span class='op'>&lt;-</span> <span class='fu'>qtm</span><span class='op'>(</span><span class='va'>hunan</span>, <span class='st'>"GDPPC"</span><span class='op'>)</span>
+<span class='fu'>tmap_arrange</span><span class='op'>(</span><span class='va'>basemap</span>, <span class='va'>gdppc</span>, asp<span class='op'>=</span><span class='fl'>1</span>, ncol<span class='op'>=</span><span class='fl'>2</span><span class='op'>)</span>
+</code></pre>
+</div>
+<p><img src="hands-on-exercise-7_files/figure-html5/unnamed-chunk-5-1.png" width="624" /></p>
+</div>
+<h1 id="global-spatial-autocorrelation">5 Global Spatial Autocorrelation</h1>
+<p>Compute global spatial autocorrelation statistics and to perform spatial complete randomness test for global spatial autocorrelation.</p>
+<h2 id="computing-contiguity-spatial-weights">5.1 Computing Contiguity Spatial Weights</h2>
+<p>Before we can compute the global spatial autocorrelation statistics, we need to construct a spatial weights of the study area. The spatial weights is used to define the neighbourhood relationships between the geographical units (i.e. county) in the study area.</p>
+<ul>
+<li>In the code chunk below, poly2nb() of spdep package is used to compute contiguity weight matrices for the study area.</li>
+<li>This function builds a neighbours list based on regions with contiguous boundaries.</li>
+<li>Can pass a “queen” argument that takes TRUE or FALSE as options. If you do not specify this argument the default is set to TRUE, that is, if you don’t specify queen = FALSE this function will return a list of first order neighbours using the Queen criteria.</li>
+</ul>
+<p>Code chunk below is used to compute Queen contiguity weight matrix.</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>wm_q</span> <span class='op'>&lt;-</span> <span class='fu'>poly2nb</span><span class='op'>(</span><span class='va'>hunan</span>, queen<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>wm_q</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>Neighbour list object:
+Number of regions: 88 
+Number of nonzero links: 448 
+Percentage nonzero weights: 5.785124 
+Average number of links: 5.090909 
+Link number distribution:
+
+ 1  2  3  4  5  6  7  8  9 11 
+ 2  2 12 16 24 14 11  4  2  1 
+2 least connected regions:
+30 65 with 1 link
+1 most connected region:
+85 with 11 links</code></pre>
+</div>
+<p>Results above show that:</p>
+<ul>
+<li>There are 88 area units in Hunan.</li>
+<li>The most connected area unit has 11 neighbours.</li>
+<li>There are two area units with only one neighbours.</li>
+</ul>
+<h2 id="row-standardised-weights-matrix">5.1.1 Row-standardised weights matrix</h2>
+<ul>
+<li>Next, we need to assign weights to each neighboring polygon.</li>
+<li>In our case, each neighboring polygon will be assigned equal weight (style=“W”). This is accomplished by assigning the fraction 1/(#ofneighbors) to each neighboring county then summing the weighted income values.</li>
+<li>While this is the most intuitive way to summaries the neighbors’ values it has one <strong>drawback</strong> in that polygons along the edges of the study area will be based on their lagged values on fewer polygons thus potentially over- or under-estimating the true nature of the spatial autocorrelation in the data.</li>
+<li>For this example, we’ll stick with the style=“W” option for simplicity’s sake but note that other <strong>more robust options are available, notably style=“B”</strong>.</li>
+</ul>
+<p><br></p>
+<ul>
+<li>zero.policy=TRUE option allows for lists of non-neighbors. This should be used with caution since the user may not be aware of missing neighbors in their dataset however, a zero.policy of FALSE would return an error.</li>
+</ul>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>rswm_q</span> <span class='op'>&lt;-</span> <span class='fu'>nb2listw</span><span class='op'>(</span><span class='va'>wm_q</span>, style<span class='op'>=</span><span class='st'>"W"</span>, zero.policy <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
+<span class='va'>rswm_q</span>
+</code></pre>
+</div>
+<pre><code>Characteristics of weights list object:
+Neighbour list object:
+Number of regions: 88 
+Number of nonzero links: 448 
+Percentage nonzero weights: 5.785124 
+Average number of links: 5.090909 
+
+Weights style: W 
+Weights constants summary:
+   n   nn S0       S1       S2
+W 88 7744 88 37.86334 365.9147</code></pre>
+</div>
+<h2 id="global-spatial-autocorrelation-morans-i">5.2 Global Spatial Autocorrelation: Moran’s I</h2>
+<p>Perform Moran’s I statistics testing by using moran.test() of spdep.</p>
+<h2 id="marons-i-test">5.2.1 Maron’s I test</h2>
+<ul>
+<li>The code chunk below performs Moran’s I statistical testing using moran.test() of spdep.</li>
+</ul>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>moran.test</span><span class='op'>(</span><span class='va'>hunan</span><span class='op'>$</span><span class='va'>GDPPC</span>, listw<span class='op'>=</span><span class='va'>rswm_q</span>, zero.policy <span class='op'>=</span> <span class='cn'>TRUE</span>, na.action<span class='op'>=</span><span class='va'>na.omit</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>
+    Moran I test under randomisation
+
+data:  hunan$GDPPC  
+weights: rswm_q    
+
+Moran I statistic standard deviate = 4.7351, p-value =
+1.095e-06
+alternative hypothesis: greater
+sample estimates:
+Moran I statistic       Expectation          Variance 
+      0.300749970      -0.011494253       0.004348351 </code></pre>
+</div>
+<p>Question: What statistical conclusion can you draw from the output above?</p>
+<div class="layout-chunk" data-layout="l-body">
+
+</div>
+<div class="layout-chunk" data-layout="l-body">
+
+</div>
+<div class="layout-chunk" data-layout="l-body">
+
+</div>
+<div class="layout-chunk" data-layout="l-body">
+
+</div>
+<div class="layout-chunk" data-layout="l-body">
+
+</div>
+<div class="layout-chunk" data-layout="l-body">
+
+</div>
+<div class="layout-chunk" data-layout="l-body">
+
+</div>
+<div class="layout-chunk" data-layout="l-body">
+
+</div>
+<div class="layout-chunk" data-layout="l-body">
+
+</div>
+<div class="layout-chunk" data-layout="l-body">
+
+</div>
+<div class="layout-chunk" data-layout="l-body">
+
+</div>
+<div class="layout-chunk" data-layout="l-body">
+
+</div>
+<div class="layout-chunk" data-layout="l-body">
+
+</div>
+<div class="layout-chunk" data-layout="l-body">
+
+</div>
+<div class="layout-chunk" data-layout="l-body">
+
+</div>
+<div class="layout-chunk" data-layout="l-body">
+
+</div>
+<div class="layout-chunk" data-layout="l-body">
+
+</div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->
 </div>
