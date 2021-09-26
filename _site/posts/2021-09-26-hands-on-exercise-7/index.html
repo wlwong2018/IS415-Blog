@@ -117,7 +117,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <!--/radix_placeholder_rmarkdown_metadata-->
   
   <script type="text/json" id="radix-resource-manifest">
-  {"type":"character","attributes":{},"value":["data/attribute/Dictionary.xlsx","data/attribute/Hunan_2012.csv","data/shapefile/Hunan.dbf","data/shapefile/Hunan.prj","data/shapefile/Hunan.qpj","data/shapefile/Hunan.shp","data/shapefile/Hunan.shx","hands-on-exercise-7_files/anchor-4.2.2/anchor.min.js","hands-on-exercise-7_files/bowser-1.9.3/bowser.min.js","hands-on-exercise-7_files/distill-2.2.21/template.v2.js","hands-on-exercise-7_files/figure-html5/unnamed-chunk-11-1.png","hands-on-exercise-7_files/figure-html5/unnamed-chunk-16-1.png","hands-on-exercise-7_files/figure-html5/unnamed-chunk-17-1.png","hands-on-exercise-7_files/figure-html5/unnamed-chunk-18-1.png","hands-on-exercise-7_files/figure-html5/unnamed-chunk-22-1.png","hands-on-exercise-7_files/figure-html5/unnamed-chunk-23-1.png","hands-on-exercise-7_files/figure-html5/unnamed-chunk-24-1.png","hands-on-exercise-7_files/figure-html5/unnamed-chunk-25-1.png","hands-on-exercise-7_files/figure-html5/unnamed-chunk-27-1.png","hands-on-exercise-7_files/figure-html5/unnamed-chunk-35-1.png","hands-on-exercise-7_files/figure-html5/unnamed-chunk-36-1.png","hands-on-exercise-7_files/figure-html5/unnamed-chunk-5-1.png","hands-on-exercise-7_files/header-attrs-2.10/header-attrs.js","hands-on-exercise-7_files/jquery-1.11.3/jquery.min.js","hands-on-exercise-7_files/popper-2.6.0/popper.min.js","hands-on-exercise-7_files/tippy-6.2.7/tippy-bundle.umd.min.js","hands-on-exercise-7_files/tippy-6.2.7/tippy-light-border.css","hands-on-exercise-7_files/tippy-6.2.7/tippy.css","hands-on-exercise-7_files/tippy-6.2.7/tippy.umd.min.js","hands-on-exercise-7_files/webcomponents-2.0.0/webcomponents.js"]}
+  {"type":"character","attributes":{},"value":["data/attribute/Dictionary.xlsx","data/attribute/Hunan_2012.csv","data/shapefile/Hunan.dbf","data/shapefile/Hunan.prj","data/shapefile/Hunan.qpj","data/shapefile/Hunan.shp","data/shapefile/Hunan.shx","hands-on-exercise-7_files/anchor-4.2.2/anchor.min.js","hands-on-exercise-7_files/bowser-1.9.3/bowser.min.js","hands-on-exercise-7_files/distill-2.2.21/template.v2.js","hands-on-exercise-7_files/figure-html5/unnamed-chunk-11-1.png","hands-on-exercise-7_files/figure-html5/unnamed-chunk-16-1.png","hands-on-exercise-7_files/figure-html5/unnamed-chunk-17-1.png","hands-on-exercise-7_files/figure-html5/unnamed-chunk-18-1.png","hands-on-exercise-7_files/figure-html5/unnamed-chunk-22-1.png","hands-on-exercise-7_files/figure-html5/unnamed-chunk-23-1.png","hands-on-exercise-7_files/figure-html5/unnamed-chunk-24-1.png","hands-on-exercise-7_files/figure-html5/unnamed-chunk-25-1.png","hands-on-exercise-7_files/figure-html5/unnamed-chunk-27-1.png","hands-on-exercise-7_files/figure-html5/unnamed-chunk-35-1.png","hands-on-exercise-7_files/figure-html5/unnamed-chunk-36-1.png","hands-on-exercise-7_files/figure-html5/unnamed-chunk-49-1.png","hands-on-exercise-7_files/figure-html5/unnamed-chunk-5-1.png","hands-on-exercise-7_files/figure-html5/unnamed-chunk-51-1.png","hands-on-exercise-7_files/header-attrs-2.10/header-attrs.js","hands-on-exercise-7_files/jquery-1.11.3/jquery.min.js","hands-on-exercise-7_files/popper-2.6.0/popper.min.js","hands-on-exercise-7_files/tippy-6.2.7/tippy-bundle.umd.min.js","hands-on-exercise-7_files/tippy-6.2.7/tippy-light-border.css","hands-on-exercise-7_files/tippy-6.2.7/tippy.css","hands-on-exercise-7_files/tippy-6.2.7/tippy.umd.min.js","hands-on-exercise-7_files/webcomponents-2.0.0/webcomponents.js"]}
   </script>
   <!--radix_placeholder_navigation_in_header-->
 <meta name="distill:offset" content="../.."/>
@@ -2551,7 +2551,7 @@ Geodetic CRS:  WGS 84</code></pre>
 <span class='fu'>tmap_arrange</span><span class='op'>(</span><span class='va'>basemap</span>, <span class='va'>gdppc</span>, asp<span class='op'>=</span><span class='fl'>1</span>, ncol<span class='op'>=</span><span class='fl'>2</span><span class='op'>)</span>
 </code></pre>
 </div>
-<p><img src="hands-on-exercise-7_files/figure-html5/unnamed-chunk-5-1.png" width="624" /></p>
+<p><img src="hands-on-exercise-7_files/figure-html5/unnamed-chunk-5-1.png" width="1152" /></p>
 </div>
 <h1 id="global-spatial-autocorrelation">5 Global Spatial Autocorrelation</h1>
 <p>Compute global spatial autocorrelation statistics and to perform spatial complete randomness test for global spatial autocorrelation.</p>
@@ -3268,8 +3268,177 @@ Zixing                0.4830</code></pre>
 </div>
 <p>Question: What statistical observations can you draw from the LISA map above?</p>
 <h1 id="hot-spot-and-cold-spot-area-analysis">7 Hot Spot and Cold Spot Area Analysis</h1>
+<p>Besides detecting cluster and outliers, localised spatial statistics can be also used to detect hot spot and/or cold spot areas.</p>
+<p>The term ‘hot spot’ has been used generically across disciplines to describe a region or value that is higher relative to its surroundings (Lepers et al 2005, Aben et al 2012, Isobe et al 2015).</p>
+<h1 id="getis-and-ords-g-statistics">7.1 Getis and Ord’s G-Statistics</h1>
+<ul>
+<li>Another spatial statistics to detect spatial anomalies is the Getis and Ord’s G-statistics (Getis and Ord, 1972; Ord and Getis, 1995).</li>
+<li>It looks at neighbours within a defined proximity to identify where either high or low values clutser spatially. Here, statistically significant hot-spots are recognised as areas of high values where other areas within a neighbourhood range also share high values too.</li>
+</ul>
+<p>The analysis consists of three steps:</p>
+<ul>
+<li>Deriving spatial weight matrix</li>
+<li>Computing Gi statistics</li>
+<li>Mapping Gi statistics</li>
+</ul>
+<h2 id="deriving-distance-based-weight-matrix">7.2 Deriving distance-based weight matrix</h2>
+<p>First, we need to define a new set of neighbours. Whist the spatial autocorrelation considered units which shared borders, for Getis-Ord we are defining neighbours based on distance.</p>
+<p>Two type of distance-based proximity matrix:</p>
+<ul>
+<li>fixed diatnce weight matrix; and</li>
+<li>adaptive distance weight matrix.</li>
+</ul>
+<h3 id="deriving-the-centroid">7.2.1 Deriving the centroid</h3>
+<ul>
+<li><p>We will need points to associate with each polygon before we can make our connectivity graph.</p></li>
+<li><p>It will be a little more complicated than just running st_centroid() on the sf object: us.bound. We need the coordinates in a separate data frame for this to work.</p></li>
+<li><p>Use mapping function: applies a given function to each element of a vector and returns a vector of the same length. The input vector is geometry column of us.bound. The function will be st_centroid(). We will be using map_dbl variation of map from the purrr package.</p></li>
+<li><p>To get longitude values we map the st_centroid() function over the geometry column of us.bound and access the longitude value through double bracket notation [[]] and 1. This allows us to get only the longitude, which is the first value in each centroid.</p></li>
+</ul>
 <div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>longitude</span> <span class='op'>&lt;-</span> <span class='fu'>map_dbl</span><span class='op'>(</span><span class='va'>hunan</span><span class='op'>$</span><span class='va'>geometry</span>, <span class='op'>~</span><span class='fu'>st_centroid</span><span class='op'>(</span><span class='va'>.x</span><span class='op'>)</span><span class='op'>[[</span><span class='fl'>1</span><span class='op'>]</span><span class='op'>]</span><span class='op'>)</span>
+</code></pre>
+</div>
+</div>
+<ul>
+<li>Do the same for latitude with one key difference.</li>
+<li>Access the second value per each centroid with [[2]].</li>
+</ul>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>latitude</span> <span class='op'>&lt;-</span> <span class='fu'>map_dbl</span><span class='op'>(</span><span class='va'>hunan</span><span class='op'>$</span><span class='va'>geometry</span>, <span class='op'>~</span><span class='fu'>st_centroid</span><span class='op'>(</span><span class='va'>.x</span><span class='op'>)</span><span class='op'>[[</span><span class='fl'>2</span><span class='op'>]</span><span class='op'>]</span><span class='op'>)</span>
+</code></pre>
+</div>
+</div>
+<ul>
+<li>Use cbind to put longitude and latitude into the same object.</li>
+</ul>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>coords</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/cbind.html'>cbind</a></span><span class='op'>(</span><span class='va'>longitude</span>, <span class='va'>latitude</span><span class='op'>)</span>
+</code></pre>
+</div>
+</div>
+<h3 id="determine-the-cut-off-distance">7.2.2 Determine the cut-off distance</h3>
+<p>Firstly, to determine the upper limit for distance band by using the steps below:</p>
+<ul>
+<li>Return a matrix with the indices of points belonging to the set of the k nearest neighbours of each other by using knearneigh() of spdep.</li>
+<li>Convert the knn object returned by knearneigh() into a neighbours list of class nb with a list of integer vectors containing neighbour region number ids by using knn2nb().</li>
+<li>Return the length of neighbour relationship edges by using nbdists() of spdep. The function returns in the units of the coordinates if the coordinates are projected, in km otherwise.</li>
+<li>Remove the list structure of the returned object by using unlist().</li>
+</ul>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='co'>#coords &lt;- coordinates(hunan)</span>
+<span class='va'>k1</span> <span class='op'>&lt;-</span> <span class='fu'>knn2nb</span><span class='op'>(</span><span class='fu'>knearneigh</span><span class='op'>(</span><span class='va'>coords</span><span class='op'>)</span><span class='op'>)</span>
+<span class='va'>k1dists</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/unlist.html'>unlist</a></span><span class='op'>(</span><span class='fu'>nbdists</span><span class='op'>(</span><span class='va'>k1</span>, <span class='va'>coords</span>, longlat <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>k1dists</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  24.79   32.57   38.01   39.07   44.52   61.79 </code></pre>
+</div>
+<p>Results above show that: - The largest first nearest neighbour distance is 61.79 km, so using this as the upper threshold gives certainty that all units will have at least one neighbour.</p>
+<h3 id="computing-fixed-distance-weight-matrix">7.2.3 Computing fixed distance weight matrix</h3>
+<ul>
+<li>Compute the distance weight matrix by using <em>dnearneigh()</em>.</li>
+</ul>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>wm_d62</span> <span class='op'>&lt;-</span> <span class='fu'>dnearneigh</span><span class='op'>(</span><span class='va'>coords</span>, <span class='fl'>0</span>, <span class='fl'>62</span>, longlat <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
+<span class='va'>wm_d62</span>
+</code></pre>
+</div>
+<pre><code>Neighbour list object:
+Number of regions: 88 
+Number of nonzero links: 324 
+Percentage nonzero weights: 4.183884 
+Average number of links: 3.681818 </code></pre>
+</div>
+<p>Next, nb2listw() is used to convert the nb object into spatial weights object. The input of nb2listw() must be an object of class nb. The syntax of the function has two major arguments, namely style and zero.poly.</p>
+<ul>
+<li><p>style can take values “W”, “B”, “C”, “U”, “minmax” and “S”.</p>
+<ul>
+<li>B is the basic binary coding</li>
+<li>W is row standardised (sums over all links to n),</li>
+<li>C is globally standardised (sums over all links to n),</li>
+<li>U is equal to C divided by the number of neighbours (sums over all links to unity)</li>
+<li>S is the variance-stabilizing coding scheme proposed by Tiefelsdorf et al. 1999, p. 167-168 (sums over all links to n).</li>
+</ul></li>
+<li><p>If zero policy is set to TRUE, weights vectors of zero length are inserted for regions without neighbour in the neighbours list. These will in turn generate lag values of zero, equivalent to the sum of products of the zero row t(rep(0, length=length(neighbours))) %*% x, for arbitraty numerical vector x of length length(neighbours). The spatially lagged value of x for the zero-neighbour region will then be zero, which may (or may not) be a sensible choice.</p></li>
+</ul>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>wm62_lw</span> <span class='op'>&lt;-</span> <span class='fu'>nb2listw</span><span class='op'>(</span><span class='va'>wm_d62</span>, style <span class='op'>=</span> <span class='st'>'B'</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>wm62_lw</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>Characteristics of weights list object:
+Neighbour list object:
+Number of regions: 88 
+Number of nonzero links: 324 
+Percentage nonzero weights: 4.183884 
+Average number of links: 3.681818 
+Link number distribution:
 
+ 1  2  3  4  5  6 
+ 6 15 14 26 20  7 
+6 least connected regions:
+6 15 30 32 56 65 with 1 link
+7 most connected regions:
+21 28 35 45 50 52 82 with 6 links
+
+Weights style: B 
+Weights constants summary:
+   n   nn  S0  S1   S2
+B 88 7744 324 648 5440</code></pre>
+</div>
+<h3 id="computing-adaptive-distance-weight-matrix">7.2.4 Computing adaptive distance weight matrix</h3>
+<p>One of the characteristics of fixed distance weight matrix is that more densely settled areas (usually the urban areas) tend to have more neighbours and the less densely settled areas (usually the rural counties) tend to have lesser neighbours. Having many neighbours smoothes the neighbour relationship across more neighbours.</p>
+<p>It is possible to control the numbers of neighbours directly using k-nearest neighbours, either accepting asymmetric neighbours or imposing symmetry as shown in the code chunk below.</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>knn</span> <span class='op'>&lt;-</span> <span class='fu'>knn2nb</span><span class='op'>(</span><span class='fu'>knearneigh</span><span class='op'>(</span><span class='va'>coords</span>, k<span class='op'>=</span><span class='fl'>8</span><span class='op'>)</span><span class='op'>)</span>
+<span class='va'>knn</span>
+</code></pre>
+</div>
+<pre><code>Neighbour list object:
+Number of regions: 88 
+Number of nonzero links: 704 
+Percentage nonzero weights: 9.090909 
+Average number of links: 8 
+Non-symmetric neighbours list</code></pre>
+</div>
+<ul>
+<li>nb2listw() is used to convert the nb object into spatial weights object.</li>
+</ul>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>knn_lw</span> <span class='op'>&lt;-</span> <span class='fu'>nb2listw</span><span class='op'>(</span><span class='va'>knn</span>, style <span class='op'>=</span> <span class='st'>'B'</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>knn_lw</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>Characteristics of weights list object:
+Neighbour list object:
+Number of regions: 88 
+Number of nonzero links: 704 
+Percentage nonzero weights: 9.090909 
+Average number of links: 8 
+Non-symmetric neighbours list
+Link number distribution:
+
+ 8 
+88 
+88 least connected regions:
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 with 8 links
+88 most connected regions:
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 with 8 links
+
+Weights style: B 
+Weights constants summary:
+   n   nn  S0   S1    S2
+B 88 7744 704 1300 23014</code></pre>
 </div>
 <div class="layout-chunk" data-layout="l-body">
 
@@ -3277,49 +3446,119 @@ Zixing                0.4830</code></pre>
 <div class="layout-chunk" data-layout="l-body">
 
 </div>
+<h2 id="computing-gi-statistics">7.3 Computing Gi statistics</h2>
+<h3 id="gi-statistics-using-fixed-distance">7.3.1 Gi statistics using fixed distance</h3>
 <div class="layout-chunk" data-layout="l-body">
-
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>fips</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/order.html'>order</a></span><span class='op'>(</span><span class='va'>hunan</span><span class='op'>$</span><span class='va'>County</span><span class='op'>)</span>
+<span class='va'>gi.fixed</span> <span class='op'>&lt;-</span> <span class='fu'>localG</span><span class='op'>(</span><span class='va'>hunan</span><span class='op'>$</span><span class='va'>GDPPC</span>, <span class='va'>wm62_lw</span><span class='op'>)</span>
+<span class='va'>gi.fixed</span>
+</code></pre>
 </div>
+<pre><code> [1]  0.436075843 -0.265505650 -0.073033665  0.413017033  0.273070579
+ [6] -0.377510776  2.863898821  2.794350420  5.216125401  0.228236603
+[11]  0.951035346 -0.536334231  0.176761556  1.195564020 -0.033020610
+[16]  1.378081093 -0.585756761 -0.419680565  0.258805141  0.012056111
+[21] -0.145716531 -0.027158687 -0.318615290 -0.748946051 -0.961700582
+[26] -0.796851342 -1.033949773 -0.460979158 -0.885240161 -0.266671512
+[31] -0.886168613 -0.855476971 -0.922143185 -1.162328599  0.735582222
+[36] -0.003358489 -0.967459309 -1.259299080 -1.452256513 -1.540671121
+[41] -1.395011407 -1.681505286 -1.314110709 -0.767944457 -0.192889342
+[46]  2.720804542  1.809191360 -1.218469473 -0.511984469 -0.834546363
+[51] -0.908179070 -1.541081516 -1.192199867 -1.075080164 -1.631075961
+[56] -0.743472246  0.418842387  0.832943753 -0.710289083 -0.449718820
+[61] -0.493238743 -1.083386776  0.042979051  0.008596093  0.136337469
+[66]  2.203411744  2.690329952  4.453703219 -0.340842743 -0.129318589
+[71]  0.737806634 -1.246912658  0.666667559  1.088613505 -0.985792573
+[76]  1.233609606 -0.487196415  1.626174042 -1.060416797  0.425361422
+[81] -0.837897118 -0.314565243  0.371456331  4.424392623 -0.109566928
+[86]  1.364597995 -1.029658605 -0.718000620
+attr(,&quot;gstari&quot;)
+[1] FALSE
+attr(,&quot;call&quot;)
+localG(x = hunan$GDPPC, listw = wm62_lw)
+attr(,&quot;class&quot;)
+[1] &quot;localG&quot;</code></pre>
+</div>
+<p>Results above show that:</p>
+<ul>
+<li>The output of localG() is a vector of G or Gstar values, with attributes “gstari” set to TRUE or FALSE, “call” set to the function call, and class “localG”.</li>
+<li>The Gi statistics is represented as a Z-score. Greater values represent a greater intensity of clustering and the direction (positive or negative) indicates high or low clusters.</li>
+</ul>
+<p><br></p>
+<ul>
+<li><p>Join the Gi values to their corresponding hunan sf data frame by using the code chunk below.</p></li>
+<li><p>The 3 sub tasks are:</p>
+<ul>
+<li>it convert the output vector (i.e. gi.fixed) into r matrix object by using as.matrix().c</li>
+<li>cbind() is used to join <a href="mailto:hun@data" class="email">hun@data</a> and gi.fixed matrix to produce a new SpatialPolygonDataFrame called hunan.gi.</li>
+<li>Field name of the gi values is renamed to gstat_fixed by using names().</li>
+</ul></li>
+</ul>
 <div class="layout-chunk" data-layout="l-body">
-
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>hunan.gi</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/cbind.html'>cbind</a></span><span class='op'>(</span><span class='va'>hunan</span>, <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>as.matrix</a></span><span class='op'>(</span><span class='va'>gi.fixed</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
+  <span class='fu'>rename</span><span class='op'>(</span>gstat_fixed <span class='op'>=</span> <span class='va'>as.matrix.gi.fixed.</span><span class='op'>)</span>
+</code></pre>
 </div>
+</div>
+<h3 id="mapping-gi-values-with-fixed-distance-weights">7.3.2 Mapping Gi values with fixed distance weights</h3>
+<ul>
+<li>Functions used to map the Gi values derived using fixed distance weight matrix.</li>
+</ul>
 <div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>gdppc</span> <span class='op'>&lt;-</span> <span class='fu'>qtm</span><span class='op'>(</span><span class='va'>hunan</span>, <span class='st'>"GDPPC"</span><span class='op'>)</span>
 
+<span class='va'>Gimap</span> <span class='op'>&lt;-</span><span class='fu'>tm_shape</span><span class='op'>(</span><span class='va'>hunan.gi</span><span class='op'>)</span> <span class='op'>+</span>
+  <span class='fu'>tm_fill</span><span class='op'>(</span>col <span class='op'>=</span> <span class='st'>"gstat_fixed"</span>, 
+          style <span class='op'>=</span> <span class='st'>"pretty"</span>,
+          palette<span class='op'>=</span><span class='st'>"-RdBu"</span>,
+          title <span class='op'>=</span> <span class='st'>"local Gi"</span><span class='op'>)</span> <span class='op'>+</span>
+  <span class='fu'>tm_borders</span><span class='op'>(</span>alpha <span class='op'>=</span> <span class='fl'>0.5</span><span class='op'>)</span>
+
+<span class='fu'>tmap_arrange</span><span class='op'>(</span><span class='va'>gdppc</span>, <span class='va'>Gimap</span>, asp<span class='op'>=</span><span class='fl'>1</span>, ncol<span class='op'>=</span><span class='fl'>2</span><span class='op'>)</span>
+</code></pre>
 </div>
+<p><img src="hands-on-exercise-7_files/figure-html5/unnamed-chunk-49-1.png" width="624" /></p>
+</div>
+<p>Question: What statistical observation can you draw from the Gi map above?</p>
+<h3 id="gi-statistics-using-adaptive-distance">7.3.3 Gi statistics using adaptive distance</h3>
+<ul>
+<li>Compute the Gi values for GDPPC2012 by using an adaptive distance weight matrix (i.e knb_lw).</li>
+</ul>
 <div class="layout-chunk" data-layout="l-body">
-
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>fips</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/order.html'>order</a></span><span class='op'>(</span><span class='va'>hunan</span><span class='op'>$</span><span class='va'>County</span><span class='op'>)</span>
+<span class='va'>gi.adaptive</span> <span class='op'>&lt;-</span> <span class='fu'>localG</span><span class='op'>(</span><span class='va'>hunan</span><span class='op'>$</span><span class='va'>GDPPC</span>, <span class='va'>knn_lw</span><span class='op'>)</span>
+<span class='va'>hunan.gi</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/cbind.html'>cbind</a></span><span class='op'>(</span><span class='va'>hunan</span>, <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>as.matrix</a></span><span class='op'>(</span><span class='va'>gi.adaptive</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
+  <span class='fu'>rename</span><span class='op'>(</span>gstat_adaptive <span class='op'>=</span> <span class='va'>as.matrix.gi.adaptive.</span><span class='op'>)</span>
+</code></pre>
 </div>
+</div>
+<h3 id="mapping-gi-values-with-adaptive-distance-weights">7.3.4 Mapping Gi values with adaptive distance weights</h3>
+<ul>
+<li>Visualise the locations of hot spot and cold spot areas. The choropleth mapping functions of tmap package will be used to map the Gi values.</li>
+<li>The code chunk below shows the functions used to map the Gi values derived using fixed distance weight matrix.</li>
+</ul>
 <div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>gdppc</span> <span class='op'>&lt;-</span> <span class='fu'>qtm</span><span class='op'>(</span><span class='va'>hunan</span>, <span class='st'>"GDPPC"</span><span class='op'>)</span>
 
-</div>
-<div class="layout-chunk" data-layout="l-body">
+<span class='va'>Gimap</span> <span class='op'>&lt;-</span> <span class='fu'>tm_shape</span><span class='op'>(</span><span class='va'>hunan.gi</span><span class='op'>)</span> <span class='op'>+</span>
+  <span class='fu'>tm_fill</span><span class='op'>(</span>col <span class='op'>=</span> <span class='st'>"gstat_adaptive"</span>, 
+          style <span class='op'>=</span> <span class='st'>"pretty"</span>,
+          palette<span class='op'>=</span><span class='st'>"-RdBu"</span>,
+          title <span class='op'>=</span> <span class='st'>"local Gi"</span><span class='op'>)</span> <span class='op'>+</span>
+  <span class='fu'>tm_borders</span><span class='op'>(</span>alpha <span class='op'>=</span> <span class='fl'>0.5</span><span class='op'>)</span>
 
+<span class='fu'>tmap_arrange</span><span class='op'>(</span><span class='va'>gdppc</span>, <span class='va'>Gimap</span>, asp<span class='op'>=</span><span class='fl'>1</span>, ncol<span class='op'>=</span><span class='fl'>2</span><span class='op'>)</span>
+</code></pre>
 </div>
-<div class="layout-chunk" data-layout="l-body">
-
+<p><img src="hands-on-exercise-7_files/figure-html5/unnamed-chunk-51-1.png" width="624" /></p>
 </div>
-<div class="layout-chunk" data-layout="l-body">
-
-</div>
-<div class="layout-chunk" data-layout="l-body">
-
-</div>
-<div class="layout-chunk" data-layout="l-body">
-
-</div>
-<div class="layout-chunk" data-layout="l-body">
-
-</div>
-<div class="layout-chunk" data-layout="l-body">
-
-</div>
-<div class="layout-chunk" data-layout="l-body">
-
-</div>
-<div class="layout-chunk" data-layout="l-body">
-
-</div>
-<div class="sourceCode" id="cb16"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<p>Question: What statistical observation can you draw from the Gi map above?</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->
 </div>
