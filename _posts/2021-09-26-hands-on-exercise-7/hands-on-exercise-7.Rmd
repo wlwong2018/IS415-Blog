@@ -35,7 +35,7 @@ In this case study, we are interested to examine the spatial pattern of a select
 - tmap will be used to prepare cartographic quality chropleth map.
 
 ```{r eval=TRUE, echo = TRUE}
-packages = c('sf', 'spdep', 'tmap', 'tidyverse')
+packages = c('sf', 'spdep', 'tmap', 'tidyverse', 'ggplot2')
 for (p in packages){
   if(!require(p, character.only = T)){
     install.packages(p)
@@ -146,55 +146,102 @@ moran.test(hunan$GDPPC, listw=rswm_q, zero.policy = TRUE, na.action=na.omit)
 
 Question: What statistical conclusion can you draw from the output above?
 
+p-value is too large to conclude that it is statistically significant.  
 
+## 5.2.2 Computing Monte Carlo Moran’s I
+
+- The code chunk below performs permutation test for Moran’s I statistic by using moran.mc() of spdep.
+- A total of 1000 simulation will be performed.
+
+```{r eval=TRUE, echo = TRUE}
+set.seed(1234)
+bperm= moran.mc(hunan$GDPPC, listw=rswm_q, nsim=999, zero.policy = TRUE, na.action=na.omit)
+bperm
+
+```
+
+Question: What statistical conclusion can you draw from the output above?
+
+## 5.2.3 Visualising Monte Carlo Moran’s I
+
+- Good practice to examine the simulated Moran’s I test statistics in greater detail.
+- This can be achieved by plotting the distribution of the statistical values as a histogram by using the code chunk below.
 
 
 ```{r eval=TRUE, echo = TRUE}
+mean(bperm$res[1:999])
+var(bperm$res[1:999])
+summary(bperm$res[1:999])
 
 ```
 
 
 
 ```{r eval=TRUE, echo = TRUE}
-
+hist(bperm$res, freq=TRUE, breaks=20, xlab="Simulated Moran's I")
+abline(v=0, col="red") 
 ```
 
+Question: What statistical observation can you draw from the output above?
 
+
+Challenge: Instead of using Base Graph to plot the values, plot the values by using ggplot2 package.
 
 ```{r eval=TRUE, echo = TRUE}
 
 ```
 
+## 5.3 Global Spatial Autocorrelation: Geary’s
 
+Perform Geary’s c statistics testing by using appropriate functions of spdep package.
+
+## 5.3.1 Geary’s C test
+
+The code chunk below performs Geary’s C test for spatial autocorrelation by using geary.test() of spdep.
 
 ```{r eval=TRUE, echo = TRUE}
+geary.test(hunan$GDPPC, listw=rswm_q)
 
 ```
 
+Question: What statistical conclusion can you draw from the output above?
+
+## 5.3.2 Computing Monte Carlo Geary’s C
+
+The code chunk below performs permutation test for Geary’s C statistic by using geary.mc() of spdep.
 
 ```{r eval=TRUE, echo = TRUE}
+set.seed(1234)
+bperm=geary.mc(hunan$GDPPC, listw=rswm_q, nsim=999)
+bperm
+```
+
+Question: What statistical conclusion can you draw from the output above?
+
+## 5.3.3 Visualising the Monte Carlo Geary’s C
+
+- Plot a histogram to reveal the distribution of the simulated values by using the code chunk below.
+
+```{r eval=TRUE, echo = TRUE}
+mean(bperm$res[1:999])
+var(bperm$res[1:999])
+summary(bperm$res[1:999])
 
 ```
 
-
-
 ```{r eval=TRUE, echo = TRUE}
-
+hist(bperm$res, freq=TRUE, breaks=20, xlab="Simulated Geary c")
+abline(v=1, col="red") 
 ```
 
+Question: What statistical observation can you draw from the output?
 
+## 5.4 Spatial Correlogram
 
-```{r eval=TRUE, echo = TRUE}
-
-```
-
-
-
-```{r eval=TRUE, echo = TRUE}
-
-```
-
-
+- Spatial correlograms are for examining patterns of spatial autocorrelation in the data or model residuals.
+- They show how correlated are pairs of spatial observations when you increase the distance (lag) between them - they are plots of some index of autocorrelation (Moran’s I or Geary’s c) against distance.
+- Although correlograms are not as fundamental as variograms (a keystone concept of geostatistics), they are very useful as an exploratory and descriptive tool.
+- For this purpose they actually provide richer information than variograms.
 
 ```{r eval=TRUE, echo = TRUE}
 
