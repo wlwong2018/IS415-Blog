@@ -162,6 +162,8 @@ bperm
 
 Question: What statistical conclusion can you draw from the output above?
 
+- - To input - 
+
 ## 5.2.3 Visualising Monte Carlo Moran’s I
 
 - Good practice to examine the simulated Moran’s I test statistics in greater detail.
@@ -184,6 +186,7 @@ abline(v=0, col="red")
 
 Question: What statistical observation can you draw from the output above?
 
+- The distribution above is right skewed.
 
 Challenge: Instead of using Base Graph to plot the values, plot the values by using ggplot2 package.
 
@@ -206,6 +209,8 @@ geary.test(hunan$GDPPC, listw=rswm_q)
 
 Question: What statistical conclusion can you draw from the output above?
 
+- - To input - 
+
 ## 5.3.2 Computing Monte Carlo Geary’s C
 
 The code chunk below performs permutation test for Geary’s C statistic by using geary.mc() of spdep.
@@ -217,6 +222,8 @@ bperm
 ```
 
 Question: What statistical conclusion can you draw from the output above?
+
+- - To input - 
 
 ## 5.3.3 Visualising the Monte Carlo Geary’s C
 
@@ -235,6 +242,8 @@ abline(v=1, col="red")
 ```
 
 Question: What statistical observation can you draw from the output?
+
+- The distribution above is nearing normal distribution.
 
 ## 5.4 Spatial Correlogram
 
@@ -256,6 +265,8 @@ plot(MI_corr)
 ```
 
 Question: What statistical observation can you draw from the plot above?
+
+- - To input - 
 
 ## 5.4.2 Compute Geary’s C correlogram and plot
 
@@ -503,6 +514,7 @@ tmap_arrange(gdppc, LISAmap, asp=1, ncol=2)
 
 Question: What statistical observations can you draw from the LISA map above?
 
+- - To input - 
 
 # 7 Hot Spot and Cold Spot Area Analysis
 
@@ -683,6 +695,8 @@ tmap_arrange(gdppc, Gimap, asp=1, ncol=2)
 
 Question: What statistical observation can you draw from the Gi map above?
 
+- - To input - 
+
 ### 7.3.3 Gi statistics using adaptive distance
 
 - Compute the Gi values for GDPPC2012 by using an adaptive distance weight matrix (i.e knb_lw).
@@ -714,4 +728,5 @@ tmap_arrange(gdppc, Gimap, asp=1, ncol=2)
 
 Question: What statistical observation can you draw from the Gi map above?
 
+- - To input - 
 
