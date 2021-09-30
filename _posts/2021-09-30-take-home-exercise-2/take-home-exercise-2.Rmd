@@ -1,0 +1,22 @@
+---
+title: "Take-Home Exercise 2"
+description: |
+  To investigate if the distribution of Airbnb listings are affected by location factors and to analyse the impact of COVID-19 on Airbnb business in Singapore.
+author:
+  - name: Wong Wei Ling
+    url: www.google.com
+date: 09-30-2021
+output:
+  distill::distill_article:
+    self_contained: false
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+set.seed(1234)
+```
+
+
+
+
