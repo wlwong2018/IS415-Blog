@@ -9,6 +9,9 @@ date: 09-30-2021
 output:
   distill::distill_article:
     self_contained: false
+    toc: true
+    toc_float: true
+    number_sections: true
 ---
 
 
@@ -151,7 +154,6 @@ Result above show that:
 ## 4.6 Visualise the MRT services on the Singapore map
 
 - It is a good practice to visualise the geospatial data before continuing with the other steps.
-- *tmap_mode()* of **tmap** package is used to visualise the geospatial data with high cartographic quality and interactive manner.
 
 ```{r echo=TRUE, eval=TRUE}
 
@@ -739,4 +741,132 @@ tmap_mode("plot")
 - This can be observed from the red spots above. 
 - In the South-East region of Singapore, it can be observed that MRT services are not as concentrated as compared to tourism and hotels. MRT services are slightly more spread out within the South-East region of Singapore.
 - MRT services is in fact more spread out than hotels within the South-East region of Singapore.
+
  
+<br>
+
+**Advantage of kernel density map over point map:**
+
+- Point map shows all of the occurrences of the point events. It is tough to tell the dense areas from a point map.
+
+- Kernel density maps on the other hand can highlight areas that have high number of the point events. With the help of the shades of colours, the darker it is, the higher the occurrences of these point events. Vice versa, with kernel density maps, areas with lesser point events would not be shown. This means that less prominent spots would not be highlighted in the kernel density map. 
+
+- An advantage of kernel density maps is hence the ability to highlight areas that are dense in the point events (high number of occurrences). 
+
+
+**Conclusion for Section A's Exploratory Spatial Data Analysis:**
+
+- With kernel density maps however, even though we do see that the distribution of Airbnb listings with hotels, tourist attractions and MRT services are in the same region (with a little variation of the MRT services), we cannot conclude for sure that the distribution of Airbnb listings are affected by the above-mentioned location factors. 
+- Hence, we need to employ **Second-order Spatial Point Patterns Analysis** to draw statistical conclusions. 
+
+
+## 7.2 Second Order Spatial Point Patterns Analysis
+
+A second order spatial point patterns analysis describes the covariance or correlation between values of a spatial point pattern at different regions in space. There are 4 functions available for us to use, namely Cross G-Function, Cross F-Function, Cross K-Function and Cross L-Function. For the purpose of this study, the **Cross L-Function** will be used. 
+
+Cross F-Function will **not** be used as it selects a sample of locations within the study region at random. This means that not all point events will be used for the computation. 
+
+Cross K-Function will **not** be used as we need to look at the curve which might be a little ambiguous. Instead, **Cross L-Function will be used** as it standardizes the curve.
+
+Because of the reasons listed above, **Cross L-Function** would be used.  
+
+### 7.2.1 Prepare and visualise subzones
+
+- Before diving into the computation of the Cross Functions, we first select a sub zone as it is computationally expensive to perform Second Order Spatial Point Patterns Analysis on the entire Singapore.
+- Sub zone "DOWNTOWN CORE" will be selected since based on the Exploratory Spatial Data Analysis, most point events for all are clustered around this sub zone. 
+
+- The code chunk below:
+
+    + Specifies the study area to be extracted, which is DOWNTOWN CORE
+    + To only take the non NA values
+    + Plot the study area using the mpsz data sets to visualise the selected study area.
+    
+```{r echo=TRUE, eval=TRUE}
+mpsz_sf$STUDY_AREA[(mpsz_sf$PLN_AREA_N == 'DOWNTOWN CORE')] = "Y" 
+
+mpsz_sf$STUDY_AREA[is.na(mpsz_sf$STUDY_AREA)] = 'N'
+
+tm_shape(mpsz_sf) +
+  tm_fill('STUDY_AREA',
+          palette = c('grey', 'lightblue')) +
+  tm_borders(col = 'gray28', lwd = 0.1, alpha = 0.3) +
+    tm_layout(legend.show = FALSE,
+              frame = FALSE)
+```
+
+### 7.2.2 Extract selected study areas
+
+#### 7.2.2.1 Create owin for each subzones
+
+- Create function to create owin objects for each sub zones.
+- Apply the function created on the selected study area.
+
+```{r echo=TRUE, eval=TRUE}
+convert_owin <- function(sz, plan_area) {
+  sz[sz$PLN_AREA_N == plan_area,] %>%
+    as('Spatial') %>%
+    as('SpatialPolygons') %>%
+    as('owin')
+}
+
+downtowncore_owin <- convert_owin(mpsz_sf, "DOWNTOWN CORE")
+
+```
+
+#### 7.2.2.2 Combine SpatialPoints objects with owin objects
+
+- Combine SpatialPoints object i.e. Airbnb listings in 2019, hotels, tourism and MRT with the downtown core owin object.
+
+```{r echo=TRUE, eval=TRUE}
+downtowncore_2019_ppp <- listings_2019_ppp[downtowncore_owin]
+downtowncore_hotels_ppp <- hotels_ppp[downtowncore_owin]
+downtowncore_tourisms_ppp <- tourisms_ppp[downtowncore_owin]
+downtowncore_mrt_ppp <- mrt_ppp[downtowncore_owin]
+
+```
+
+#### 7.2.2.3 Combine the ppp objects
+
+- *superimpose()* of **spatstat** package to combine ppp objects.
+- *=* sign is to combine such that the ppp objects are marked. 
+- This is necessary for plotting the Cross Functions. 
+
+```{r echo=TRUE, eval=TRUE}
+all_downtowncore_ppp <- superimpose(dc_2019_mark=downtowncore_2019_ppp,
+                                    dc_hotels_mark=downtowncore_hotels_ppp,
+                                    dc_tourisms_mark=downtowncore_tourisms_ppp,
+                                    dc_mrt_mark=downtowncore_mrt_ppp)
+```
+
+
+### 7.2.3 Multi-type Point Patterns Analysis: Cross L-Function
+
+#### 7.2.3.1 Compute Cross L-Function Estimation
+
+- Create a function for computing Cross L-Function Estimation
+
+    + *Lcross()* of **spatstat** package is used to compute the Cross L-Function estimation.
+    + *plot()* to visualise the relationship.
+    
+- Finally, the function created is being called to plot the graphs
+
+```{r echo=TRUE, eval=TRUE, fig.width=12, fig.height=8}
+par(mfrow=c(2,2))
+
+lcross <- function(data, i, j, title) {
+  compute <- Lcross(data, i, j, correction='border')
+  
+  plot(compute, . - r ~ r, xlab="d", ylab="L(d)-r", main=title)
+}
+
+lcross(data = all_downtowncore_ppp, i="dc_2019_mark", j="dc_hotels_mark", title="Listings 2019 vs Hotels Lcross")
+lcross(data = all_downtowncore_ppp, i="dc_2019_mark", j="dc_tourisms_mark", title="Listings 2019 vs Tourisms Lcross")
+lcross(data = all_downtowncore_ppp, i="dc_2019_mark", j="dc_mrt_mark", title="Listings 2019 vs MRT Lcross")
+
+```
+
+Results above show that:
+
+- There is a sign that the marked spatial point events are not spatially independent at certain distances for all plots.
+- However, a hypothesis test is still required to confirm this observation statistically.
+
