@@ -876,7 +876,7 @@ Results above show that:
 - The hypothesis and test are as follows:
 
     + Ho = The distribution of Airbnb listings in 2019 and Hotels/Tourist Attractions/MRT services are spatially independent.
-    + H1 = The distribution of Airbnb listings in 2019 and hotels are **NOT** spatially independent.
+    + H1 = The distribution of Airbnb listings in 2019 and  Hotels/Tourist Attractions/MRT services are **NOT** spatially independent.
     
 - The null hypothesis will be rejected if p-value is smaller than alpha value of 0.1 (i.e. at 90% confident interval). (this applies to all of the above points)
 
@@ -924,17 +924,102 @@ Results above show that:
 
     + From about **50 to 150m**, it can be observed that the black line is not only above the red line, it is also above the envelope.  This shows signs of significant cluster pattern from the 50 to 150m mark. Also, since it is above the envelope, we have enough statistical evidence to **reject the null hypothesis** at 90% confidence interval.
     + After the **150m mark**, the black line is below the red line and this shows signs of regular pattern. However, we can only say that it shows sign of significant regular pattern after the 150m mark as this is the part where the black line is below the envelope. Since it is below the envelope, we have enough statistical evidence to **reject the null hypothesis** at 90% confidence interval.
-    + To summarise, for both distances i.e.50 to 150m and after the 150m mark, are NOT spatially independent but from **50 to 150m**, it has **significant cluster pattern** while after the **150m mark**, it has **significant regular pattern**.
+    + To summarise, for both distances i.e.50 to 150m and after the 150m mark, are NOT spatially independent but from **50 to 150m**, it has **significant clustered patterns** while after the **150m mark**, it has **significant regular pattern**.
 
 - For Airbnb listings 2019 vs Tourism
 
     + The black line is below the red line which shows signs of regular pattern. But it is only significant for ditances **after 250m**.
-    + Hence, only for distances **after 250m**, we have enough statistical evidence to **reject the null hypothesis** at 90% confidence interval. We can hence infer that it is NOT spatially independent and for certain distances and has **significant regular patterns.**
+    + Hence, only for distances **after 250m**, we have enough statistical evidence to **reject the null hypothesis** at 90% confidence interval. We can hence infer that it is NOT spatially independent and for ditances **after 250m** and it has **significant regular patterns.**
 
 - For Airbnb listings 2019 vs MRT
 
-    + The black line is above the red line which shows signs of cluster pattern. But it is only significant at from **160m to 220m**.
-    + Hence, only from the distance of **160m to 220m**, we have have enough statistical evidence and we **will reject the null hypothesis** at 90% confidence interval. We can hence infer that it is NOT spatially independent for certain distances.
+    + The black line is above the red line which shows signs of clustered pattern. But it is only significant at from **160m to 220m**.
+    + Hence, only from the distance of **160m to 220m**, we have have enough statistical evidence and we **will reject the null hypothesis** at 90% confidence interval. We can hence infer that it is NOT spatially independent for from the distance of **160m to 220m** and it has **significant clustered patterns.**
 
+
+
+
+# 8 Section B: Impact of COVID-19
+
+This section is to analyse the impact of COVID-19 on Airbnb business in Singapore by comparing Airbnb listings data on June 2019 and June 2021. To determine the objective, we will first perform and plot **Kernel Density Estimation maps** by room type then confirm the insights found by using **Second-Order Spatial Point Patterns Analysis** to draw statistical conclusions.
+
+## 8.1 Exploratory Spatial Data Analysis
+
+### 8.1.1 Kernel Density Estimation
+
+- *unique()* to find out the categories of room types in Airbnb Listings in 2019 & 2021.
+
+#### 8.1.1.1 Retrieve categories of room_types
+
+```{r echo=TRUE, eval=TRUE}
+unique(listings_2019_sf$room_type)
+unique(listings_2021_sf$room_type)
+
+```
+
+From the results above,
+
+- There are 3 categories in Airbnb Listings in 2019, namely Private room, Entire home/apt and Shared room
+- There are 3 categories in Airbnb Listings in 2021, namely Private room, Entire home/apt, Shared room and Hotel room.
+
+#### 8.1.1.2 Subset categories into different ppp objects
+
+- *subset()* to retrieve the ppp objects of the different categories for both Airbnb Listings in 2019 and 2020. 
+- This is for calculating and plotting KDE maps in later part of the section.
+- Since "Hotel Room" is not available in the Airbnb listings in 2021, it will be excluded from the analysis. 
+
+```{r echo=TRUE, eval=TRUE}
+listings_2019_ppp_pr <- subset(listings_2019_ppp, listings_2019_sf$room_type == "Private room")
+listings_2019_ppp_ea <- subset(listings_2019_ppp, listings_2019_sf$room_type == "Entire home/apt")
+listings_2019_ppp_sr <- subset(listings_2019_ppp, listings_2019_sf$room_type == "Shared room")
+
+listings_2021_ppp_pr <- subset(listings_2021_ppp, listings_2021_sf$room_type == "Private room")
+listings_2021_ppp_ea <- subset(listings_2021_ppp, listings_2021_sf$room_type == "Entire home/apt")
+listings_2021_ppp_sr <- subset(listings_2021_ppp, listings_2021_sf$room_type == "Shared room")
+# listings_2021_ppp_hr <- subset(listings_2021_ppp, listings_2021_sf$room_type == "Hotel room")
+
+```
+
+####  8.1.1.3 Re-scale KDE Values
+
+- However, since the default unit of measurement of SVY21 is in meter, we have to convert the KDE values to km so that the values would not be too small to look for useful insights.
+- *rescale()* is used to convert the KDE values from meter to kilometer.
+
+```{r echo=TRUE, eval=TRUE}
+listings_2019_ppp_pr.km <- rescale(listings_2019_ppp_pr, 1000, "km")
+listings_2019_ppp_ea.km <- rescale(listings_2019_ppp_ea, 1000, "km")
+listings_2019_ppp_sr.km <- rescale(listings_2019_ppp_sr, 1000, "km")
+
+listings_2021_ppp_pr.km <- rescale(listings_2021_ppp_pr, 1000, "km")
+listings_2021_ppp_ea.km <- rescale(listings_2021_ppp_ea, 1000, "km")
+listings_2021_ppp_sr.km <- rescale(listings_2021_ppp_sr, 1000, "km")
+# listings_2021_ppp_hr.km <- rescale(listings_2021_ppp_hr, 1000, "km")
+
+```
+
+
+#### 8.1.1.4 Plot KDE maps using automatic bandwidth methods (ppl)
+
+- Explanation for this section is similar to 7.1.1.1 
+
+##### *bw.ppl*
+
+###### Airbnb Listings 2019
+
+- The function used was created in Section A, to plot KDE maps using the bandwidth *bw.ppl()*
+- par() is used to arrange the maps in a side-by-side manner
+
+```{r echo=TRUE, eval=TRUE, fig.width=10, fig.height=8}
+par(mfrow=c(2,2))
+
+plot(kde_ppl(listings_2019_ppp_pr.km), main = "listings 2019 private room bw.ppl")
+plot(kde_ppl(listings_2019_ppp_ea.km), main = "listings 2019 entire home/apt  bw.ppl")
+plot(kde_ppl(listings_2019_ppp_sr.km), main = "listings 2019 shared room bw.ppl")
+
+```
+
+Results above show that: 
+
+- There is a concentrated area for Shared Rooms and a few less concentrated spots for Private Room and Entire room/apt. 
 
 
