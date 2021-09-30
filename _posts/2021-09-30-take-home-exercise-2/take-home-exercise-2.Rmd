@@ -1023,3 +1023,121 @@ Results above show that:
 - There is a concentrated area for Shared Rooms and a few less concentrated spots for Private Room and Entire room/apt. 
 
 
+###### Airbnb Listings 2021
+
+```{r echo=TRUE, eval=TRUE, fig.width=10, fig.height=8}
+par(mfrow=c(2,2))
+
+plot(kde_ppl(listings_2021_ppp_pr.km), main = "listings 2021 private room bw.ppl")
+plot(kde_ppl(listings_2021_ppp_ea.km), main = "listings 2021 entire home/apt  bw.ppl")
+plot(kde_ppl(listings_2021_ppp_sr.km), main = "listings 2021 shared room bw.ppl")
+
+
+```
+
+Results above show that: 
+
+- Likewise, there is a concentrated area for Shared Rooms and a few less concentrated spots for Private Room and Entire room/apt.
+- The Entire room/apt in 2021 looks more concentrated than its counterpart in 2019.
+
+##### Reveal density
+
+- *intensity()* of **spatstat** package is used to reveal the density of Airbnb listings in 2019, hotels, tourism and MRT services.
+
+```{r echo=TRUE, eval=TRUE}
+intensity(listings_2019_ppp_pr.km)
+intensity(listings_2019_ppp_ea.km)
+intensity(listings_2019_ppp_sr.km)
+
+intensity(listings_2021_ppp_pr.km)
+intensity(listings_2021_ppp_ea.km)
+intensity(listings_2021_ppp_sr.km)
+
+```
+
+Results above show that:
+
+- Entire home/apt listings in 2019 have the highest density 5.69 units per km square, followed by Private Room then Shared Room with a density of 4.78 and 0.59 units per km square respectively.
+- Private Room 2021 have the highest density of 2.73, followed by Entire home/apt then Shared Room with a density of 2.42 and 0.23 units per km square respectively.
+
+
+### 8.1.1.3 Data Preparation for visualising Kernel Density Maps on openstreetmap of Singapore
+
+
+##### 8.1.1.3.1 Compute KDE maps with metres instead of kilometers
+
+- Since OpenStreetMap's default units is in metres, we have to compute the KDE in metres, instead of using the previously calculated KDE in kilometres. 
+- Compute KDE with bw.ppl() using metres
+
+```{r echo=TRUE, eval=TRUE}
+kde_listings_2019_ppl_pr <- density(listings_2019_ppp_pr, sigma=bw.ppl, edge=TRUE, kernel="gaussian") 
+kde_listings_2019_ppl_ea <- density(listings_2019_ppp_ea, sigma=bw.ppl, edge=TRUE, kernel="gaussian") 
+kde_listings_2019_ppl_sr <- density(listings_2019_ppp_sr, sigma=bw.ppl, edge=TRUE, kernel="gaussian") 
+
+kde_listings_2021_ppl_pr <- density(listings_2021_ppp_pr, sigma=bw.ppl, edge=TRUE, kernel="gaussian") 
+kde_listings_2021_ppl_ea <- density(listings_2021_ppp_ea, sigma=bw.ppl, edge=TRUE, kernel="gaussian") 
+kde_listings_2021_ppl_sr <- density(listings_2021_ppp_sr, sigma=bw.ppl, edge=TRUE, kernel="gaussian") 
+
+kde_listings_2021_ppl <- density(listings_2021_ppp, sigma=bw.ppl, edge=TRUE, kernel="gaussian") 
+
+```
+
+
+##### 8.1.1.3.2 Convert KDE output into grid object
+
+- For suitability of mapping.
+- grid.arrange() of gridExtra package to arrange the grids side-by-side
+
+```{r echo=TRUE, eval=TRUE}
+gridded_kde_listings_2019_ppl_pr <- as.SpatialGridDataFrame.im(kde_listings_2019_ppl_pr)
+gridded_kde_listings_2019_ppl_ea <- as.SpatialGridDataFrame.im(kde_listings_2019_ppl_ea)
+gridded_kde_listings_2019_ppl_sr <- as.SpatialGridDataFrame.im(kde_listings_2019_ppl_sr)
+
+gridded_kde_listings_2021_ppl_pr <- as.SpatialGridDataFrame.im(kde_listings_2021_ppl_pr)
+gridded_kde_listings_2021_ppl_ea <- as.SpatialGridDataFrame.im(kde_listings_2021_ppl_ea)
+gridded_kde_listings_2021_ppl_sr <- as.SpatialGridDataFrame.im(kde_listings_2021_ppl_sr)
+
+gridded_kde_listings_2021_ppl <- as.SpatialGridDataFrame.im(kde_listings_2021_ppl)
+
+```
+
+##### 8.1.1.3.3 Convert gridded output into raster
+
+- Use *raster()* of **raster** package to convert the gridded kernel density objects to RasterLayer object. 
+- Print 1 raster object as an example
+
+```{r echo=TRUE, eval=TRUE}
+kde_listings_2019_ppl_raster_pr <- raster(gridded_kde_listings_2019_ppl_pr)
+kde_listings_2019_ppl_raster_ea <- raster(gridded_kde_listings_2019_ppl_ea)
+kde_listings_2019_ppl_raster_sr <- raster(gridded_kde_listings_2019_ppl_sr)
+
+kde_listings_2021_ppl_raster_pr <- raster(gridded_kde_listings_2021_ppl_pr)
+kde_listings_2021_ppl_raster_ea <- raster(gridded_kde_listings_2021_ppl_ea)
+kde_listings_2021_ppl_raster_sr <- raster(gridded_kde_listings_2021_ppl_sr)
+
+kde_listings_2021_ppl_raster <- raster(gridded_kde_listings_2021_ppl)
+
+kde_listings_2019_ppl_raster_pr
+```
+
+From the results above,
+
+- The CRS is NA, hence we have to assign a projection system to it.
+
+##### 8.1.1.3.4 Assign projection systems
+
+- Assign the epsg code of 3414
+
+```{r echo=TRUE, eval=TRUE}
+projection(kde_listings_2019_ppl_raster_pr) <- CRS("+init=EPSG:3414")
+projection(kde_listings_2019_ppl_raster_ea) <- CRS("+init=EPSG:3414")
+projection(kde_listings_2019_ppl_raster_sr) <- CRS("+init=EPSG:3414")
+
+projection(kde_listings_2021_ppl_raster_pr) <- CRS("+init=EPSG:3414")
+projection(kde_listings_2021_ppl_raster_ea) <- CRS("+init=EPSG:3414")
+projection(kde_listings_2021_ppl_raster_sr) <- CRS("+init=EPSG:3414")
+
+projection(kde_listings_2021_ppl_raster) <- CRS("+init=EPSG:3414")
+
+```
+
