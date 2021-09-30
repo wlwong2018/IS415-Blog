@@ -870,3 +870,71 @@ Results above show that:
 - There is a sign that the marked spatial point events are not spatially independent at certain distances for all plots.
 - However, a hypothesis test is still required to confirm this observation statistically.
 
+
+#### 7.2.3.2 Perform CSR test on Cross L-Function
+
+- The hypothesis and test are as follows:
+
+    + Ho = The distribution of Airbnb listings in 2019 and Hotels/Tourist Attractions/MRT services are spatially independent.
+    + H1 = The distribution of Airbnb listings in 2019 and hotels are **NOT** spatially independent.
+    
+- The null hypothesis will be rejected if p-value is smaller than alpha value of 0.1 (i.e. at 90% confident interval). (this applies to all of the above points)
+
+
+#### 7.2.3.3 Monte Carlo test with Cross L-Function
+
+- *envelope()* of **spatstat** package is used to perform CSR test
+- A total of 100 simulations will be ran. Using **spatstat** package, the end is always 1 less as the 1st simulation is 0 (and not 1), hence in the argument *nsim*, it is defined as 99 and not 100. 
+- A global *set.seed()* is used to ensure that the same output is computed each time the code is being ran. (*set.seed(1234)* is being used and it is placed at the top of the .RMD file, which cannot be seen here.)
+
+```{r echo=TRUE, eval=TRUE}
+par(mfrow=c(2,2))
+
+dc_listings_2019_hotels_Lcross.csr <- envelope(all_downtowncore_ppp, Lcross,
+                                               i="dc_2019_mark", j="dc_hotels_mark",
+                                              correction='border', nsim=99)
+
+dc_listings_2019_tourisms_Lcross.csr <- envelope(all_downtowncore_ppp, Lcross,
+                                               i="dc_2019_mark", j="dc_tourisms_mark",
+                                              correction='border', nsim=99)
+
+dc_listings_2019_mrt_Lcross.csr <- envelope(all_downtowncore_ppp, Lcross,
+                                               i="dc_2019_mark", j="dc_mrt_mark",
+                                              correction='border', nsim=99)
+```
+
+#### 7.2.3.4  Plot Cross L-Function
+
+- plot() is used to plot the simulated Cross L-Function
+
+```{r echo=TRUE, eval=TRUE, fig.width=12, fig.height=8}
+par(mfrow=c(2,2))
+
+plot(dc_listings_2019_hotels_Lcross.csr, . -r ~ r, xlab="distance(m)")
+plot(dc_listings_2019_tourisms_Lcross.csr, . -r ~ r, xlab="distance(m)")
+plot(dc_listings_2019_mrt_Lcross.csr, . -r ~ r, xlab="distance(m)")
+
+```
+
+Results above show that:
+
+- Red line represents the theoretical curve, the black line represents the observed curve and the grey shaded area represents the envelope derived based on the simulation.
+
+- For Airbnb listings 2019 vs Hotels
+
+    + From about **50 to 150m**, it can be observed that the black line is not only above the red line, it is also above the envelope.  This shows signs of significant cluster pattern from the 50 to 150m mark. Also, since it is above the envelope, we have enough statistical evidence to **reject the null hypothesis** at 90% confidence interval.
+    + After the **150m mark**, the black line is below the red line and this shows signs of regular pattern. However, we can only say that it shows sign of significant regular pattern after the 150m mark as this is the part where the black line is below the envelope. Since it is below the envelope, we have enough statistical evidence to **reject the null hypothesis** at 90% confidence interval.
+    + To summarise, for both distances i.e.50 to 150m and after the 150m mark, are NOT spatially independent but from **50 to 150m**, it has **significant cluster pattern** while after the **150m mark**, it has **significant regular pattern**.
+
+- For Airbnb listings 2019 vs Tourism
+
+    + The black line is below the red line which shows signs of regular pattern. But it is only significant for ditances **after 250m**.
+    + Hence, only for distances **after 250m**, we have enough statistical evidence to **reject the null hypothesis** at 90% confidence interval. We can hence infer that it is NOT spatially independent and for certain distances and has **significant regular patterns.**
+
+- For Airbnb listings 2019 vs MRT
+
+    + The black line is above the red line which shows signs of cluster pattern. But it is only significant at from **160m to 220m**.
+    + Hence, only from the distance of **160m to 220m**, we have have enough statistical evidence and we **will reject the null hypothesis** at 90% confidence interval. We can hence infer that it is NOT spatially independent for certain distances.
+
+
+
