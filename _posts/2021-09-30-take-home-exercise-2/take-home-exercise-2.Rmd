@@ -1228,3 +1228,61 @@ tmap_mode('plot')
 - With kernel density maps however, even though we do see that the changes in distribution of Private Room, Entire home/apt and Shared Room in 2019 and 2021, we cannot conclude for sure that the distribution of these Airbnb listings room types are impacted by COVID-19. 
 - Hence, we need to employ **Second-order Spatial Point Patterns Analysis** to draw statistical conclusions. 
 
+
+
+## 8.2 Second Order Spatial Point Patterns Analysis 
+
+#### 8.2.1 Combine SpatialPoints objects with owin objects
+
+```{r echo=TRUE, eval=TRUE}
+
+dc_2019_pr <- listings_2019_ppp_pr[downtowncore_owin]
+dc_2021_pr <- listings_2021_ppp_pr[downtowncore_owin]
+
+dc_2019_ea <- listings_2019_ppp_ea[downtowncore_owin]
+dc_2021_ea <- listings_2021_ppp_ea[downtowncore_owin]
+
+dc_2019_sr <- listings_2019_ppp_sr[downtowncore_owin]
+dc_2021_sr <- listings_2021_ppp_sr[downtowncore_owin]
+
+```
+
+
+### 8.2.2 Point Patterns Analysis: L-Function
+
+- Explanation for using L-Function is similar to Section A.
+
+#### 8.2.2.1 Compute L-Function Estimation
+
+- Create a function for computing L-Function Estimation
+
+    + *Lest()* of **spatstat** package is used to compute the L-Function estimation.
+    + *plot()* to visualise the relationship.
+    
+- Finally, the function created is being called to plot the graphs.
+
+```{r echo=TRUE, eval=TRUE, fig.width=12, fig.height=8}
+l_test <- function(data, title) {
+  compute <- Lest(data, correction='Ripley')
+  
+  plot(compute, . - r ~ r, xlab="d", ylab="L(d)-r", main=title)
+}
+
+par(mfrow=c(3,2))
+l_test(data = dc_2019_pr, title="Listings 2019 PR Lcross")
+l_test(data = dc_2021_pr, title="Listings 2021 PR Lcross")
+
+l_test(data = dc_2019_ea, title="Listings 2019 EA Lcross")
+l_test(data = dc_2021_ea, title="Listings 2019 EA Lcross")
+
+l_test(data = dc_2019_sr, title="Listings 2019 SR Lcross")
+l_test(data = dc_2021_sr, title="Listings 2019 SR Lcross")
+
+
+```
+
+Results above show that:
+
+- There is a sign that the marked spatial point events are not randomly distributed at certain distances for all plots except for Shared Room in 2021.
+- However, a hypothesis test is still required to confirm this observation statistically.
+
