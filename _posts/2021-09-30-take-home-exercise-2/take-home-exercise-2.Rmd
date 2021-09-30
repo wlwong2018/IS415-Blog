@@ -514,3 +514,80 @@ listings_2021_ppp.km <- rescale(listings_2021_ppp, 1000, "km")
 
 
 
+# 7 Section A: Airbnb Distribution in 2019
+
+This section is to investigate if the distribution of Airbnb listings are affected by location factors such as near to existing hotels, MRT services and tourist attractions. For the purpose of this analysis, Airbnb listings in June 2019 are used. To determine the objective, we will first compute and plot **Kernel Density Estimation maps** then confirm the insights found by using **Second-Order Spatial Point Patterns Analysis** to draw statistical conclusions.
+
+
+## 7.1 Exploratory Spatial Data Analysis
+
+In this section, we will describe the way in which the expected value of the spatial point patterns varies across space such as the intensity of the spatial point patterns. There are a few ways to measure this property such as Kernel Density Estimation, Nearest Neighbours Index and Quadrat Analysis. For the purpose of this analysis however, we will just be implementing **Kernel Density Estimation**. 
+
+### 7.1.1 Kernel Density Estimation
+
+Kernel Density Estimation is a method to compute the intensity of a point distribution and looks at attribute values across X, Y coordinates (value of attribute value). Geographically, X and Y is the location, which is in projected coordinates system.
+
+#### 7.1.1.1 Plot KDE maps using automatic bandwidth method (ppl)
+
+- *density()* of *spatstat** package is used to plot the re-scaled data set and plot the KDE map
+
+- Bandwidth Selection:
+
+    + Baddeley et. (2016) suggested the use of the bw.ppl() algorithm because in their experience, it tends to produce the more appropriate values when the pattern consists predominantly of tight clusters. 
+    + From the ppp objects plotted above, since there are tight clusters, using ppl would be the most suitable choice.
+
+- Smoothing Kernel:
+
+    + Gaussian is the default and it will be used.
+    + It uses a kernel (filter window/moving window) to remove edges and noise from the given data set, such that point events that are located further away will be given less weight. 
+    
+
+- Edge argument:
+
+    + This is a logical value to indicate whether to apply edge correction.
+    + The default is FALSE.
+
+
+##### *bw.ppl*
+
+- A function is created to plot KDE maps using the bandwidth *bw.ppl()*
+- par() is used to arrange the maps in a side-by-side manner
+
+```{r echo=TRUE, eval=TRUE, fig.width=10, fig.height=8}
+kde_ppl <- function(data) {
+    density(data,
+    sigma=bw.ppl,
+    edge=TRUE,
+    kernel="gaussian") 
+}
+
+par(mfrow=c(2,2))
+
+plot(kde_ppl(listings_2019_ppp.km), main = "listings 2019 bw.ppl")
+plot(kde_ppl(hotels_ppp.km), main = "hotels bw.ppl")
+plot(kde_ppl(tourisms_ppp.km), main = "tourism bw.ppl")
+plot(kde_ppl(mrt_ppp.km), main = "mrt bw.ppl")
+
+```
+
+Results above show that: 
+
+- There is a concentrated area for Hotels and Tourism and a few concentrated areas for MRT services. 
+- Listings are generally less concentrated in the same area.
+
+##### Reveal density
+
+- *intensity()* of **spatstat** package is used to reveal the density of Airbnb listings in 2019, Hotels, Tourist Attractions and MRT services.
+
+```{r echo=TRUE, eval=TRUE}
+intensity(listings_2019_ppp.km)
+intensity(hotels_ppp.km)
+intensity(tourisms_ppp.km)
+intensity(mrt_ppp.km)
+
+```
+
+Results above show that:
+
+- Airbnb listings in 2019 have the highest density of 11.07 units per km square, followed by hotels, tourism then MRT services which have a density of 0.56, 0.24 and 0.25 units per km square.
+
