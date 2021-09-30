@@ -117,7 +117,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <!--/radix_placeholder_rmarkdown_metadata-->
   
   <script type="text/json" id="radix-resource-manifest">
-  {"type":"character","attributes":{},"value":["data/aspatial/hotels.csv","data/aspatial/listings_June_2019.csv","data/aspatial/listings_June_2021.csv","data/aspatial/tourism.csv","data/geospatial/CostalOutline.dbf","data/geospatial/CostalOutline.prj","data/geospatial/CostalOutline.sbn","data/geospatial/CostalOutline.sbx","data/geospatial/CostalOutline.shp","data/geospatial/CostalOutline.shx","data/geospatial/MP14_SUBZONE_WEB_PL.dbf","data/geospatial/MP14_SUBZONE_WEB_PL.prj","data/geospatial/MP14_SUBZONE_WEB_PL.sbn","data/geospatial/MP14_SUBZONE_WEB_PL.sbx","data/geospatial/MP14_SUBZONE_WEB_PL.shp","data/geospatial/MP14_SUBZONE_WEB_PL.shp.xml","data/geospatial/MP14_SUBZONE_WEB_PL.shx","data/geospatial/MRTLRTStnPtt.CPG","data/geospatial/MRTLRTStnPtt.dbf","data/geospatial/MRTLRTStnPtt.prj","data/geospatial/MRTLRTStnPtt.sbn","data/geospatial/MRTLRTStnPtt.sbx","data/geospatial/MRTLRTStnPtt.shp","data/geospatial/MRTLRTStnPtt.shx"]}
+  {"type":"character","attributes":{},"value":["data/aspatial/hotels.csv","data/aspatial/listings_June_2019.csv","data/aspatial/listings_June_2021.csv","data/aspatial/tourism.csv","data/geospatial/CostalOutline.dbf","data/geospatial/CostalOutline.prj","data/geospatial/CostalOutline.sbn","data/geospatial/CostalOutline.sbx","data/geospatial/CostalOutline.shp","data/geospatial/CostalOutline.shx","data/geospatial/MP14_SUBZONE_WEB_PL.dbf","data/geospatial/MP14_SUBZONE_WEB_PL.prj","data/geospatial/MP14_SUBZONE_WEB_PL.sbn","data/geospatial/MP14_SUBZONE_WEB_PL.sbx","data/geospatial/MP14_SUBZONE_WEB_PL.shp","data/geospatial/MP14_SUBZONE_WEB_PL.shp.xml","data/geospatial/MP14_SUBZONE_WEB_PL.shx","data/geospatial/MRTLRTStnPtt.CPG","data/geospatial/MRTLRTStnPtt.dbf","data/geospatial/MRTLRTStnPtt.prj","data/geospatial/MRTLRTStnPtt.sbn","data/geospatial/MRTLRTStnPtt.sbx","data/geospatial/MRTLRTStnPtt.shp","data/geospatial/MRTLRTStnPtt.shx","take-home-exercise-2_files/anchor-4.2.2/anchor.min.js","take-home-exercise-2_files/bowser-1.9.3/bowser.min.js","take-home-exercise-2_files/distill-2.2.21/template.v2.js","take-home-exercise-2_files/figure-html5/unnamed-chunk-7-1.png","take-home-exercise-2_files/header-attrs-2.10/header-attrs.js","take-home-exercise-2_files/jquery-1.11.3/jquery.min.js","take-home-exercise-2_files/popper-2.6.0/popper.min.js","take-home-exercise-2_files/tippy-6.2.7/tippy-bundle.umd.min.js","take-home-exercise-2_files/tippy-6.2.7/tippy-light-border.css","take-home-exercise-2_files/tippy-6.2.7/tippy.css","take-home-exercise-2_files/tippy-6.2.7/tippy.umd.min.js","take-home-exercise-2_files/webcomponents-2.0.0/webcomponents.js"]}
   </script>
   <!--radix_placeholder_navigation_in_header-->
 <meta name="distill:offset" content="../.."/>
@@ -2466,7 +2466,449 @@ Hands-on Exercise
 </div>
 
 <div class="d-article">
-<div class="sourceCode" id="cb1"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<h1 id="objectives">1 Objectives</h1>
+<ul>
+<li>To investigate if the distribution of Airbnb listings are affected by location factors such as near to existing hotels, MRT services and tourist attractions.</li>
+<li>To analyse the impact of COVID-19 on Airbnb business in Singapore by comparing Airbnb listings data on June 2019 and June 2021</li>
+</ul>
+<h1 id="dataset">2 Dataset</h1>
+<ul>
+<li>Airbnb listings for June 2019 and June 2021 from Inside Airbnb.</li>
+<li>Hotels, tourist attractions, MRT services and other appropriate geospatial data sets were supposed to be extracted from SLA OneMap Service by using onemapsgapi. However, due to some issues of creating a onemap account, Prof. Kam has kindly provided us with the data in CSV format.</li>
+<li>Coastaloutline is used for binding the Singapore boundary which is also provided by Prof. Kam.</li>
+<li>Sub zones from data.gov.sg</li>
+</ul>
+<h1 id="install-and-load-packages">3 Install and Load Packages</h1>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>packages</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>'tidyverse'</span>, <span class='st'>'sf'</span>, <span class='st'>'tmap'</span>, <span class='st'>'maptools'</span>, <span class='st'>'spatstat'</span>, <span class='st'>'raster'</span>, <span class='st'>'gridExtra'</span><span class='op'>)</span> <span class='co'>#  'sp', 'spNetwork', 'readr', 'dplyr',  , 'ggplot2', 'ggpubr', 'rgdal', 'ggthemes', 'plotly'</span>
+
+<span class='kw'>for</span> <span class='op'>(</span><span class='va'>p</span> <span class='kw'>in</span> <span class='va'>packages</span><span class='op'>)</span><span class='op'>{</span>
+<span class='kw'>if</span><span class='op'>(</span><span class='op'>!</span><span class='kw'><a href='https://rdrr.io/r/base/library.html'>require</a></span><span class='op'>(</span><span class='va'>p</span>, character.only <span class='op'>=</span> <span class='cn'>T</span><span class='op'>)</span><span class='op'>)</span><span class='op'>{</span>
+  <span class='fu'><a href='https://rdrr.io/r/utils/install.packages.html'>install.packages</a></span><span class='op'>(</span><span class='va'>p</span><span class='op'>)</span>
+<span class='op'>}</span>
+  <span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'>p</span>,character.only <span class='op'>=</span> <span class='cn'>T</span><span class='op'>)</span>
+<span class='op'>}</span>
+</code></pre>
+</div>
+</div>
+<p>Explanation on the uses of each package:</p>
+<ul>
+<li><p><strong>tidyverse</strong>: For data import and tidying. It also consist of several other packages specified below.</p>
+<ul>
+<li><strong>readr</strong>: For importing CSV files</li>
+<li><strong>dplyr</strong>: For data manipulation</li>
+<li><strong>ggplot2</strong>: For plotting graphics</li>
+</ul></li>
+<li><p><strong>sf:</strong> For importing and processing of geospatial data such as encoding spatial vector data.</p></li>
+<li><p><strong>tmap:</strong> For plotting interactive maps</p></li>
+<li><p><strong>maptools:</strong> For maanipulating geospatial data</p></li>
+<li><p><strong>spatstat:</strong> For statistical analysis of spatial data.</p></li>
+<li><p><strong>ggpubr:</strong> For arranging tmaps to be side-by-side for easy visualisation</p></li>
+<li><p><strong>raster:</strong> For processing geospatial data to plot KDE maps on OpenStreetMap</p></li>
+<li><p><strong>gridExtra:</strong> For arranging KDE maps when plotted into grid objects</p></li>
+</ul>
+<h1 id="data-import-and-preparation-for-geospatial-dataset">4 Data Import and Preparation for Geospatial Dataset</h1>
+<p>In this section, we have to import and ensure that the geospatial data is a format that we can use to perform analysis. We have to check if it is being assigned the right CRS and code. Also, since we are working in the boundary of Singapore, we have to ensure that it is in SVY21 as well.</p>
+<h2 id="import-geospatial-data-set">4.1 Import geospatial data set</h2>
+<ul>
+<li><em>st_read()</em> of <strong>sf</strong> package to import the geospatial data sets.</li>
+<li>The imported shapefile will be a simple feature Object of sf.</li>
+</ul>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>mrt_sf</span> <span class='op'>&lt;-</span> <span class='fu'>st_read</span><span class='op'>(</span>dsn <span class='op'>=</span> <span class='st'>"data/geospatial"</span>, layer <span class='op'>=</span> <span class='st'>"MRTLRTStnPtt"</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>Reading layer `MRTLRTStnPtt&#39; from data source 
+  `C:\wlwong2018\IS415 Blog\_posts\2021-09-30-take-home-exercise-2\data\geospatial&#39; 
+  using driver `ESRI Shapefile&#39;
+Simple feature collection with 185 features and 3 fields
+Geometry type: POINT
+Dimension:     XY
+Bounding box:  xmin: 6138.311 ymin: 27555.06 xmax: 45254.86 ymax: 47854.2
+Projected CRS: SVY21</code></pre>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>mpsz_sf</span> <span class='op'>&lt;-</span> <span class='fu'>st_read</span><span class='op'>(</span>dsn <span class='op'>=</span> <span class='st'>"data/geospatial"</span>, layer <span class='op'>=</span> <span class='st'>"MP14_SUBZONE_WEB_PL"</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>Reading layer `MP14_SUBZONE_WEB_PL&#39; from data source 
+  `C:\wlwong2018\IS415 Blog\_posts\2021-09-30-take-home-exercise-2\data\geospatial&#39; 
+  using driver `ESRI Shapefile&#39;
+Simple feature collection with 323 features and 15 fields
+Geometry type: MULTIPOLYGON
+Dimension:     XY
+Bounding box:  xmin: 2667.538 ymin: 15748.72 xmax: 56396.44 ymax: 50256.33
+Projected CRS: SVY21</code></pre>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>sg_sf</span> <span class='op'>&lt;-</span> <span class='fu'>st_read</span><span class='op'>(</span>dsn <span class='op'>=</span> <span class='st'>"data/geospatial"</span>, layer<span class='op'>=</span><span class='st'>"CostalOutline"</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>Reading layer `CostalOutline&#39; from data source 
+  `C:\wlwong2018\IS415 Blog\_posts\2021-09-30-take-home-exercise-2\data\geospatial&#39; 
+  using driver `ESRI Shapefile&#39;
+Simple feature collection with 60 features and 4 fields
+Geometry type: POLYGON
+Dimension:     XY
+Bounding box:  xmin: 2663.926 ymin: 16357.98 xmax: 56047.79 ymax: 50244.03
+Projected CRS: SVY21</code></pre>
+</div>
+<p>From the results above:</p>
+<ul>
+<li>The geometry type is point, multipolygon and polygon for the mrt, mpsz and sg data set.</li>
+<li>The assigned CRS for all is SVY21.</li>
+</ul>
+<h2 id="check-crs">4.2 Check CRS</h2>
+<ul>
+<li>Check CRS using <em>st_crs()</em> of <strong>sf</strong> package.</li>
+<li>Singapore is using SVY21.</li>
+</ul>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>st_crs</span><span class='op'>(</span><span class='va'>mrt_sf</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>Coordinate Reference System:
+  User input: SVY21 
+  wkt:
+PROJCRS[&quot;SVY21&quot;,
+    BASEGEOGCRS[&quot;SVY21[WGS84]&quot;,
+        DATUM[&quot;World Geodetic System 1984&quot;,
+            ELLIPSOID[&quot;WGS 84&quot;,6378137,298.257223563,
+                LENGTHUNIT[&quot;metre&quot;,1]],
+            ID[&quot;EPSG&quot;,6326]],
+        PRIMEM[&quot;Greenwich&quot;,0,
+            ANGLEUNIT[&quot;Degree&quot;,0.0174532925199433]]],
+    CONVERSION[&quot;unnamed&quot;,
+        METHOD[&quot;Transverse Mercator&quot;,
+            ID[&quot;EPSG&quot;,9807]],
+        PARAMETER[&quot;Latitude of natural origin&quot;,1.36666666666667,
+            ANGLEUNIT[&quot;Degree&quot;,0.0174532925199433],
+            ID[&quot;EPSG&quot;,8801]],
+        PARAMETER[&quot;Longitude of natural origin&quot;,103.833333333333,
+            ANGLEUNIT[&quot;Degree&quot;,0.0174532925199433],
+            ID[&quot;EPSG&quot;,8802]],
+        PARAMETER[&quot;Scale factor at natural origin&quot;,1,
+            SCALEUNIT[&quot;unity&quot;,1],
+            ID[&quot;EPSG&quot;,8805]],
+        PARAMETER[&quot;False easting&quot;,28001.642,
+            LENGTHUNIT[&quot;metre&quot;,1],
+            ID[&quot;EPSG&quot;,8806]],
+        PARAMETER[&quot;False northing&quot;,38744.572,
+            LENGTHUNIT[&quot;metre&quot;,1],
+            ID[&quot;EPSG&quot;,8807]]],
+    CS[Cartesian,2],
+        AXIS[&quot;(E)&quot;,east,
+            ORDER[1],
+            LENGTHUNIT[&quot;metre&quot;,1,
+                ID[&quot;EPSG&quot;,9001]]],
+        AXIS[&quot;(N)&quot;,north,
+            ORDER[2],
+            LENGTHUNIT[&quot;metre&quot;,1,
+                ID[&quot;EPSG&quot;,9001]]]]</code></pre>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>st_crs</span><span class='op'>(</span><span class='va'>mpsz_sf</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>Coordinate Reference System:
+  User input: SVY21 
+  wkt:
+PROJCRS[&quot;SVY21&quot;,
+    BASEGEOGCRS[&quot;SVY21[WGS84]&quot;,
+        DATUM[&quot;World Geodetic System 1984&quot;,
+            ELLIPSOID[&quot;WGS 84&quot;,6378137,298.257223563,
+                LENGTHUNIT[&quot;metre&quot;,1]],
+            ID[&quot;EPSG&quot;,6326]],
+        PRIMEM[&quot;Greenwich&quot;,0,
+            ANGLEUNIT[&quot;Degree&quot;,0.0174532925199433]]],
+    CONVERSION[&quot;unnamed&quot;,
+        METHOD[&quot;Transverse Mercator&quot;,
+            ID[&quot;EPSG&quot;,9807]],
+        PARAMETER[&quot;Latitude of natural origin&quot;,1.36666666666667,
+            ANGLEUNIT[&quot;Degree&quot;,0.0174532925199433],
+            ID[&quot;EPSG&quot;,8801]],
+        PARAMETER[&quot;Longitude of natural origin&quot;,103.833333333333,
+            ANGLEUNIT[&quot;Degree&quot;,0.0174532925199433],
+            ID[&quot;EPSG&quot;,8802]],
+        PARAMETER[&quot;Scale factor at natural origin&quot;,1,
+            SCALEUNIT[&quot;unity&quot;,1],
+            ID[&quot;EPSG&quot;,8805]],
+        PARAMETER[&quot;False easting&quot;,28001.642,
+            LENGTHUNIT[&quot;metre&quot;,1],
+            ID[&quot;EPSG&quot;,8806]],
+        PARAMETER[&quot;False northing&quot;,38744.572,
+            LENGTHUNIT[&quot;metre&quot;,1],
+            ID[&quot;EPSG&quot;,8807]]],
+    CS[Cartesian,2],
+        AXIS[&quot;(E)&quot;,east,
+            ORDER[1],
+            LENGTHUNIT[&quot;metre&quot;,1,
+                ID[&quot;EPSG&quot;,9001]]],
+        AXIS[&quot;(N)&quot;,north,
+            ORDER[2],
+            LENGTHUNIT[&quot;metre&quot;,1,
+                ID[&quot;EPSG&quot;,9001]]]]</code></pre>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>st_crs</span><span class='op'>(</span><span class='va'>sg_sf</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>Coordinate Reference System:
+  User input: SVY21 
+  wkt:
+PROJCRS[&quot;SVY21&quot;,
+    BASEGEOGCRS[&quot;SVY21[WGS84]&quot;,
+        DATUM[&quot;World Geodetic System 1984&quot;,
+            ELLIPSOID[&quot;WGS 84&quot;,6378137,298.257223563,
+                LENGTHUNIT[&quot;metre&quot;,1]],
+            ID[&quot;EPSG&quot;,6326]],
+        PRIMEM[&quot;Greenwich&quot;,0,
+            ANGLEUNIT[&quot;Degree&quot;,0.0174532925199433]]],
+    CONVERSION[&quot;unnamed&quot;,
+        METHOD[&quot;Transverse Mercator&quot;,
+            ID[&quot;EPSG&quot;,9807]],
+        PARAMETER[&quot;Latitude of natural origin&quot;,1.36666666666667,
+            ANGLEUNIT[&quot;Degree&quot;,0.0174532925199433],
+            ID[&quot;EPSG&quot;,8801]],
+        PARAMETER[&quot;Longitude of natural origin&quot;,103.833333333333,
+            ANGLEUNIT[&quot;Degree&quot;,0.0174532925199433],
+            ID[&quot;EPSG&quot;,8802]],
+        PARAMETER[&quot;Scale factor at natural origin&quot;,1,
+            SCALEUNIT[&quot;unity&quot;,1],
+            ID[&quot;EPSG&quot;,8805]],
+        PARAMETER[&quot;False easting&quot;,28001.642,
+            LENGTHUNIT[&quot;metre&quot;,1],
+            ID[&quot;EPSG&quot;,8806]],
+        PARAMETER[&quot;False northing&quot;,38744.572,
+            LENGTHUNIT[&quot;metre&quot;,1],
+            ID[&quot;EPSG&quot;,8807]]],
+    CS[Cartesian,2],
+        AXIS[&quot;(E)&quot;,east,
+            ORDER[1],
+            LENGTHUNIT[&quot;metre&quot;,1,
+                ID[&quot;EPSG&quot;,9001]]],
+        AXIS[&quot;(N)&quot;,north,
+            ORDER[2],
+            LENGTHUNIT[&quot;metre&quot;,1,
+                ID[&quot;EPSG&quot;,9001]]]]</code></pre>
+</div>
+<p>From the results above:</p>
+<ul>
+<li>Referencing from <em>(<a href="https://epsg.io/3414" class="uri">https://epsg.io/3414</a>)</em>, the EPSG code of SVY21 is supposed to be 3414.</li>
+<li>The EPSG code shown is 9001 which is incorrect.</li>
+</ul>
+<h2 id="assign-crs-and-check-again">4.3 Assign CRS and check again</h2>
+<ul>
+<li><em>st_set_crs()</em> of <strong>sf</strong> package to assign correct EPSG code to SpatialPointsDataFrame.</li>
+<li>Do not have to use <em>st_transform()</em> since it is already in SVY21.</li>
+<li><em>st_crs</em> of <strong>sf</strong> package to check the CRS again.</li>
+</ul>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>mrt_sf</span> <span class='op'>&lt;-</span> <span class='fu'>st_set_crs</span><span class='op'>(</span><span class='va'>mrt_sf</span>, <span class='fl'>3414</span><span class='op'>)</span>
+<span class='va'>mpsz_sf</span> <span class='op'>&lt;-</span> <span class='fu'>st_set_crs</span><span class='op'>(</span><span class='va'>mpsz_sf</span>, <span class='fl'>3414</span><span class='op'>)</span>
+<span class='va'>sg_sf</span> <span class='op'>&lt;-</span> <span class='fu'>st_set_crs</span><span class='op'>(</span><span class='va'>sg_sf</span>, <span class='fl'>3414</span><span class='op'>)</span>
+
+<span class='fu'>st_crs</span><span class='op'>(</span><span class='va'>mrt_sf</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>Coordinate Reference System:
+  User input: EPSG:3414 
+  wkt:
+PROJCRS[&quot;SVY21 / Singapore TM&quot;,
+    BASEGEOGCRS[&quot;SVY21&quot;,
+        DATUM[&quot;SVY21&quot;,
+            ELLIPSOID[&quot;WGS 84&quot;,6378137,298.257223563,
+                LENGTHUNIT[&quot;metre&quot;,1]]],
+        PRIMEM[&quot;Greenwich&quot;,0,
+            ANGLEUNIT[&quot;degree&quot;,0.0174532925199433]],
+        ID[&quot;EPSG&quot;,4757]],
+    CONVERSION[&quot;Singapore Transverse Mercator&quot;,
+        METHOD[&quot;Transverse Mercator&quot;,
+            ID[&quot;EPSG&quot;,9807]],
+        PARAMETER[&quot;Latitude of natural origin&quot;,1.36666666666667,
+            ANGLEUNIT[&quot;degree&quot;,0.0174532925199433],
+            ID[&quot;EPSG&quot;,8801]],
+        PARAMETER[&quot;Longitude of natural origin&quot;,103.833333333333,
+            ANGLEUNIT[&quot;degree&quot;,0.0174532925199433],
+            ID[&quot;EPSG&quot;,8802]],
+        PARAMETER[&quot;Scale factor at natural origin&quot;,1,
+            SCALEUNIT[&quot;unity&quot;,1],
+            ID[&quot;EPSG&quot;,8805]],
+        PARAMETER[&quot;False easting&quot;,28001.642,
+            LENGTHUNIT[&quot;metre&quot;,1],
+            ID[&quot;EPSG&quot;,8806]],
+        PARAMETER[&quot;False northing&quot;,38744.572,
+            LENGTHUNIT[&quot;metre&quot;,1],
+            ID[&quot;EPSG&quot;,8807]]],
+    CS[Cartesian,2],
+        AXIS[&quot;northing (N)&quot;,north,
+            ORDER[1],
+            LENGTHUNIT[&quot;metre&quot;,1]],
+        AXIS[&quot;easting (E)&quot;,east,
+            ORDER[2],
+            LENGTHUNIT[&quot;metre&quot;,1]],
+    USAGE[
+        SCOPE[&quot;Cadastre, engineering survey, topographic mapping.&quot;],
+        AREA[&quot;Singapore - onshore and offshore.&quot;],
+        BBOX[1.13,103.59,1.47,104.07]],
+    ID[&quot;EPSG&quot;,3414]]</code></pre>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>st_crs</span><span class='op'>(</span><span class='va'>mpsz_sf</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>Coordinate Reference System:
+  User input: EPSG:3414 
+  wkt:
+PROJCRS[&quot;SVY21 / Singapore TM&quot;,
+    BASEGEOGCRS[&quot;SVY21&quot;,
+        DATUM[&quot;SVY21&quot;,
+            ELLIPSOID[&quot;WGS 84&quot;,6378137,298.257223563,
+                LENGTHUNIT[&quot;metre&quot;,1]]],
+        PRIMEM[&quot;Greenwich&quot;,0,
+            ANGLEUNIT[&quot;degree&quot;,0.0174532925199433]],
+        ID[&quot;EPSG&quot;,4757]],
+    CONVERSION[&quot;Singapore Transverse Mercator&quot;,
+        METHOD[&quot;Transverse Mercator&quot;,
+            ID[&quot;EPSG&quot;,9807]],
+        PARAMETER[&quot;Latitude of natural origin&quot;,1.36666666666667,
+            ANGLEUNIT[&quot;degree&quot;,0.0174532925199433],
+            ID[&quot;EPSG&quot;,8801]],
+        PARAMETER[&quot;Longitude of natural origin&quot;,103.833333333333,
+            ANGLEUNIT[&quot;degree&quot;,0.0174532925199433],
+            ID[&quot;EPSG&quot;,8802]],
+        PARAMETER[&quot;Scale factor at natural origin&quot;,1,
+            SCALEUNIT[&quot;unity&quot;,1],
+            ID[&quot;EPSG&quot;,8805]],
+        PARAMETER[&quot;False easting&quot;,28001.642,
+            LENGTHUNIT[&quot;metre&quot;,1],
+            ID[&quot;EPSG&quot;,8806]],
+        PARAMETER[&quot;False northing&quot;,38744.572,
+            LENGTHUNIT[&quot;metre&quot;,1],
+            ID[&quot;EPSG&quot;,8807]]],
+    CS[Cartesian,2],
+        AXIS[&quot;northing (N)&quot;,north,
+            ORDER[1],
+            LENGTHUNIT[&quot;metre&quot;,1]],
+        AXIS[&quot;easting (E)&quot;,east,
+            ORDER[2],
+            LENGTHUNIT[&quot;metre&quot;,1]],
+    USAGE[
+        SCOPE[&quot;Cadastre, engineering survey, topographic mapping.&quot;],
+        AREA[&quot;Singapore - onshore and offshore.&quot;],
+        BBOX[1.13,103.59,1.47,104.07]],
+    ID[&quot;EPSG&quot;,3414]]</code></pre>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>st_crs</span><span class='op'>(</span><span class='va'>sg_sf</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>Coordinate Reference System:
+  User input: EPSG:3414 
+  wkt:
+PROJCRS[&quot;SVY21 / Singapore TM&quot;,
+    BASEGEOGCRS[&quot;SVY21&quot;,
+        DATUM[&quot;SVY21&quot;,
+            ELLIPSOID[&quot;WGS 84&quot;,6378137,298.257223563,
+                LENGTHUNIT[&quot;metre&quot;,1]]],
+        PRIMEM[&quot;Greenwich&quot;,0,
+            ANGLEUNIT[&quot;degree&quot;,0.0174532925199433]],
+        ID[&quot;EPSG&quot;,4757]],
+    CONVERSION[&quot;Singapore Transverse Mercator&quot;,
+        METHOD[&quot;Transverse Mercator&quot;,
+            ID[&quot;EPSG&quot;,9807]],
+        PARAMETER[&quot;Latitude of natural origin&quot;,1.36666666666667,
+            ANGLEUNIT[&quot;degree&quot;,0.0174532925199433],
+            ID[&quot;EPSG&quot;,8801]],
+        PARAMETER[&quot;Longitude of natural origin&quot;,103.833333333333,
+            ANGLEUNIT[&quot;degree&quot;,0.0174532925199433],
+            ID[&quot;EPSG&quot;,8802]],
+        PARAMETER[&quot;Scale factor at natural origin&quot;,1,
+            SCALEUNIT[&quot;unity&quot;,1],
+            ID[&quot;EPSG&quot;,8805]],
+        PARAMETER[&quot;False easting&quot;,28001.642,
+            LENGTHUNIT[&quot;metre&quot;,1],
+            ID[&quot;EPSG&quot;,8806]],
+        PARAMETER[&quot;False northing&quot;,38744.572,
+            LENGTHUNIT[&quot;metre&quot;,1],
+            ID[&quot;EPSG&quot;,8807]]],
+    CS[Cartesian,2],
+        AXIS[&quot;northing (N)&quot;,north,
+            ORDER[1],
+            LENGTHUNIT[&quot;metre&quot;,1]],
+        AXIS[&quot;easting (E)&quot;,east,
+            ORDER[2],
+            LENGTHUNIT[&quot;metre&quot;,1]],
+    USAGE[
+        SCOPE[&quot;Cadastre, engineering survey, topographic mapping.&quot;],
+        AREA[&quot;Singapore - onshore and offshore.&quot;],
+        BBOX[1.13,103.59,1.47,104.07]],
+    ID[&quot;EPSG&quot;,3414]]</code></pre>
+</div>
+<h2 id="check-if-geometries-are-valid">4.4 Check if geometries are valid</h2>
+<ul>
+<li><em>st_is_valid()</em> is used to check for any invalid geometries.</li>
+</ul>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/which.html'>which</a></span><span class='op'>(</span><span class='fu'>st_is_valid</span><span class='op'>(</span><span class='va'>mrt_sf</span><span class='op'>)</span> <span class='op'>==</span> <span class='cn'>FALSE</span><span class='op'>)</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>[1] 0</code></pre>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/which.html'>which</a></span><span class='op'>(</span><span class='fu'>st_is_valid</span><span class='op'>(</span><span class='va'>mpsz_sf</span><span class='op'>)</span> <span class='op'>==</span> <span class='cn'>FALSE</span><span class='op'>)</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>[1] 9</code></pre>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/which.html'>which</a></span><span class='op'>(</span><span class='fu'>st_is_valid</span><span class='op'>(</span><span class='va'>sg_sf</span><span class='op'>)</span> <span class='op'>==</span> <span class='cn'>FALSE</span><span class='op'>)</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>[1] 1</code></pre>
+</div>
+<p>From the results above:</p>
+<ul>
+<li>There are 0, 9 and 1 invalid geometries for mrt, mpsz and sg respectively</li>
+</ul>
+<h2 id="handle-the-invalid-geometries-and-check-again">4.5 Handle the invalid geometries and check again</h2>
+<ul>
+<li><em>st_make_valid()</em> to make the geometries valid for the mpsz and sg data set only since MRT has no invalid geometries</li>
+</ul>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>mpsz_sf</span> <span class='op'>&lt;-</span> <span class='fu'>st_make_valid</span><span class='op'>(</span><span class='va'>mpsz_sf</span><span class='op'>)</span>
+<span class='va'>sg_sf</span> <span class='op'>&lt;-</span> <span class='fu'>st_make_valid</span><span class='op'>(</span><span class='va'>sg_sf</span><span class='op'>)</span>
+
+<span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/which.html'>which</a></span><span class='op'>(</span><span class='fu'>st_is_valid</span><span class='op'>(</span><span class='va'>mpsz_sf</span><span class='op'>)</span> <span class='op'>==</span> <span class='cn'>FALSE</span><span class='op'>)</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>[1] 0</code></pre>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/which.html'>which</a></span><span class='op'>(</span><span class='fu'>st_is_valid</span><span class='op'>(</span><span class='va'>sg_sf</span><span class='op'>)</span> <span class='op'>==</span> <span class='cn'>FALSE</span><span class='op'>)</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>[1] 0</code></pre>
+</div>
+<p>Result above show that:</p>
+<ul>
+<li>There are no longer any invalid geometries</li>
+</ul>
+<h2 id="visualise-the-mrt-services-on-the-singapore-map">4.6 Visualise the MRT services on the Singapore map</h2>
+<ul>
+<li>It is a good practice to visualise the geospatial data before continuing with the other steps.</li>
+<li><em>tmap_mode()</em> of <strong>tmap</strong> package is used to visualise the geospatial data with high cartographic quality and interactive manner.</li>
+</ul>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>tm_shape</span><span class='op'>(</span><span class='va'>sg_sf</span><span class='op'>)</span> <span class='op'>+</span>
+  <span class='fu'>tm_polygons</span><span class='op'>(</span><span class='op'>)</span> <span class='op'>+</span>
+<span class='fu'>tm_shape</span><span class='op'>(</span><span class='va'>mpsz_sf</span><span class='op'>)</span> <span class='op'>+</span>
+  <span class='fu'>tm_polygons</span><span class='op'>(</span><span class='op'>)</span> <span class='op'>+</span>
+<span class='fu'>tm_shape</span><span class='op'>(</span><span class='va'>mrt_sf</span><span class='op'>)</span> <span class='op'>+</span>
+  <span class='fu'>tm_dots</span><span class='op'>(</span>col<span class='op'>=</span><span class='st'>"blue"</span><span class='op'>)</span>
+</code></pre>
+</div>
+<p><img src="take-home-exercise-2_files/figure-html5/unnamed-chunk-7-1.png" width="624" /></p>
+</div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->
 </div>

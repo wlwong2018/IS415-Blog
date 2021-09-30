@@ -18,5 +18,154 @@ set.seed(1234)
 ```
 
 
+# 1 Objectives
+
+- To investigate if the distribution of Airbnb listings are affected by location factors such as near to existing hotels, MRT services and tourist attractions. 
+- To analyse the impact of COVID-19 on Airbnb business in Singapore by comparing Airbnb listings data on June 2019 and June 2021
+
+# 2 Dataset
+
+- Airbnb listings for June 2019 and June 2021 from Inside Airbnb.
+- Hotels, tourist attractions, MRT services and other appropriate geospatial data sets were supposed to be extracted from SLA OneMap Service by using onemapsgapi. However, due to some issues of creating a onemap account, Prof. Kam has kindly provided us with the data in CSV format. 
+- Coastaloutline is used for binding the Singapore boundary which is also provided by Prof. Kam. 
+- Sub zones from data.gov.sg 
+
+# 3 Install and Load Packages
+
+```{r echo=TRUE, eval=TRUE}
+packages = c('tidyverse', 'sf', 'tmap', 'maptools', 'spatstat', 'raster', 'gridExtra') #  'sp', 'spNetwork', 'readr', 'dplyr',  , 'ggplot2', 'ggpubr', 'rgdal', 'ggthemes', 'plotly'
+
+for (p in packages){
+if(!require(p, character.only = T)){
+  install.packages(p)
+}
+  library(p,character.only = T)
+}
+```
+
+Explanation on the uses of each package:
+
+- **tidyverse**: For data import and tidying. It also consist of several other packages specified below. 
+
+    + **readr**: For importing CSV files
+    + **dplyr**: For data manipulation
+    + **ggplot2**: For plotting graphics
+    
+- **sf:** For importing and processing of geospatial data such as encoding spatial vector data.
+    
+- **tmap:** For plotting interactive maps
+
+- **maptools:** For maanipulating geospatial data
+
+- **spatstat:** For statistical analysis of spatial data.
+
+- **ggpubr:** For arranging tmaps to be side-by-side for easy visualisation
+    
+- **raster:** For processing geospatial data to plot KDE maps on OpenStreetMap
+    
+- **gridExtra:** For arranging KDE maps when plotted into grid objects
+
+# 4 Data Import and Preparation for Geospatial Dataset
+
+In this section, we have to import and ensure that the geospatial data is a format that we can use to perform analysis. We have to check if it is being assigned the right CRS and code. Also, since we are working in the boundary of Singapore, we have to ensure that it is in SVY21 as well. 
+
+## 4.1 Import geospatial data set
+
+- *st_read()* of **sf** package to import the geospatial data sets.
+- The imported shapefile will be a simple feature Object of sf.
+
+```{r echo=TRUE, eval=TRUE}
+mrt_sf <- st_read(dsn = "data/geospatial", layer = "MRTLRTStnPtt")
+mpsz_sf <- st_read(dsn = "data/geospatial", layer = "MP14_SUBZONE_WEB_PL")
+sg_sf <- st_read(dsn = "data/geospatial", layer="CostalOutline")
+```
+
+From the results above: 
+
+- The geometry type is point, multipolygon and polygon for the mrt, mpsz and sg data set.
+- The assigned CRS for all is SVY21.
+
+## 4.2 Check CRS
+
+- Check CRS using *st_crs()* of **sf** package.
+- Singapore is using SVY21. 
+
+```{r echo=TRUE, eval=TRUE}
+st_crs(mrt_sf)
+st_crs(mpsz_sf)
+st_crs(sg_sf)
+
+```
+
+From the results above:
+
+- Referencing from *(https://epsg.io/3414)*, the EPSG code of SVY21 is supposed to be 3414.
+- The EPSG code shown is 9001 which is incorrect. 
+
+## 4.3 Assign CRS and check again
+
+- *st_set_crs()* of **sf** package to assign correct EPSG code to SpatialPointsDataFrame.
+- Do not have to use *st_transform()* since it is already in SVY21. 
+- *st_crs* of **sf** package to check the CRS again. 
+
+```{r echo=TRUE, eval=TRUE}
+mrt_sf <- st_set_crs(mrt_sf, 3414)
+mpsz_sf <- st_set_crs(mpsz_sf, 3414)
+sg_sf <- st_set_crs(sg_sf, 3414)
+
+st_crs(mrt_sf)
+st_crs(mpsz_sf)
+st_crs(sg_sf)
+
+```
+
+## 4.4 Check if geometries are valid
+
+- *st_is_valid()* is used to check for any invalid geometries.
+
+```{r echo=TRUE, eval=TRUE}
+length(which(st_is_valid(mrt_sf) == FALSE))
+length(which(st_is_valid(mpsz_sf) == FALSE))
+length(which(st_is_valid(sg_sf) == FALSE))
+
+```
+
+From the results above: 
+
+- There are 0, 9 and 1 invalid geometries for mrt, mpsz and sg respectively
+
+## 4.5 Handle the invalid geometries and check again
+
+- *st_make_valid()* to make the geometries valid for the mpsz and sg data set only since MRT has no invalid geometries
+
+```{r echo=TRUE, eval=TRUE}
+mpsz_sf <- st_make_valid(mpsz_sf)
+sg_sf <- st_make_valid(sg_sf)
+
+length(which(st_is_valid(mpsz_sf) == FALSE))
+length(which(st_is_valid(sg_sf) == FALSE))
+```
+
+Result above show that:
+
+- There are no longer any invalid geometries
+
+## 4.6 Visualise the MRT services on the Singapore map
+
+- It is a good practice to visualise the geospatial data before continuing with the other steps.
+- *tmap_mode()* of **tmap** package is used to visualise the geospatial data with high cartographic quality and interactive manner.
+
+```{r echo=TRUE, eval=TRUE}
+
+tm_shape(sg_sf) +
+  tm_polygons() +
+tm_shape(mpsz_sf) +
+  tm_polygons() +
+tm_shape(mrt_sf) +
+  tm_dots(col="blue")
+
+```
+
+
 
 
