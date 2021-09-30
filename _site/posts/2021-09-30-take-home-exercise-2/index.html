@@ -2369,7 +2369,17 @@ d-appendix d-footnote-list a.footnote-backlink {
 }</style>
 <!--/radix_placeholder_distill-->
   <script src="../../site_libs/header-attrs-2.10/header-attrs.js"></script>
-  <script src="../../site_libs/jquery-1.11.3/jquery.min.js"></script>
+  <script src="../../site_libs/htmlwidgets-1.5.3/htmlwidgets.js"></script>
+  <script src="../../site_libs/jquery-1.12.4/jquery.min.js"></script>
+  <link href="../../site_libs/leaflet-1.3.1/leaflet.css" rel="stylesheet" />
+  <script src="../../site_libs/leaflet-1.3.1/leaflet.js"></script>
+  <link href="../../site_libs/leafletfix-1.0.0/leafletfix.css" rel="stylesheet" />
+  <script src="../../site_libs/proj4-2.6.2/proj4.min.js"></script>
+  <script src="../../site_libs/Proj4Leaflet-1.0.1/proj4leaflet.js"></script>
+  <link href="../../site_libs/rstudio_leaflet-1.3.1/rstudio_leaflet.css" rel="stylesheet" />
+  <script src="../../site_libs/leaflet-binding-2.0.4.1/leaflet.js"></script>
+  <script src="../../site_libs/leaflet-providers-1.9.0/leaflet-providers_1.9.0.js"></script>
+  <script src="../../site_libs/leaflet-providers-plugin-2.0.4.1/leaflet-providers-plugin.js"></script>
   <script src="../../site_libs/popper-2.6.0/popper.min.js"></script>
   <link href="../../site_libs/tippy-6.2.7/tippy.css" rel="stylesheet" />
   <link href="../../site_libs/tippy-6.2.7/tippy-light-border.css" rel="stylesheet" />
@@ -3605,7 +3615,7 @@ Window area = 828622000 square units</code></pre>
 <h1 id="section-a-airbnb-distribution-in-2019">7 Section A: Airbnb Distribution in 2019</h1>
 <p>This section is to investigate if the distribution of Airbnb listings are affected by location factors such as near to existing hotels, MRT services and tourist attractions. For the purpose of this analysis, Airbnb listings in June 2019 are used. To determine the objective, we will first compute and plot <strong>Kernel Density Estimation maps</strong> then confirm the insights found by using <strong>Second-Order Spatial Point Patterns Analysis</strong> to draw statistical conclusions.</p>
 <h2 id="exploratory-spatial-data-analysis">7.1 Exploratory Spatial Data Analysis</h2>
-<p>In this section, we will describe the way in which the expected value of the spatial point patterns varies across space such as the intensity of the spatial point patterns. There are a few ways to measure this property such as Kernel Density Estimation, Nearest Neighbours Index and Quadrat Analysis. For the purpose of this analysis however, we will just be implementing Kernel Density Estimation.</p>
+<p>In this section, we will describe the way in which the expected value of the spatial point patterns varies across space such as the intensity of the spatial point patterns. There are a few ways to measure this property such as Kernel Density Estimation, Nearest Neighbours Index and Quadrat Analysis. For the purpose of this analysis however, we will just be implementing <strong>Kernel Density Estimation</strong>.</p>
 <h3 id="kernel-density-estimation">7.1.1 Kernel Density Estimation</h3>
 <p>Kernel Density Estimation is a method to compute the intensity of a point distribution and looks at attribute values across X, Y coordinates (value of attribute value). Geographically, X and Y is the location, which is in projected coordinates system.</p>
 <h4 id="plot-kde-maps-using-automatic-bandwidth-method-ppl">7.1.1.1 Plot KDE maps using automatic bandwidth method (ppl)</h4>
@@ -3686,7 +3696,209 @@ Window area = 828622000 square units</code></pre>
 <ul>
 <li>Airbnb listings in 2019 have the highest density of 11.07 units per km square, followed by hotels, tourism then MRT services which have a density of 0.56, 0.24 and 0.25 units per km square.</li>
 </ul>
-<div class="sourceCode" id="cb42"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<h4 id="data-preparation-for-visualising-kernel-density-maps-on-openstreetmap-of-singapore">7.1.1.2 Data Preparation for visualising Kernel Density Maps on openstreetmap of Singapore</h4>
+<ul>
+<li>Kernel density calculates the density of point features around each output raster cell. The steps below show the deriving of kernel density maps being plotted on openstreetmap of Singapore.</li>
+</ul>
+<h5 id="compute-kde-maps-with-metres-instead-of-kilometers">7.1.1.2.1 Compute KDE maps with metres instead of kilometers</h5>
+<ul>
+<li>Since OpenStreetMap’s default units is in metres, we have to compute the KDE in metres, instead of using the previously calculated KDE in kilometres.</li>
+<li>Compute KDE with bw.ppl() using metres.</li>
+</ul>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>kde_listings_2019_ppl_m</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/density.html'>density</a></span><span class='op'>(</span><span class='va'>listings_2019_ppp</span>, sigma<span class='op'>=</span><span class='va'>bw.ppl</span>, edge<span class='op'>=</span><span class='cn'>TRUE</span>,kernel<span class='op'>=</span><span class='st'>"gaussian"</span><span class='op'>)</span> 
+<span class='va'>kde_hotels_ppl_m</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/density.html'>density</a></span><span class='op'>(</span><span class='va'>hotels_ppp</span>, sigma<span class='op'>=</span><span class='va'>bw.ppl</span>, edge<span class='op'>=</span><span class='cn'>TRUE</span>, kernel<span class='op'>=</span><span class='st'>"gaussian"</span><span class='op'>)</span>
+<span class='va'>kde_tourism_ppl_m</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/density.html'>density</a></span><span class='op'>(</span><span class='va'>tourisms_ppp</span>, sigma<span class='op'>=</span><span class='va'>bw.ppl</span>, edge<span class='op'>=</span><span class='cn'>TRUE</span>, kernel<span class='op'>=</span><span class='st'>"gaussian"</span><span class='op'>)</span>
+<span class='va'>kde_mrt_ppl_m</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/density.html'>density</a></span><span class='op'>(</span><span class='va'>mrt_ppp</span>, sigma<span class='op'>=</span><span class='va'>bw.ppl</span>, edge<span class='op'>=</span><span class='cn'>TRUE</span>, kernel<span class='op'>=</span><span class='st'>"gaussian"</span><span class='op'>)</span>
+</code></pre>
+</div>
+</div>
+<h5 id="convert-kde-output-into-grid-object">7.1.1.2.2 Convert KDE output into grid object</h5>
+<ul>
+<li><em>as.SpatialGridDataFrame.im()</em> is used so that the gridded output is suitable for mapping.</li>
+</ul>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>gridded_kde_listings_2019_ppl</span> <span class='op'>&lt;-</span> <span class='fu'>as.SpatialGridDataFrame.im</span><span class='op'>(</span><span class='va'>kde_listings_2019_ppl_m</span><span class='op'>)</span>
+<span class='va'>gridded_kde_hotels_ppl</span> <span class='op'>&lt;-</span> <span class='fu'>as.SpatialGridDataFrame.im</span><span class='op'>(</span><span class='va'>kde_hotels_ppl_m</span><span class='op'>)</span>
+<span class='va'>gridded_kde_tourism_ppl</span> <span class='op'>&lt;-</span> <span class='fu'>as.SpatialGridDataFrame.im</span><span class='op'>(</span><span class='va'>kde_tourism_ppl_m</span><span class='op'>)</span>
+<span class='va'>gridded_kde_mrt_ppl</span> <span class='op'>&lt;-</span> <span class='fu'>as.SpatialGridDataFrame.im</span><span class='op'>(</span><span class='va'>kde_mrt_ppl_m</span><span class='op'>)</span>
+</code></pre>
+</div>
+</div>
+<ul>
+<li>Distribution above will be the same, only legend will be different it is being plotted in meters instead of kilometers.</li>
+</ul>
+<h5 id="convert-gridded-output-into-raster">7.1.1.2.3 Convert gridded output into raster</h5>
+<ul>
+<li>Use <em>raster()</em> of <strong>raster</strong> package to convert the gridded kernel density objects to RasterLayer object.</li>
+</ul>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>kde_listings_2019_ppl_raster</span> <span class='op'>&lt;-</span> <span class='fu'>raster</span><span class='op'>(</span><span class='va'>gridded_kde_listings_2019_ppl</span><span class='op'>)</span>
+<span class='va'>kde_listings_2019_ppl_raster</span>
+</code></pre>
+</div>
+<pre><code>class      : RasterLayer 
+dimensions : 128, 128, 16384  (nrow, ncol, ncell)
+resolution : 417.0614, 264.7348  (x, y)
+extent     : 2663.926, 56047.79, 16357.98, 50244.03  (xmin, xmax, ymin, ymax)
+crs        : NA 
+source     : memory
+names      : v 
+values     : -8.607272e-20, 0.0008461072  (min, max)</code></pre>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>kde_hotels_ppl_raster</span> <span class='op'>&lt;-</span> <span class='fu'>raster</span><span class='op'>(</span><span class='va'>gridded_kde_hotels_ppl</span><span class='op'>)</span>
+<span class='va'>kde_hotels_ppl_raster</span>
+</code></pre>
+</div>
+<pre><code>class      : RasterLayer 
+dimensions : 128, 128, 16384  (nrow, ncol, ncell)
+resolution : 417.0614, 264.7348  (x, y)
+extent     : 2663.926, 56047.79, 16357.98, 50244.03  (xmin, xmax, ymin, ymax)
+crs        : NA 
+source     : memory
+names      : v 
+values     : -4.68666e-22, 1.784205e-05  (min, max)</code></pre>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>kde_tourism_ppl_raster</span> <span class='op'>&lt;-</span> <span class='fu'>raster</span><span class='op'>(</span><span class='va'>gridded_kde_tourism_ppl</span><span class='op'>)</span>
+<span class='va'>kde_tourism_ppl_raster</span>
+</code></pre>
+</div>
+<pre><code>class      : RasterLayer 
+dimensions : 128, 128, 16384  (nrow, ncol, ncell)
+resolution : 417.0614, 264.7348  (x, y)
+extent     : 2663.926, 56047.79, 16357.98, 50244.03  (xmin, xmax, ymin, ymax)
+crs        : NA 
+source     : memory
+names      : v 
+values     : 3.376166e-23, 3.144157e-06  (min, max)</code></pre>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>kde_mrt_ppl_raster</span> <span class='op'>&lt;-</span> <span class='fu'>raster</span><span class='op'>(</span><span class='va'>gridded_kde_mrt_ppl</span><span class='op'>)</span>
+<span class='va'>kde_mrt_ppl_raster</span>
+</code></pre>
+</div>
+<pre><code>class      : RasterLayer 
+dimensions : 128, 128, 16384  (nrow, ncol, ncell)
+resolution : 417.0614, 264.7348  (x, y)
+extent     : 2663.926, 56047.79, 16357.98, 50244.03  (xmin, xmax, ymin, ymax)
+crs        : NA 
+source     : memory
+names      : v 
+values     : -1.127277e-22, 2.217116e-06  (min, max)</code></pre>
+</div>
+<p>From the results above:</p>
+<ul>
+<li>CRS for all data sets are NA. Hence, we have to assign appropriate projection systems.</li>
+</ul>
+<h5 id="assign-projection-systems">7.1.1.2.4 Assign projection systems</h5>
+<ul>
+<li>Assign the epsg code of 3414</li>
+</ul>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>projection</span><span class='op'>(</span><span class='va'>kde_listings_2019_ppl_raster</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fu'>CRS</span><span class='op'>(</span><span class='st'>"+init=EPSG:3414"</span><span class='op'>)</span>
+<span class='va'>kde_listings_2019_ppl_raster</span>
+</code></pre>
+</div>
+<pre><code>class      : RasterLayer 
+dimensions : 128, 128, 16384  (nrow, ncol, ncell)
+resolution : 417.0614, 264.7348  (x, y)
+extent     : 2663.926, 56047.79, 16357.98, 50244.03  (xmin, xmax, ymin, ymax)
+crs        : +proj=tmerc +lat_0=1.36666666666667 +lon_0=103.833333333333 +k=1 +x_0=28001.642 +y_0=38744.572 +ellps=WGS84 +units=m +no_defs 
+source     : memory
+names      : v 
+values     : -8.607272e-20, 0.0008461072  (min, max)</code></pre>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>projection</span><span class='op'>(</span><span class='va'>kde_hotels_ppl_raster</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fu'>CRS</span><span class='op'>(</span><span class='st'>"+init=EPSG:3414"</span><span class='op'>)</span>
+<span class='va'>kde_hotels_ppl_raster</span>
+</code></pre>
+</div>
+<pre><code>class      : RasterLayer 
+dimensions : 128, 128, 16384  (nrow, ncol, ncell)
+resolution : 417.0614, 264.7348  (x, y)
+extent     : 2663.926, 56047.79, 16357.98, 50244.03  (xmin, xmax, ymin, ymax)
+crs        : +proj=tmerc +lat_0=1.36666666666667 +lon_0=103.833333333333 +k=1 +x_0=28001.642 +y_0=38744.572 +ellps=WGS84 +units=m +no_defs 
+source     : memory
+names      : v 
+values     : -4.68666e-22, 1.784205e-05  (min, max)</code></pre>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>projection</span><span class='op'>(</span><span class='va'>kde_tourism_ppl_raster</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fu'>CRS</span><span class='op'>(</span><span class='st'>"+init=EPSG:3414"</span><span class='op'>)</span>
+<span class='va'>kde_tourism_ppl_raster</span>
+</code></pre>
+</div>
+<pre><code>class      : RasterLayer 
+dimensions : 128, 128, 16384  (nrow, ncol, ncell)
+resolution : 417.0614, 264.7348  (x, y)
+extent     : 2663.926, 56047.79, 16357.98, 50244.03  (xmin, xmax, ymin, ymax)
+crs        : +proj=tmerc +lat_0=1.36666666666667 +lon_0=103.833333333333 +k=1 +x_0=28001.642 +y_0=38744.572 +ellps=WGS84 +units=m +no_defs 
+source     : memory
+names      : v 
+values     : 3.376166e-23, 3.144157e-06  (min, max)</code></pre>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>projection</span><span class='op'>(</span><span class='va'>kde_mrt_ppl_raster</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fu'>CRS</span><span class='op'>(</span><span class='st'>"+init=EPSG:3414"</span><span class='op'>)</span>
+<span class='va'>kde_mrt_ppl_raster</span>
+</code></pre>
+</div>
+<pre><code>class      : RasterLayer 
+dimensions : 128, 128, 16384  (nrow, ncol, ncell)
+resolution : 417.0614, 264.7348  (x, y)
+extent     : 2663.926, 56047.79, 16357.98, 50244.03  (xmin, xmax, ymin, ymax)
+crs        : +proj=tmerc +lat_0=1.36666666666667 +lon_0=103.833333333333 +k=1 +x_0=28001.642 +y_0=38744.572 +ellps=WGS84 +units=m +no_defs 
+source     : memory
+names      : v 
+values     : -1.127277e-22, 2.217116e-06  (min, max)</code></pre>
+</div>
+<p>From the results above:</p>
+<ul>
+<li>CRS for all data sets are have been assigned appropriate projection systems.</li>
+</ul>
+<h4 id="visualise-output-in-openstreetmap">7.1.1.3 Visualise output in openstreetmap</h4>
+<ul>
+<li>Create function for plotting the visualisation on OpenStreetMap</li>
+<li>Use <strong>tmap</strong> package to display raster in OpenStreetMap of Singapore.</li>
+</ul>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>oms</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>data1</span>, <span class='va'>data2</span>, <span class='va'>legend1</span>, <span class='va'>legend2</span>, <span class='va'>main_title</span><span class='op'>)</span> <span class='op'>{</span>
+  <span class='fu'>tmap_mode</span><span class='op'>(</span><span class='st'>'view'</span><span class='op'>)</span>
+
+  <span class='fu'>tm_basemap</span><span class='op'>(</span><span class='st'>"OpenStreetMap"</span><span class='op'>)</span><span class='op'>+</span>
+    <span class='fu'>tm_shape</span><span class='op'>(</span><span class='va'>data1</span><span class='op'>)</span> <span class='op'>+</span>
+    <span class='fu'>tm_raster</span><span class='op'>(</span><span class='st'>"v"</span>, title <span class='op'>=</span> <span class='va'>legend1</span>, alpha<span class='op'>=</span> <span class='fl'>0.5</span>,  palette <span class='op'>=</span> <span class='st'>'Reds'</span> <span class='op'>)</span> <span class='op'>+</span>
+      <span class='fu'>tm_shape</span><span class='op'>(</span><span class='va'>data2</span><span class='op'>)</span> <span class='op'>+</span> 
+      <span class='fu'>tm_raster</span><span class='op'>(</span><span class='st'>"v"</span>, title <span class='op'>=</span> <span class='va'>legend2</span>, alpha<span class='op'>=</span> <span class='fl'>0.45</span>, palette <span class='op'>=</span> <span class='st'>'Blues'</span> <span class='op'>)</span>
+  
+<span class='op'>}</span>
+</code></pre>
+</div>
+</div>
+<h5 id="plot-airbnb-listings-2019-against-hotels">7.1.1.3.1 Plot Airbnb Listings 2019 against Hotels</h5>
+<ul>
+<li>tm_basemap() to specify the visualization to be in OpenStreetMap</li>
+</ul>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>oms</span><span class='op'>(</span><span class='va'>kde_hotels_ppl_raster</span>, <span class='va'>kde_listings_2019_ppl_raster</span>, <span class='st'>"Hotels"</span>, <span class='st'>"Airbnb Listings 2019"</span><span class='op'>)</span>
+</code></pre>
+</div>
+<div id="htmlwidget-21bb8c2199859ecc07b5" style="width:624px;height:384px;" class="leaflet html-widget"></div>
+<script type="application/json" data-for="htmlwidget-21bb8c2199859ecc07b5">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"createMapPane","args":["tmap401",401]},{"method":"createMapPane","args":["tmap402",402]},{"method":"addProviderTiles","args":["OpenStreetMap",null,"OpenStreetMap",{"minZoom":0,"maxZoom":18,"tileSize":256,"subdomains":"abc","errorTileUrl":"","tms":false,"noWrap":false,"zoomOffset":0,"zoomReverse":false,"opacity":1,"zIndex":1,"detectRetina":false,"pane":"tilePane"}]},{"method":"addRasterImage","args":["data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAKEAAABnCAYAAABo4CIfAAAFSklEQVR4nO2dP1bcMBCHx2Epcg3SpuAEFBSUOQMn2eNwAMoUPB4noEgbLpLwNpVevFpZGlkz0kj6fR0Pry3Ln0d/LS0EiIjo8+P9tPW/q5vbpWZaZgOZS9sCruX7/Hg/QUYdps7UWPRLASHlmDIjS+TzgYzlfGmdgNpICghkmOot1hIQ0bAMs5kn1RCoGfkg4z5MZVpKmNyH3KrohYx5mKkTSgsDAfvBhIRcYaSP06L19Xuj6Vsr8bD8DuXS80mAaJhHs8yyIowGkDCPJsXxyAISjX9/KXLvv9obO9ODCUVCjD1vo54pM8lHdCkgZ3JELu6co0itehOzCei4urldOPe+R6LQeXuX0UQXzWjU7kr6/Hg/ab/wmueHhJXYila+QO5vyYcudT4tEVEcNyTVx+mK9ZjAqfNLVQs066EqEkI+WVIPvjS/W9cpIWEncEXZk/fDSQgBZfGL1NKo2Fq4EKIJgoA6cD+4Wv+vp66cQ+sEgDRruXJEsiqdDyJhh/QiFxf0E3bIaC87ImHHSH7u0DK6IhJ2jOTISssAgobJBFgvocRCsPUbnYGteYwS59Gkq+96QR1qS4g6IbigdmCBhCBITRGLwi6K4nGpWSQXf+cA5kFLTBTHgI2pmdWIgnMjHREhIShCQsgulloDtpCOhKgTguawJUQUBFogEoIsNLppICFoDiQEzYGEgE3TERM0SoAmiISAheaEBkzvB1FqzKZhr8YE0pzenomIaLn70TglMtSazgUJC3HipehNzNhyIv4xpUDCAnwB//x8ISKi64d71u97F1NKws06IeSLsxbQyRf6mytkTbiLZ9aC3TCxlvBWbEW/LXKjozQl0Wrrt9J1xazWMaeeIE1P8v96+U1ERN/vv7GOP709qxXJKVFSW100/8aEs/eGxBK1scUfU2vttWArCjr51vgihiJhqYCjrM61u5+wJEL5C4K78/hSjrILkmRRPEJ++JjorI5tw2UlCvrEoiCHnCg4onhrsiT0m+Z7JMldcXSrmLYqJ9F5UVxSDI8un+NCwr1SSayRzDmeI3FLQZ2Avnwp8WYRLsSuCQwp4a5ubhfJBRx75PB4XA6Px4VoW0CXTzMLSBSIhFpFXawLINQwCR1nnbMo+PQaPban+9Jm13ZVjr0bvOSso7f3YWm8SLFRkjVfn16TXVmQ8D9nkVD6waXOxxmD5HTThCRv1Xi5frinvw/3J1cEj9TVpIXKpNbYWso1OqBb1S9DLWEImIa1S7kjZzfI2G+3iueSHSlriMedNeM3RCBhnAOR7ObPNX+3Zqv4lRxqXO5+nIlocYZMj2QttC21MHcOuRsMOkr2CeYQmsx6eDwunHouOMfEsF2KPQ809huJ6OhHRc51QZhqEqbqfa1asznXTU1/IjrKJWwisia17r2IP5pSY6pYDpxqRqhaYG2qWa9svtnSw27pKLLvutKE8sBqWkch2DrWyFxOhd3aQ/XTjIinQ3DsuHYiLMkXqi6UlBAgTdPWsdUHGqu39j7JwiIXmV2SodITH6xgdZ/gUbgYO0a9B9RGdALDqFGh1ve3s9L90nDryC25E7qPLxwElIPVcZyLduU91ZGscU2gR/eRMLclC+xRRULpiOR/IGQl4kH6fWxKqFm/0iAkoouSte7DysvQGyp1wllZf5iP/OPTxXxCy6BBVM7B+pIaPQDpymDNo6uXHNugmNXBXIbiJZgPUw+4tJEUWt8wdh5ENhuY6ayuvfoDsIMZCVtFJMjanqGKoth0fBS7AIA56G2oEQAA0iCyzYGZ1rEP5APNgYQAAAAAAAAAAACYh3+/YLBfebKJqwAAAABJRU5ErkJggg==",[[1.47066364891549,103.605646858975],[1.16218335265381,104.087962389458]],0.498039215686275,null,"tmap401","data1"]},{"method":"addLegend","args":[{"colors":["#FDDED0","#FCA082","#F75A40","#CB181D"],"labels":["0.000000 to 0.000005","0.000005 to 0.000010","0.000010 to 0.000015","0.000015 to 0.000020"],"na_color":null,"na_label":"NA","opacity":0.498039215686275,"position":"topright","type":"unknown","title":"Hotels","extra":null,"layerId":"legend401","className":"info legend data1","group":"data1"}]},{"method":"addRasterImage","args":["data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAKEAAABnCAYAAABo4CIfAAAFXElEQVR4nO2dvU4cMRSFvYiCggoJOpSGhqcgr5anSJM3yAukJHWqVFGkbQjdRtpqCzpSREaDxz/X9r329fh8EhKwsx6Pfeb4394ZYIwx5vn48hr67PbqYtcyLrOBxDVhAS7F93x8eYUYZZg6UWPulwKC5GPKhKwRnwvEWM9Z7wi0hlOAgIep3mIpAcIN61CbeFwNgZbOBzGWoSrRUoLJzeReRS/EmIeaOiG3YCDAcVAhQqpguK+Tovf9R6PrW8uRWW6Hcm14HMAN8+iWWFoEIwFEmEeX4njLAjRm+8+XIvf5m72xM2WMzwkx9hxGPFFmEp8xawFSJkfkYsPciqhFH2I2AVpury52lGcvEZEv3NHFqKKLZmu07kp6Pr68Sr/wkuFDhI0IuZUrIPs3Z6ZzhSclRBTHHUn1cdpiPSbgVPhc1QLJeqiICCE+XlIZX5veveuUEOEgUIVSkvabEyEEyItbpNa6Ym/B+WCNEAQoA3XB1fKzkbpyzntHAKRZiitHSFpF5wInHJBRxEUF/YQDsrWXHU44MJzLHXq6K5xwYDhHVnoaCBomE6C9hGKzYO0POgOheYwc4Ugy1Lpe0IbWIkSdEKxobSwQIfDSUohVtouieLu0LJKr1zmAeZASJopjQEbVzGq44NxwOyJECKrgEOQQW60BXXA7IeqEoDtkEcIFgRRwQpCFRDcNRAi6AxGC7kCEgEzXERM0SoAkcEJAQnJCA0RYyf5w6h0FUW6vLnbSM2rIuzEBP64I724uO8WEn1bTubDQiYHHp6MxxpiPH646x4SP2HYi7jW1wAkZ2LIbLnGFySXCoBNCfPlYRwyJcCnWx6fjyjlbiZe6eWYryMWxtohr5Puvv8aY/8WyK6gvP/68u+7h/rpJnGrcKvTdrrNoWrSUfPdseb8S7m4uzd3N5ZuwrCNa9oeT+fz159vfD/fXb0Jd/nCSyiv7eei67mtMKGdvcGxRG9v8MbXXnhaWRawV0v5wWonK979aRnhBKRS3jmuKZ3dDcBuOK0qNpyBZ0VHqfUu4BKgtPThQ0UUTO4ZLswtaUg2SWrYovCXFRxNQr419N3VfjeJ0i1/J7pmti8+ycsJSUXHskUy5nrJtroRA3Todt/vNIjgfxbs4xXaAKj2zjSsjWrhkqqHRcsRhdFZOKFXUxYpaX8PEd50mYi1hClqfqwfFs2hCgqHskedew50hrTI41BKGwPJ454TcDpgKj1J8U4ppn8glHH3pevvDyXz69ts83F+vnHCEriZNiMwnjO2l3KIDWipsV2x25GN/OAVdEQJMQzql3JJzGmTsu6HiueZEyh5dNqmOawtEGOfMmP7n4XLcPzbYLjXm7Y4RgzKyumi4NubOIfeAQUvNOcGlLOMK96OjYtguRUmGpmaQ2N+5BQnx5dNsoRNlalGruJTeNzX9CZSRNam19CbL78a6TiQdKga1b9OtFoww1WwEgq1jznPTfOFRhNgDXxpojetWODeGNnulFkqFXVumunGG48ngHTtuHQlN4vNVF2pKCJCma+tYa4bG6q0jTbIYhVVi1yRozTQwzWA6liyrLhrUe0BrWPsJt+oKrdbfzsrwu3ItnZvzJHQX6TmQM0PqOM5FuvKe6kiWuCeQY3gnzG3JAn00EaHE9P3lsJkWx4PoywiKULJ+JUFoP5WWz6HlZRgNkTrhrCwX5iP96Awxn1AzaBDVcz7Kfi+agejqyF4jPDMoZmVQl6B4CeZDVQbXNpJ8i85j4cDZdKCms7r17g9AD2pE2MuRINb+bKooik3HR7ELAJiD0YYaAQAgDZxtDtS0jl0gPtAdiBAAAAAAAAAAAADz8A/a3KzkVZoCpAAAAABJRU5ErkJggg==",[[1.47066364891549,103.605646858975],[1.16218335265381,104.087962389458]],0.447058823529412,null,"tmap402","data2"]},{"method":"addLegend","args":[{"colors":["#E3EEF8","#BFD8EC","#7FB9DA","#4090C5","#1664AB"],"labels":["0.0000 to 0.0002","0.0002 to 0.0004","0.0004 to 0.0006","0.0006 to 0.0008","0.0008 to 0.0010"],"na_color":null,"na_label":"NA","opacity":0.447058823529412,"position":"topright","type":"unknown","title":"Airbnb Listings 2019","extra":null,"layerId":"legend402","className":"info legend data2","group":"data2"}]},{"method":"addLayersControl","args":[[],["data1","data2"],{"collapsed":true,"autoZIndex":true,"position":"topleft"}]}],"limits":{"lat":[1.16218335265381,1.47066364891549],"lng":[103.605646858975,104.087962389458]},"fitBounds":[1.1641988317039,103.605646858975,1.4706519681352,104.085357795856,[]]},"evals":[],"jsHooks":[]}</script>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>tmap_mode</span><span class='op'>(</span><span class='st'>"plot"</span><span class='op'>)</span>
+</code></pre>
+</div>
+</div>
+<p><strong>Spatial patterns revealed by the kernel density map above:</strong></p>
+<ul>
+<li>Shades of blue represent Airbnb listings in 2019 while shades of red represent Hotels.</li>
+<li>The shades of the colours shows the number of Airbnb listings and hotels on the map.</li>
+<li>It is observed that the dark blue colour is prominent in the Southern-Eastern region of Singapore, which indicates a higher number of Airbnb listings in this region.</li>
+<li>From the intensity of the colours of the blue spots, it can be seen that many Airbnb listings are cluttered in the South-East region.</li>
+<li>It can also be observed that there is a larger red spot in the same region. This also means that hotels are also dense in the South-East region of Singapore.</li>
+</ul>
+<div class="sourceCode" id="cb50"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->
 </div>

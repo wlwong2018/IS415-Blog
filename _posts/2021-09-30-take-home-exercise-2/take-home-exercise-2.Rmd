@@ -591,3 +591,122 @@ Results above show that:
 
 - Airbnb listings in 2019 have the highest density of 11.07 units per km square, followed by hotels, tourism then MRT services which have a density of 0.56, 0.24 and 0.25 units per km square.
 
+
+#### 7.1.1.2 Data Preparation for visualising Kernel Density Maps on openstreetmap of Singapore
+
+- Kernel density calculates the density of point features around each output raster cell. The steps below show the deriving of kernel density maps being plotted on  openstreetmap of Singapore. 
+
+##### 7.1.1.2.1 Compute KDE maps with metres instead of kilometers
+
+- Since OpenStreetMap's default units is in metres, we have to compute the KDE in metres, instead of using the previously calculated KDE in kilometres. 
+- Compute KDE with bw.ppl() using metres.
+
+```{r echo=TRUE, eval=TRUE}
+kde_listings_2019_ppl_m <- density(listings_2019_ppp, sigma=bw.ppl, edge=TRUE,kernel="gaussian") 
+kde_hotels_ppl_m <- density(hotels_ppp, sigma=bw.ppl, edge=TRUE, kernel="gaussian")
+kde_tourism_ppl_m <- density(tourisms_ppp, sigma=bw.ppl, edge=TRUE, kernel="gaussian")
+kde_mrt_ppl_m <- density(mrt_ppp, sigma=bw.ppl, edge=TRUE, kernel="gaussian")
+
+```
+
+
+##### 7.1.1.2.2 Convert KDE output into grid object
+
+- *as.SpatialGridDataFrame.im()* is used so that the gridded output is suitable for mapping.
+
+```{r echo=TRUE, eval=TRUE}
+gridded_kde_listings_2019_ppl <- as.SpatialGridDataFrame.im(kde_listings_2019_ppl_m)
+gridded_kde_hotels_ppl <- as.SpatialGridDataFrame.im(kde_hotels_ppl_m)
+gridded_kde_tourism_ppl <- as.SpatialGridDataFrame.im(kde_tourism_ppl_m)
+gridded_kde_mrt_ppl <- as.SpatialGridDataFrame.im(kde_mrt_ppl_m)
+
+```
+
+- Distribution above will be the same, only legend will be different it is being plotted in meters instead of kilometers. 
+
+
+##### 7.1.1.2.3 Convert gridded output into raster
+
+- Use *raster()* of **raster** package to convert the gridded kernel density objects to RasterLayer object. 
+
+```{r echo=TRUE, eval=TRUE}
+kde_listings_2019_ppl_raster <- raster(gridded_kde_listings_2019_ppl)
+kde_listings_2019_ppl_raster
+
+kde_hotels_ppl_raster <- raster(gridded_kde_hotels_ppl)
+kde_hotels_ppl_raster
+
+kde_tourism_ppl_raster <- raster(gridded_kde_tourism_ppl)
+kde_tourism_ppl_raster
+
+kde_mrt_ppl_raster <- raster(gridded_kde_mrt_ppl)
+kde_mrt_ppl_raster
+
+```
+From the results above: 
+
+- CRS for all data sets are NA. Hence, we have to assign appropriate projection systems. 
+
+##### 7.1.1.2.4 Assign projection systems
+
+- Assign the epsg code of 3414
+
+```{r echo=TRUE, eval=TRUE}
+projection(kde_listings_2019_ppl_raster) <- CRS("+init=EPSG:3414")
+kde_listings_2019_ppl_raster
+
+projection(kde_hotels_ppl_raster) <- CRS("+init=EPSG:3414")
+kde_hotels_ppl_raster
+
+projection(kde_tourism_ppl_raster) <- CRS("+init=EPSG:3414")
+kde_tourism_ppl_raster
+
+projection(kde_mrt_ppl_raster) <- CRS("+init=EPSG:3414")
+kde_mrt_ppl_raster
+
+```
+
+From the results above: 
+
+- CRS for all data sets are have been assigned appropriate projection systems.
+
+
+#### 7.1.1.3 Visualise output in openstreetmap
+
+- Create function for plotting the visualisation on OpenStreetMap
+- Use **tmap** package to display raster in OpenStreetMap of Singapore.
+
+```{r echo=TRUE, eval=TRUE}
+oms <- function(data1, data2, legend1, legend2, main_title) {
+  tmap_mode('view')
+
+  tm_basemap("OpenStreetMap")+
+    tm_shape(data1) +
+    tm_raster("v", title = legend1, alpha= 0.5,  palette = 'Reds' ) +
+      tm_shape(data2) + 
+      tm_raster("v", title = legend2, alpha= 0.45, palette = 'Blues' )
+  
+}
+
+```
+
+##### 7.1.1.3.1 Plot Airbnb Listings 2019 against Hotels
+
+- tm_basemap() to specify the visualization to be in OpenStreetMap
+
+```{r echo=TRUE, eval=TRUE}
+oms(kde_hotels_ppl_raster, kde_listings_2019_ppl_raster, "Hotels", "Airbnb Listings 2019")
+
+tmap_mode("plot")
+
+```
+
+**Spatial patterns revealed by the kernel density map above:**
+
+- Shades of blue represent Airbnb listings in 2019 while shades of red represent Hotels.
+- The shades of the colours shows the number of Airbnb listings and hotels on the map. 
+- It is observed that the dark blue colour is prominent in the Southern-Eastern region of Singapore, which indicates a higher number of Airbnb listings in this region. 
+- From the intensity of the colours of the blue spots, it can be seen that many Airbnb listings are cluttered in the South-East region. 
+- It can also be observed that there is a larger red spot in the same region. This also means that hotels are also dense in the South-East region of Singapore. 
+
+
