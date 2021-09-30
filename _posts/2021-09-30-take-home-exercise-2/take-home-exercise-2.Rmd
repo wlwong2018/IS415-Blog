@@ -1184,3 +1184,47 @@ tmap_mode('plot')
 - Hence, there are fewer areas with Private listings in 2021 as compared to 2019.
 
 
+
+
+###### Plot Entire/Apt Room 2019 vs 2021
+
+- Use function created in Section A to plot on OpenStreetMap Singapore.
+
+```{r echo=TRUE, eval=TRUE}
+oms(kde_listings_2019_ppl_raster_ea, kde_listings_2021_ppl_raster_ea, "Entire home/apt 2019", "Entire home/apt 2021")
+
+tmap_mode('plot')
+
+```
+
+**Spatial patterns revealed by the kernel density map above:**
+
+- There are more listings for Entire home/apartment in general, as compared to private rooms in the previous map.
+- Entire home/apartment listings in 2019 and 2021 are generally in the same area, with 2021 having slightly more listings in other areas.
+
+
+###### Plot Shared Room 2019 vs 2021
+
+- Use function created in Section A to plot on OpenStreetMap Singapore.
+
+```{r echo=TRUE, eval=TRUE}
+oms(kde_listings_2019_ppl_raster_sr, kde_listings_2021_ppl_raster_sr, "Shared Room 2019", "Shared Room 2021")
+
+tmap_mode('plot')
+
+```
+
+**Spatial patterns revealed by the kernel density map above:**
+
+- Shared room listings in general are more concentrated within areas in Southern-Eastern region of Singapore such as People's Park and Little India.
+- In 2019, it is observed that the prominent spots are within People's Park as well as between Little India and Kallang area. 
+- In 2021 however, it is more concentrated within the the area of Little India and Bugis. 
+- This shows that there have been less shared room listings in People's park area and many more in Little India and Bugis area in 2021.
+
+<br>
+
+**Conclusion for Section B's Exploratory Spatial Data Analysis:**
+
+- With kernel density maps however, even though we do see that the changes in distribution of Private Room, Entire home/apt and Shared Room in 2019 and 2021, we cannot conclude for sure that the distribution of these Airbnb listings room types are impacted by COVID-19. 
+- Hence, we need to employ **Second-order Spatial Point Patterns Analysis** to draw statistical conclusions. 
+
