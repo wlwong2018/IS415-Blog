@@ -116,7 +116,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   <!--/radix_placeholder_rmarkdown_metadata-->
   
   <script type="text/json" id="radix-resource-manifest">
-  {"type":"character","attributes":{},"value":["data/aspatial/hotels.csv","data/aspatial/listings_June_2019.csv","data/aspatial/listings_June_2021.csv","data/aspatial/tourism.csv","data/geospatial/CostalOutline.dbf","data/geospatial/CostalOutline.prj","data/geospatial/CostalOutline.sbn","data/geospatial/CostalOutline.sbx","data/geospatial/CostalOutline.shp","data/geospatial/CostalOutline.shx","data/geospatial/MP14_SUBZONE_WEB_PL.dbf","data/geospatial/MP14_SUBZONE_WEB_PL.prj","data/geospatial/MP14_SUBZONE_WEB_PL.sbn","data/geospatial/MP14_SUBZONE_WEB_PL.sbx","data/geospatial/MP14_SUBZONE_WEB_PL.shp","data/geospatial/MP14_SUBZONE_WEB_PL.shp.xml","data/geospatial/MP14_SUBZONE_WEB_PL.shx","data/geospatial/MRTLRTStnPtt.CPG","data/geospatial/MRTLRTStnPtt.dbf","data/geospatial/MRTLRTStnPtt.prj","data/geospatial/MRTLRTStnPtt.sbn","data/geospatial/MRTLRTStnPtt.sbx","data/geospatial/MRTLRTStnPtt.shp","data/geospatial/MRTLRTStnPtt.shx","take-home-exercise-2_files/anchor-4.2.2/anchor.min.js","take-home-exercise-2_files/bowser-1.9.3/bowser.min.js","take-home-exercise-2_files/distill-2.2.21/template.v2.js","take-home-exercise-2_files/figure-html5/unnamed-chunk-13-1.png","take-home-exercise-2_files/figure-html5/unnamed-chunk-14-1.png","take-home-exercise-2_files/figure-html5/unnamed-chunk-7-1.png","take-home-exercise-2_files/header-attrs-2.10/header-attrs.js","take-home-exercise-2_files/jquery-1.11.3/jquery.min.js","take-home-exercise-2_files/popper-2.6.0/popper.min.js","take-home-exercise-2_files/tippy-6.2.7/tippy-bundle.umd.min.js","take-home-exercise-2_files/tippy-6.2.7/tippy-light-border.css","take-home-exercise-2_files/tippy-6.2.7/tippy.css","take-home-exercise-2_files/tippy-6.2.7/tippy.umd.min.js","take-home-exercise-2_files/webcomponents-2.0.0/webcomponents.js"]}
+  {"type":"character","attributes":{},"value":["data/aspatial/hotels.csv","data/aspatial/listings_June_2019.csv","data/aspatial/listings_June_2021.csv","data/aspatial/tourism.csv","data/geospatial/CostalOutline.dbf","data/geospatial/CostalOutline.prj","data/geospatial/CostalOutline.sbn","data/geospatial/CostalOutline.sbx","data/geospatial/CostalOutline.shp","data/geospatial/CostalOutline.shx","data/geospatial/MP14_SUBZONE_WEB_PL.dbf","data/geospatial/MP14_SUBZONE_WEB_PL.prj","data/geospatial/MP14_SUBZONE_WEB_PL.sbn","data/geospatial/MP14_SUBZONE_WEB_PL.sbx","data/geospatial/MP14_SUBZONE_WEB_PL.shp","data/geospatial/MP14_SUBZONE_WEB_PL.shp.xml","data/geospatial/MP14_SUBZONE_WEB_PL.shx","data/geospatial/MRTLRTStnPtt.CPG","data/geospatial/MRTLRTStnPtt.dbf","data/geospatial/MRTLRTStnPtt.prj","data/geospatial/MRTLRTStnPtt.sbn","data/geospatial/MRTLRTStnPtt.sbx","data/geospatial/MRTLRTStnPtt.shp","data/geospatial/MRTLRTStnPtt.shx","take-home-exercise-2_files/anchor-4.2.2/anchor.min.js","take-home-exercise-2_files/bowser-1.9.3/bowser.min.js","take-home-exercise-2_files/distill-2.2.21/template.v2.js","take-home-exercise-2_files/figure-html5/unnamed-chunk-13-1.png","take-home-exercise-2_files/figure-html5/unnamed-chunk-14-1.png","take-home-exercise-2_files/figure-html5/unnamed-chunk-22-1.png","take-home-exercise-2_files/figure-html5/unnamed-chunk-23-1.png","take-home-exercise-2_files/figure-html5/unnamed-chunk-7-1.png","take-home-exercise-2_files/header-attrs-2.10/header-attrs.js","take-home-exercise-2_files/jquery-1.11.3/jquery.min.js","take-home-exercise-2_files/popper-2.6.0/popper.min.js","take-home-exercise-2_files/tippy-6.2.7/tippy-bundle.umd.min.js","take-home-exercise-2_files/tippy-6.2.7/tippy-light-border.css","take-home-exercise-2_files/tippy-6.2.7/tippy.css","take-home-exercise-2_files/tippy-6.2.7/tippy.umd.min.js","take-home-exercise-2_files/webcomponents-2.0.0/webcomponents.js"]}
   </script>
   <!--radix_placeholder_navigation_in_header-->
   <!--/radix_placeholder_navigation_in_header-->
@@ -2326,7 +2326,295 @@ PROJCRS[&quot;SVY21 / Singapore TM&quot;,
 </div>
 <p><img src="take-home-exercise-2_files/figure-html5/unnamed-chunk-14-1.png" width="624" /></p>
 </div>
-<div class="sourceCode" id="cb23"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<h1 id="geospatial-data-wrangling">6 Geospatial Data Wrangling</h1>
+<p>This section focuses on converting simple feature data frames to ppp objects that are suitable for the analysis in the later steps.</p>
+<h2 id="convert-sf-to-spatial-classes">6.1 Convert sf to Spatial* classes</h2>
+<ul>
+<li><em>as_Spatial()</em> of <strong>sf</strong> package is being used to convert the geospatial data from simple feature data frame to sp’s Spatial* class.</li>
+</ul>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>mpsz</span> <span class='op'>&lt;-</span> <span class='fu'>as_Spatial</span><span class='op'>(</span><span class='va'>mpsz_sf</span><span class='op'>)</span>
+<span class='va'>sg</span> <span class='op'>&lt;-</span> <span class='fu'>as_Spatial</span><span class='op'>(</span><span class='va'>sg_sf</span><span class='op'>)</span>
+<span class='va'>listings_2019</span> <span class='op'>&lt;-</span> <span class='fu'>as_Spatial</span><span class='op'>(</span><span class='va'>listings_2019_sf</span><span class='op'>)</span>
+<span class='va'>hotels</span> <span class='op'>&lt;-</span> <span class='fu'>as_Spatial</span><span class='op'>(</span><span class='va'>hotels_sf</span><span class='op'>)</span>
+<span class='va'>tourism</span> <span class='op'>&lt;-</span> <span class='fu'>as_Spatial</span><span class='op'>(</span><span class='va'>tourism_sf</span><span class='op'>)</span>
+<span class='va'>mrt</span> <span class='op'>&lt;-</span> <span class='fu'>as_Spatial</span><span class='op'>(</span><span class='va'>mrt_sf</span><span class='op'>)</span>
+<span class='va'>listings_2021</span> <span class='op'>&lt;-</span> <span class='fu'>as_Spatial</span><span class='op'>(</span><span class='va'>listings_2021_sf</span><span class='op'>)</span>
+</code></pre>
+</div>
+</div>
+<h2 id="convert-spatial-dataframe-into-spatial-objects">6.2 Convert Spatial* dataframe into Spatial* objects</h2>
+<ul>
+<li>As <em>spatstat</em> requires the analytical data in ppp object and there is no direct way to convert a Spatial* class to ppp object, we have to convert the Spatial classes* into Spatial object first.</li>
+<li><em>as()</em> with the argument <em>SpatialPoints</em> of <strong>maptools</strong> package is being used for point data sets, while <em>SpatialPolygons</em> is being used for polygonal data sets.</li>
+<li>Data would be dropped in this step.</li>
+</ul>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>mpsz_sp</span> <span class='op'>&lt;-</span> <span class='fu'>as</span><span class='op'>(</span><span class='va'>mpsz</span>, <span class='st'>"SpatialPolygons"</span><span class='op'>)</span>
+<span class='va'>sg_sp</span> <span class='op'>&lt;-</span> <span class='fu'>as</span><span class='op'>(</span><span class='va'>sg</span>, <span class='st'>"SpatialPolygons"</span><span class='op'>)</span>
+<span class='va'>listings_2019_sp</span> <span class='op'>&lt;-</span> <span class='fu'>as</span><span class='op'>(</span><span class='va'>listings_2019</span>, <span class='st'>"SpatialPoints"</span><span class='op'>)</span>
+<span class='va'>hotels_sp</span> <span class='op'>&lt;-</span> <span class='fu'>as</span><span class='op'>(</span><span class='va'>hotels</span>, <span class='st'>"SpatialPoints"</span><span class='op'>)</span>
+<span class='va'>tourisms_sp</span> <span class='op'>&lt;-</span> <span class='fu'>as</span><span class='op'>(</span><span class='va'>tourism</span>, <span class='st'>"SpatialPoints"</span><span class='op'>)</span>
+<span class='va'>mrt_sp</span> <span class='op'>&lt;-</span> <span class='fu'>as</span><span class='op'>(</span><span class='va'>mrt</span>, <span class='st'>"SpatialPoints"</span><span class='op'>)</span>
+<span class='va'>listings_2021_sp</span> <span class='op'>&lt;-</span> <span class='fu'>as</span><span class='op'>(</span><span class='va'>listings_2021</span>, <span class='st'>"SpatialPoints"</span><span class='op'>)</span>
+</code></pre>
+</div>
+</div>
+<h2 id="convert-from-spatial-objects-into-ppp-object">6.3 Convert from Spatial* objects into ppp object</h2>
+<ul>
+<li><em>as()</em> with the argument of <em>ppp</em> of <strong>maptools</strong> package is being used.</li>
+<li>Project information would be dropped in this step.</li>
+</ul>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>listings_2019_ppp</span> <span class='op'>&lt;-</span> <span class='fu'>as</span><span class='op'>(</span><span class='va'>listings_2019_sp</span>, <span class='st'>"ppp"</span><span class='op'>)</span>
+<span class='va'>hotels_ppp</span> <span class='op'>&lt;-</span> <span class='fu'>as</span><span class='op'>(</span><span class='va'>hotels_sp</span>, <span class='st'>"ppp"</span><span class='op'>)</span>
+<span class='va'>tourisms_ppp</span> <span class='op'>&lt;-</span> <span class='fu'>as</span><span class='op'>(</span><span class='va'>tourisms_sp</span>, <span class='st'>"ppp"</span><span class='op'>)</span>
+<span class='va'>mrt_ppp</span> <span class='op'>&lt;-</span> <span class='fu'>as</span><span class='op'>(</span><span class='va'>mrt_sp</span>, <span class='st'>"ppp"</span><span class='op'>)</span>
+<span class='va'>listings_2021_ppp</span> <span class='op'>&lt;-</span> <span class='fu'>as</span><span class='op'>(</span><span class='va'>listings_2021_sp</span>, <span class='st'>"ppp"</span><span class='op'>)</span>
+</code></pre>
+</div>
+</div>
+<h2 id="summary-statistics-of-the-newly-created-ppp-objects">6.4 Summary statistics of the newly created ppp objects</h2>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>listings_2019_ppp</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>Planar point pattern:  8293 points
+Average intensity 9.345289e-06 points per square unit
+
+*Pattern contains duplicated points*
+
+Coordinates are given to 3 decimal places
+i.e. rounded to the nearest multiple of 0.001 units
+
+Window: rectangle = [7215.57, 44098.31] x [25166.35, 49226.35] units
+                    (36880 x 24060 units)
+Window area = 887399000 square units</code></pre>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>hotels_ppp</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>Planar point pattern:  422 points
+Average intensity 5.58414e-07 points per square unit
+
+*Pattern contains duplicated points*
+
+Coordinates are given to 3 decimal places
+i.e. rounded to the nearest multiple of 0.001 units
+
+Window: rectangle = [5939.24, 45334.18] x [25379.44, 44562.4] units
+                    (39390 x 19180 units)
+Window area = 755712000 square units</code></pre>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>tourisms_ppp</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>Planar point pattern:  106 points
+Average intensity 1.328016e-07 points per square unit
+
+*Pattern contains duplicated points*
+
+Coordinates are given to 3 decimal places
+i.e. rounded to the nearest multiple of 0.001 units
+
+Window: rectangle = [11380.23, 43659.54] x [22869.34, 47596.73] units
+                    (32280 x 24730 units)
+Window area = 798183000 square units</code></pre>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>mrt_ppp</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>Planar point pattern:  185 points
+Average intensity 2.32988e-07 points per square unit
+
+Coordinates are given to 3 decimal places
+i.e. rounded to the nearest multiple of 0.001 units
+
+Window: rectangle = [6138.31, 45254.86] x [27555.06, 47854.2] units
+                    (39120 x 20300 units)
+Window area = 794032000 square units</code></pre>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>listings_2021_ppp</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>Planar point pattern:  4238 points
+Average intensity 5.114513e-06 points per square unit
+
+*Pattern contains duplicated points*
+
+Coordinates are given to 3 decimal places
+i.e. rounded to the nearest multiple of 0.001 units
+
+Window: rectangle = [7406.99, 43337.89] x [25330, 48391.55] units
+                    (35930 x 23060 units)
+Window area = 828622000 square units</code></pre>
+</div>
+<ul>
+<li><p>From the results above,</p>
+<ul>
+<li>Messages about duplicates are printed for listings_2019, hotels &amp; tourism.</li>
+<li>The statistical methodology used for spatial point patterns processes is based largely on the assumption that process are simple, that is, that the points cannot be coincident.</li>
+</ul></li>
+</ul>
+<h2 id="find-number-of-duplicated-points">6.5 Find number of duplicated points</h2>
+<ul>
+<li>sum() and multiplicity() to know the number of locations with more than 1 point event.</li>
+</ul>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span><span class='op'>(</span><span class='fu'>multiplicity</span><span class='op'>(</span><span class='va'>listings_2019_ppp</span><span class='op'>)</span> <span class='op'>&gt;</span> <span class='fl'>1</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>[1] 6</code></pre>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span><span class='op'>(</span><span class='fu'>multiplicity</span><span class='op'>(</span><span class='va'>hotels_ppp</span><span class='op'>)</span> <span class='op'>&gt;</span> <span class='fl'>1</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>[1] 10</code></pre>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span><span class='op'>(</span><span class='fu'>multiplicity</span><span class='op'>(</span><span class='va'>tourisms_ppp</span><span class='op'>)</span> <span class='op'>&gt;</span> <span class='fl'>1</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>[1] 7</code></pre>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span><span class='op'>(</span><span class='fu'>multiplicity</span><span class='op'>(</span><span class='va'>mrt_ppp</span><span class='op'>)</span> <span class='op'>&gt;</span> <span class='fl'>1</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>[1] 0</code></pre>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span><span class='op'>(</span><span class='fu'>multiplicity</span><span class='op'>(</span><span class='va'>listings_2021_ppp</span><span class='op'>)</span> <span class='op'>&gt;</span> <span class='fl'>1</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>[1] 224</code></pre>
+</div>
+<p>From the results above:</p>
+<ul>
+<li>All data sets have duplicated points except for the MRT data set.</li>
+</ul>
+<h2 id="handle-duplicated-points-using-jitter">6.6 Handle duplicated points using jitter</h2>
+<ul>
+<li><em>rjitter()</em> of <strong>spatstat</strong> package is being used</li>
+<li>To avoid points overlapping, rjitter() will add a small perturbation to the duplicated points so that they do not occupy the exact same space</li>
+<li><em>any()</em> and <em>duplicated()</em> are used to ensure that there are no duplicated points after using <em>rjitter()</em></li>
+<li>From the previous step, even though <em>mrt_ppp</em> object is being shown that there are 0 duplicated points, it is a good practice to verify by printing it again.</li>
+</ul>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>listings_2019_ppp_jit</span> <span class='op'>&lt;-</span> <span class='fu'>rjitter</span><span class='op'>(</span><span class='va'>listings_2019_ppp</span>,
+                             retry <span class='op'>=</span> <span class='cn'>TRUE</span>,
+                             nsim <span class='op'>=</span> <span class='fl'>1</span>,
+                             drop <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/base/any.html'>any</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/duplicated.html'>duplicated</a></span><span class='op'>(</span><span class='va'>listings_2019_ppp_jit</span><span class='op'>)</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>[1] FALSE</code></pre>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>hotels_ppp_jit</span> <span class='op'>&lt;-</span> <span class='fu'>rjitter</span><span class='op'>(</span><span class='va'>hotels_ppp</span>,
+                             retry <span class='op'>=</span> <span class='cn'>TRUE</span>,
+                             nsim <span class='op'>=</span> <span class='fl'>1</span>,
+                             drop <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/base/any.html'>any</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/duplicated.html'>duplicated</a></span><span class='op'>(</span><span class='va'>hotels_ppp_jit</span><span class='op'>)</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>[1] FALSE</code></pre>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>tourisms_ppp_jit</span> <span class='op'>&lt;-</span> <span class='fu'>rjitter</span><span class='op'>(</span><span class='va'>tourisms_ppp</span>,
+                             retry <span class='op'>=</span> <span class='cn'>TRUE</span>,
+                             nsim <span class='op'>=</span> <span class='fl'>1</span>,
+                             drop <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/base/any.html'>any</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/duplicated.html'>duplicated</a></span><span class='op'>(</span><span class='va'>tourisms_ppp_jit</span><span class='op'>)</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>[1] FALSE</code></pre>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>mrt_ppp_jit</span> <span class='op'>&lt;-</span> <span class='fu'>rjitter</span><span class='op'>(</span><span class='va'>mrt_ppp</span>,
+                             retry <span class='op'>=</span> <span class='cn'>TRUE</span>,
+                             nsim <span class='op'>=</span> <span class='fl'>1</span>,
+                             drop <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/base/any.html'>any</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/duplicated.html'>duplicated</a></span><span class='op'>(</span><span class='va'>mrt_ppp_jit</span><span class='op'>)</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>[1] FALSE</code></pre>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>listings_2021_ppp_jit</span> <span class='op'>&lt;-</span> <span class='fu'>rjitter</span><span class='op'>(</span><span class='va'>listings_2021_ppp</span>,
+                             retry <span class='op'>=</span> <span class='cn'>TRUE</span>,
+                             nsim <span class='op'>=</span> <span class='fl'>1</span>,
+                             drop <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/base/any.html'>any</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/duplicated.html'>duplicated</a></span><span class='op'>(</span><span class='va'>listings_2021_ppp_jit</span><span class='op'>)</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>[1] FALSE</code></pre>
+</div>
+<ul>
+<li>Results above show that all are FALSE, thereby confirming that there are no duplicated points present after performing <em>rjitter()</em>.</li>
+</ul>
+<h2 id="create-an-owin-object">6.7 Create an owin object</h2>
+<ul>
+<li><p>It is a good practice to confine the spatial point patterns analysis with a geographical area such as the Singapore boundary.</p></li>
+<li><p>In <strong>spatstat</strong> package, this polygonal region is known as <strong>owin</strong>, an object specially designed to represent this boundary.</p></li>
+<li><p>Convert <em>sg</em> SpatialPolygon object to owin object of <strong>spatstat</strong> package</p></li>
+</ul>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>sg_owin</span> <span class='op'>&lt;-</span> <span class='fu'>as</span><span class='op'>(</span><span class='va'>sg_sp</span>, <span class='st'>"owin"</span><span class='op'>)</span>
+</code></pre>
+</div>
+</div>
+<h2 id="combine-with-owin-object">6.8 Combine with owin object</h2>
+<ul>
+<li>Combine point, polygonal event object and owin object into one ppp object for Airbnb listings in 2019, 2021, tourisms, hotels and MRT services.</li>
+</ul>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>listings_2019_ppp</span> <span class='op'>=</span> <span class='va'>listings_2019_ppp_jit</span><span class='op'>[</span><span class='va'>sg_owin</span><span class='op'>]</span>
+<span class='va'>tourisms_ppp</span> <span class='op'>=</span> <span class='va'>tourisms_ppp_jit</span><span class='op'>[</span><span class='va'>sg_owin</span><span class='op'>]</span>
+<span class='va'>hotels_ppp</span> <span class='op'>=</span> <span class='va'>hotels_ppp_jit</span><span class='op'>[</span><span class='va'>sg_owin</span><span class='op'>]</span>
+<span class='va'>mrt_ppp</span> <span class='op'>=</span> <span class='va'>mrt_ppp_jit</span><span class='op'>[</span><span class='va'>sg_owin</span><span class='op'>]</span>
+<span class='va'>listings_2021_ppp</span> <span class='op'>=</span> <span class='va'>listings_2021_ppp_jit</span><span class='op'>[</span><span class='va'>sg_owin</span><span class='op'>]</span>
+
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>listings_2019_ppp</span><span class='op'>)</span>
+</code></pre>
+</div>
+<p><img src="take-home-exercise-2_files/figure-html5/unnamed-chunk-22-1.png" width="624" /></p>
+</div>
+<h2 id="visualise-the-ppp-objects">6.9 Visualise the ppp objects</h2>
+<ul>
+<li><em>plot()</em> is being used to visualise the ppp objects which are confined within Singapore boundary</li>
+</ul>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/graphics/par.html'>par</a></span><span class='op'>(</span>mfrow<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>2</span>,<span class='fl'>3</span><span class='op'>)</span><span class='op'>)</span>
+
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>listings_2019_ppp</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>tourisms_ppp</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>hotels_ppp</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>mrt_ppp</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>listings_2021_ppp</span><span class='op'>)</span>
+</code></pre>
+</div>
+<p><img src="take-home-exercise-2_files/figure-html5/unnamed-chunk-23-1.png" width="624" /></p>
+</div>
+<h2 id="re-scale-kde-values">6.10 Re-scale KDE Values</h2>
+<ul>
+<li>For the analysis in the later steps, kernel density estimation (KDE) will be computed.</li>
+<li>However, since the default unit of measurement of SVY21 is in metre, we have to convert the KDE values to kilometre so that the values would not be too small to look for useful insights.</li>
+<li><em>rescale()</em> is used to convert the KDE values from metre to kilometre.</li>
+</ul>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>listings_2019_ppp.km</span> <span class='op'>&lt;-</span> <span class='fu'>rescale</span><span class='op'>(</span><span class='va'>listings_2019_ppp</span>, <span class='fl'>1000</span>, <span class='st'>"km"</span><span class='op'>)</span>
+<span class='va'>hotels_ppp.km</span> <span class='op'>&lt;-</span> <span class='fu'>rescale</span><span class='op'>(</span><span class='va'>hotels_ppp</span>, <span class='fl'>1000</span>, <span class='st'>"km"</span><span class='op'>)</span>
+<span class='va'>tourisms_ppp.km</span> <span class='op'>&lt;-</span> <span class='fu'>rescale</span><span class='op'>(</span><span class='va'>tourisms_ppp</span>, <span class='fl'>1000</span>, <span class='st'>"km"</span><span class='op'>)</span>
+<span class='va'>mrt_ppp.km</span> <span class='op'>&lt;-</span> <span class='fu'>rescale</span><span class='op'>(</span><span class='va'>mrt_ppp</span>, <span class='fl'>1000</span>, <span class='st'>"km"</span><span class='op'>)</span>
+<span class='va'>listings_2021_ppp.km</span> <span class='op'>&lt;-</span> <span class='fu'>rescale</span><span class='op'>(</span><span class='va'>listings_2021_ppp</span>, <span class='fl'>1000</span>, <span class='st'>"km"</span><span class='op'>)</span>
+</code></pre>
+</div>
+</div>
+<div class="sourceCode" id="cb38"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->
 </div>

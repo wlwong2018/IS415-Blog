@@ -324,5 +324,193 @@ tm_shape(mrt_sf) +
 ```
 
 
+# 6 Geospatial Data Wrangling
+
+This section focuses on converting simple feature data frames to ppp objects that are suitable for the analysis in the later steps. 
+
+## 6.1 Convert sf to Spatial* classes
+
+- *as_Spatial()* of **sf** package is being used to convert the geospatial data from simple feature data frame to sp’s Spatial* class.
+
+```{r echo=TRUE, eval=TRUE}
+mpsz <- as_Spatial(mpsz_sf)
+sg <- as_Spatial(sg_sf)
+listings_2019 <- as_Spatial(listings_2019_sf)
+hotels <- as_Spatial(hotels_sf)
+tourism <- as_Spatial(tourism_sf)
+mrt <- as_Spatial(mrt_sf)
+listings_2021 <- as_Spatial(listings_2021_sf)
+
+```
+
+
+## 6.2 Convert Spatial* dataframe into Spatial* objects
+
+- As *spatstat* requires the analytical data in ppp object and there is no direct way to convert a Spatial* class to ppp object, we have to convert the Spatial classes* into Spatial object first.
+- *as()* with the argument *SpatialPoints* of **maptools** package is being used for point data sets, while *SpatialPolygons* is being used for polygonal data sets.
+- Data would be dropped in this step.
+
+```{r echo=TRUE, eval=TRUE}
+mpsz_sp <- as(mpsz, "SpatialPolygons")
+sg_sp <- as(sg, "SpatialPolygons")
+listings_2019_sp <- as(listings_2019, "SpatialPoints")
+hotels_sp <- as(hotels, "SpatialPoints")
+tourisms_sp <- as(tourism, "SpatialPoints")
+mrt_sp <- as(mrt, "SpatialPoints")
+listings_2021_sp <- as(listings_2021, "SpatialPoints")
+
+```
+
+
+## 6.3 Convert from Spatial* objects into ppp object
+
+- *as()* with the argument of *ppp* of **maptools** package is being used.
+- Project information would be dropped in this step.
+
+```{r echo=TRUE, eval=TRUE}
+listings_2019_ppp <- as(listings_2019_sp, "ppp")
+hotels_ppp <- as(hotels_sp, "ppp")
+tourisms_ppp <- as(tourisms_sp, "ppp")
+mrt_ppp <- as(mrt_sp, "ppp")
+listings_2021_ppp <- as(listings_2021_sp, "ppp")
+
+```
+
+## 6.4 Summary statistics of the newly created ppp objects
+
+```{r echo=TRUE, eval=TRUE}
+summary(listings_2019_ppp)
+summary(hotels_ppp)
+summary(tourisms_ppp)
+summary(mrt_ppp)
+summary(listings_2021_ppp)
+
+```
+
+- From the results above,
+
+    + Messages about duplicates are printed for listings_2019, hotels & tourism.
+    + The statistical methodology used for spatial point patterns processes is based largely on the assumption that process are simple, that is, that the points cannot be coincident.
+
+
+## 6.5 Find number of duplicated points
+
+- sum() and multiplicity() to know the number of locations with more than 1 point event.
+
+```{r echo=TRUE, eval=TRUE}
+sum(multiplicity(listings_2019_ppp) > 1)
+sum(multiplicity(hotels_ppp) > 1)
+sum(multiplicity(tourisms_ppp) > 1)
+sum(multiplicity(mrt_ppp) > 1)
+sum(multiplicity(listings_2021_ppp) > 1)
+
+```
+
+From the results above:
+
+- All data sets have duplicated points except for the MRT data set.
+
+## 6.6 Handle duplicated points using jitter
+
+- *rjitter()* of **spatstat** package is being used
+- To avoid points overlapping, rjitter() will add a small perturbation to the duplicated points so that they do not occupy the exact same space 
+- *any()* and *duplicated()* are used to ensure that there are no duplicated points after using *rjitter()*
+- From the previous step, even though *mrt_ppp* object is being shown that there are 0 duplicated points, it is a good practice to verify by printing it again.
+
+
+```{r echo=TRUE, eval=TRUE}
+listings_2019_ppp_jit <- rjitter(listings_2019_ppp,
+                             retry = TRUE,
+                             nsim = 1,
+                             drop = TRUE)
+any(duplicated(listings_2019_ppp_jit))
+
+
+hotels_ppp_jit <- rjitter(hotels_ppp,
+                             retry = TRUE,
+                             nsim = 1,
+                             drop = TRUE)
+any(duplicated(hotels_ppp_jit))
+
+
+tourisms_ppp_jit <- rjitter(tourisms_ppp,
+                             retry = TRUE,
+                             nsim = 1,
+                             drop = TRUE)
+any(duplicated(tourisms_ppp_jit))
+
+
+mrt_ppp_jit <- rjitter(mrt_ppp,
+                             retry = TRUE,
+                             nsim = 1,
+                             drop = TRUE)
+any(duplicated(mrt_ppp_jit))
+
+listings_2021_ppp_jit <- rjitter(listings_2021_ppp,
+                             retry = TRUE,
+                             nsim = 1,
+                             drop = TRUE)
+any(duplicated(listings_2021_ppp_jit))
+
+```
+
+- Results above show that all are FALSE, thereby confirming that there are no duplicated points present after performing *rjitter()*.
+
+## 6.7 Create an owin object
+
+- It is a good practice to confine the spatial point patterns analysis with a geographical area such as the Singapore boundary.
+- In **spatstat** package, this polygonal region is known as **owin**, an object specially designed to represent this boundary.
+
+- Convert *sg* SpatialPolygon object to owin object of **spatstat** package 
+
+```{r echo=TRUE, eval=TRUE}
+sg_owin <- as(sg_sp, "owin")
+```
+
+
+## 6.8 Combine with owin object
+
+- Combine point, polygonal event object and owin object into one ppp object for Airbnb listings in 2019, 2021, tourisms, hotels and MRT services.
+
+```{r echo=TRUE, eval=TRUE}
+listings_2019_ppp = listings_2019_ppp_jit[sg_owin]
+tourisms_ppp = tourisms_ppp_jit[sg_owin]
+hotels_ppp = hotels_ppp_jit[sg_owin]
+mrt_ppp = mrt_ppp_jit[sg_owin]
+listings_2021_ppp = listings_2021_ppp_jit[sg_owin]
+
+plot(listings_2019_ppp)
+```
+
+## 6.9 Visualise the ppp objects
+
+- *plot()* is being used to visualise the ppp objects which are confined within Singapore boundary
+
+```{r echo=TRUE, eval=TRUE}
+par(mfrow=c(2,3))
+
+plot(listings_2019_ppp)
+plot(tourisms_ppp)
+plot(hotels_ppp)
+plot(mrt_ppp)
+plot(listings_2021_ppp)
+
+```
+
+## 6.10  Re-scale KDE Values
+
+- For the analysis in the later steps, kernel density estimation (KDE) will be computed. 
+- However, since the default unit of measurement of SVY21 is in metre, we have to convert the KDE values to kilometre so that the values would not be too small to look for useful insights.
+- *rescale()* is used to convert the KDE values from metre to kilometre.
+
+```{r echo=TRUE, eval=TRUE}
+listings_2019_ppp.km <- rescale(listings_2019_ppp, 1000, "km")
+hotels_ppp.km <- rescale(hotels_ppp, 1000, "km")
+tourisms_ppp.km <- rescale(tourisms_ppp, 1000, "km")
+mrt_ppp.km <- rescale(mrt_ppp, 1000, "km")
+listings_2021_ppp.km <- rescale(listings_2021_ppp, 1000, "km")
+
+```
+
 
 
