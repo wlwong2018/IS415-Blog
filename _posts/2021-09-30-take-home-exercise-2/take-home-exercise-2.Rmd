@@ -33,7 +33,7 @@ set.seed(1234)
 # 3 Install and Load Packages
 
 ```{r echo=TRUE, eval=TRUE}
-packages = c('tidyverse', 'sf', 'tmap', 'maptools', 'spatstat', 'raster', 'gridExtra') #  'sp', 'spNetwork', 'readr', 'dplyr',  , 'ggplot2', 'ggpubr', 'rgdal', 'ggthemes', 'plotly'
+packages = c('tidyverse', 'sf', 'tmap', 'maptools', 'spatstat', 'raster', 'gridExtra')
 
 for (p in packages){
 if(!require(p, character.only = T)){
@@ -59,8 +59,6 @@ Explanation on the uses of each package:
 
 - **spatstat:** For statistical analysis of spatial data.
 
-- **ggpubr:** For arranging tmaps to be side-by-side for easy visualisation
-    
 - **raster:** For processing geospatial data to plot KDE maps on OpenStreetMap
     
 - **gridExtra:** For arranging KDE maps when plotted into grid objects
@@ -710,3 +708,35 @@ tmap_mode("plot")
 - It can also be observed that there is a larger red spot in the same region. This also means that hotels are also dense in the South-East region of Singapore. 
 
 
+##### 7.1.1.3.2 Plot Airbnb Listings 2019 against Tourist Attractions
+
+```{r echo=TRUE, eval=TRUE}
+oms(kde_tourism_ppl_raster, kde_listings_2019_ppl_raster, "Tourism", "Airbnb Listings 2019")
+
+tmap_mode("plot")
+```
+
+**Spatial patterns revealed by the kernel density map above:**
+
+- Shades of blue represent Airbnb listing in 2019 while shades of red represent Tourism.
+- Similar to the tmap of Airbnb Listings 2019 against Hotels, it can also be observed that the South-East region of Singapore has a high number of tourist attraction and is therefore dense since the red is darker in this region. 
+- However, for tourism, it can be seen that it is slightly more concentrated in the middle as compared to hotels which is slightly more spread out. 
+
+<br>
+
+##### 7.1.1.3.3 Plot Airbnb Listings 2019 against MRT services
+
+```{r echo=TRUE, eval=TRUE}
+oms(kde_mrt_ppl_raster, kde_listings_2019_ppl_raster, "MRT", "Airbnb Listings 2019")
+
+tmap_mode("plot")
+```
+
+**Spatial patterns revealed by the kernel density map above:**
+
+- Shades of blue represent Airbnb listings in 2019 while shades of red represent MRT services.
+- Mrt services are dense not only in the same area as the Airbnb listings in 2019, it is also dense in the North-East and North-West region of Singapore. 
+- This can be observed from the red spots above. 
+- In the South-East region of Singapore, it can be observed that MRT services are not as concentrated as compared to tourism and hotels. MRT services are slightly more spread out within the South-East region of Singapore.
+- MRT services is in fact more spread out than hotels within the South-East region of Singapore.
+ 
