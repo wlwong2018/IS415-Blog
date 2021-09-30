@@ -923,8 +923,8 @@ Results above show that:
 - For Airbnb listings 2019 vs Hotels
 
     + From about **50 to 150m**, it can be observed that the black line is not only above the red line, it is also above the envelope.  This shows signs of significant cluster pattern from the 50 to 150m mark. Also, since it is above the envelope, we have enough statistical evidence to **reject the null hypothesis** at 90% confidence interval.
-    + After the **150m mark**, the black line is below the red line and this shows signs of regular pattern. However, we can only say that it shows sign of significant regular pattern after the 150m mark as this is the part where the black line is below the envelope. Since it is below the envelope, we have enough statistical evidence to **reject the null hypothesis** at 90% confidence interval.
-    + To summarise, for both distances i.e.50 to 150m and after the 150m mark, are NOT spatially independent but from **50 to 150m**, it has **significant clustered patterns** while after the **150m mark**, it has **significant regular pattern**.
+    + After the **150m mark**, the black line is below the red line and this shows signs of regular pattern. However, we can only say that it shows sign of significant regular pattern **after the 160m mark** as this is the part where the black line is below the envelope. Since it is below the envelope, we have enough statistical evidence to **reject the null hypothesis** at 90% confidence interval.
+    + To summarise, for both distances i.e.50 to 150m and after the 160m mark, are NOT spatially independent but from **50 to 150m**, it has **significant clustered patterns** while after the **160m mark**, it has **significant regular pattern**.
 
 - For Airbnb listings 2019 vs Tourism
 
@@ -1140,4 +1140,47 @@ projection(kde_listings_2021_ppl_raster_sr) <- CRS("+init=EPSG:3414")
 projection(kde_listings_2021_ppl_raster) <- CRS("+init=EPSG:3414")
 
 ```
+
+
+##### 8.1.1.3.5 Visualise output in openstreetmap
+
+###### Plot Airbnb Listings 2019 vs 2021
+
+- Use function created in Section A to plot on OpenStreetMap Singapore.
+
+```{r echo=TRUE, eval=TRUE}
+oms(kde_listings_2019_ppl_raster, kde_listings_2021_ppl_raster, "Airbnb Listings 2019", "Airbnb Listings 2021")
+
+tmap_mode('plot')
+```
+
+
+**Spatial patterns revealed by the kernel density map above:**
+
+- Shades of red represent Airbnb Listings in 2019 while shades of blue represent Airbnb Listings in 2021.
+- In general (without specifying the room types), the Airbnb listings in 2021 has fallen from Airbnb listings in 2019. 
+- This can be observed by having less shades of blue as compared to more shades of red.
+- In 2021, the more prominent areas are in and around Chinatown,Bendemeer as well as near Geylang. 
+- This is a significant decrease from 2019 where most parts of the Southern-Eastern region of Singapore are coloured red, representing more number of Airbnb listings in 2019.
+
+
+###### Plot Private Room 2019 vs 2021
+
+- Use function created in Section A to plot on OpenStreetMap Singapore.
+
+```{r echo=TRUE, eval=TRUE}
+oms(kde_listings_2019_ppl_raster_pr, kde_listings_2021_ppl_raster_pr, "Private Room 2019", "Private Room 2021")
+
+tmap_mode('plot')
+
+```
+
+**Spatial patterns revealed by the kernel density map above:**
+
+- For private rooms in general, it can be seen that there are not many of them. 
+- But, it can be observed that there were private rooms listings in more areas in 2019 as compared to 2021.
+- In 2019, private room listings can be seen in various areas such as Chinatown, near Somerset, Selegie, Bendemeer, several places near Aljunied and more. 
+- However in 2021, private room listings can only be seen in Chinatown, near Bencoolen and Bendemeer.
+- Hence, there are fewer areas with Private listings in 2021 as compared to 2019.
+
 
