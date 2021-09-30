@@ -167,5 +167,162 @@ tm_shape(mrt_sf) +
 ```
 
 
+# 5 Data Import and Preparation for Aspatial Dataset
+
+For aspatial data, we have to check for NA values because if NA values are not properly handled, it might hinder with the analysis in the later steps. Additionally, we have to convert them to sf objects and assign them the right CRS, making these data sets suitable to be plotted on a map. 
+
+## 5.1 Import aspatial data sets
+
+- *read_csv()* of **readr** package to import the aspatial data sets.
+
+```{r echo=TRUE, eval=TRUE}
+listings_2019 <- read_csv("data/aspatial/listings_June_2019.csv")
+hotels <- read_csv("data/aspatial/hotels.csv")
+tourism <- read_csv("data/aspatial/tourism.csv")
+listings_2021 <- read_csv("data/aspatial/listings_June_2021.csv")
+
+```
+
+## 5.2 Look into the data sets
+
+```{r echo=TRUE, eval=TRUE}
+glimpse(listings_2019)
+glimpse(hotels)
+glimpse(tourism)
+glimpse(listings_2021)
+
+```
+
+
+## 5.3 Data Cleaning
+
+- Remove NA values only from latitude and longitude columns as those are needed for analysis in the later steps.
+- NA values in other columns do not have to be dropped as the *data* will be dropped later when converting Spatial* data frame into Spatial* objects.
+
+```{r echo=TRUE, eval=TRUE}
+listings_2019 <- listings_2019 %>%
+  drop_na(latitude) %>%
+  drop_na(longitude)
+
+hotels <- hotels %>%
+  drop_na(Lat) %>%
+  drop_na(Lng)
+
+tourism <- tourism %>%
+  drop_na(LATITUDE) %>%
+  drop_na(LONGTITUDE)
+
+listings_2021 <- listings_2021  %>%
+  drop_na(latitude) %>%
+  drop_na(longitude)
+
+```
+
+
+
+## 5.4 Convert Aspatial data frame into sf object and assign CRS
+
+- The values in the latitude & longitude columns are in decimal degrees, hence, this means that it is using WGS84. 
+- We then need to assign the epsg code of 4326 before transforming to SVY21.
+
+```{r echo=TRUE, eval=TRUE}
+listings_2019_sf <- st_as_sf(listings_2019,
+                    coords = c("longitude", "latitude"),
+                    crs = 4326)  %>%
+  st_transform(crs = 3414)
+
+
+hotels_sf <- st_as_sf(hotels,
+                    coords = c("Lng", "Lat"),
+                    crs = 4326)  %>%
+  st_transform(crs = 3414)
+
+
+tourism_sf <- st_as_sf(tourism,
+                    coords = c("LONGTITUDE", "LATITUDE"),
+                    crs = 4326)  %>%
+  st_transform(crs = 3414)
+
+listings_2021_sf <- st_as_sf(listings_2021,
+                    coords = c("longitude", "latitude"),
+                    crs = 4326)  %>%
+  st_transform(crs = 3414)
+```
+
+
+## 5.5 Check CRS
+
+- Check CRS to ensure that it is EPSG:3414 - SVY21
+
+```{r echo=TRUE, eval=TRUE}
+st_crs(listings_2019_sf)
+st_crs(hotels_sf)
+st_crs(tourism_sf)
+st_crs(listings_2021_sf)
+
+```
+
+Results above show that:
+
+- All are in the right code of 3414. 
+
+## 5.6 Plot to review (including geospatial data, excluding listings_2021)
+
+- Plot all the point events of Airbnb listings 2019, hotels, tourist attractions and MRT services to ensure that they are being assigned the right CRS. 
+
+```{r echo=TRUE, eval=TRUE}
+tm_shape(sg_sf) +
+  tm_polygons() +
+tm_shape(mpsz_sf) +
+  tm_polygons() +
+tm_shape(listings_2019_sf) +
+  tm_dots(alpha = 0.4,
+          col = "blue",
+          size = 0.05) +
+tm_shape(hotels_sf) +
+  tm_dots(alpha = 0.4,
+          col = "red",
+          size = 0.05) +
+tm_shape(tourism_sf) +
+  tm_dots(alpha = 0.4,
+          col = "green",
+          size = 0.05) +
+tm_shape(mrt_sf) +
+  tm_dots(alpha = 0.4,
+          col = "orange",
+          size = 0.05)
+
+
+```
+
+
+## 5.7 Plot to review (including geospatial data, excluding listings_2019)
+
+- Plot all the point events of Airbnb listings 2021, hotels, tourist attractions and MRT services to ensure that it is being assigned the right CRS. 
+
+```{r echo=TRUE, eval=TRUE}
+tm_shape(sg_sf) +
+  tm_polygons() +
+tm_shape(mpsz_sf) +
+  tm_polygons() +
+tm_shape(listings_2021_sf) +
+  tm_dots(alpha = 0.4,
+          col = "blue",
+          size = 0.05) +
+tm_shape(hotels_sf) +
+  tm_dots(alpha = 0.4,
+          col = "red",
+          size = 0.05) +
+tm_shape(tourism_sf) +
+  tm_dots(alpha = 0.4,
+          col = "green",
+          size = 0.05) +
+tm_shape(mrt_sf) +
+  tm_dots(alpha = 0.4,
+          col = "orange",
+          size = 0.05)
+```
+
+
 
 

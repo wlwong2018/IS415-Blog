@@ -116,7 +116,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   <!--/radix_placeholder_rmarkdown_metadata-->
   
   <script type="text/json" id="radix-resource-manifest">
-  {"type":"character","attributes":{},"value":["data/aspatial/hotels.csv","data/aspatial/listings_June_2019.csv","data/aspatial/listings_June_2021.csv","data/aspatial/tourism.csv","data/geospatial/CostalOutline.dbf","data/geospatial/CostalOutline.prj","data/geospatial/CostalOutline.sbn","data/geospatial/CostalOutline.sbx","data/geospatial/CostalOutline.shp","data/geospatial/CostalOutline.shx","data/geospatial/MP14_SUBZONE_WEB_PL.dbf","data/geospatial/MP14_SUBZONE_WEB_PL.prj","data/geospatial/MP14_SUBZONE_WEB_PL.sbn","data/geospatial/MP14_SUBZONE_WEB_PL.sbx","data/geospatial/MP14_SUBZONE_WEB_PL.shp","data/geospatial/MP14_SUBZONE_WEB_PL.shp.xml","data/geospatial/MP14_SUBZONE_WEB_PL.shx","data/geospatial/MRTLRTStnPtt.CPG","data/geospatial/MRTLRTStnPtt.dbf","data/geospatial/MRTLRTStnPtt.prj","data/geospatial/MRTLRTStnPtt.sbn","data/geospatial/MRTLRTStnPtt.sbx","data/geospatial/MRTLRTStnPtt.shp","data/geospatial/MRTLRTStnPtt.shx","take-home-exercise-2_files/anchor-4.2.2/anchor.min.js","take-home-exercise-2_files/bowser-1.9.3/bowser.min.js","take-home-exercise-2_files/distill-2.2.21/template.v2.js","take-home-exercise-2_files/figure-html5/unnamed-chunk-7-1.png","take-home-exercise-2_files/header-attrs-2.10/header-attrs.js","take-home-exercise-2_files/jquery-1.11.3/jquery.min.js","take-home-exercise-2_files/popper-2.6.0/popper.min.js","take-home-exercise-2_files/tippy-6.2.7/tippy-bundle.umd.min.js","take-home-exercise-2_files/tippy-6.2.7/tippy-light-border.css","take-home-exercise-2_files/tippy-6.2.7/tippy.css","take-home-exercise-2_files/tippy-6.2.7/tippy.umd.min.js","take-home-exercise-2_files/webcomponents-2.0.0/webcomponents.js"]}
+  {"type":"character","attributes":{},"value":["data/aspatial/hotels.csv","data/aspatial/listings_June_2019.csv","data/aspatial/listings_June_2021.csv","data/aspatial/tourism.csv","data/geospatial/CostalOutline.dbf","data/geospatial/CostalOutline.prj","data/geospatial/CostalOutline.sbn","data/geospatial/CostalOutline.sbx","data/geospatial/CostalOutline.shp","data/geospatial/CostalOutline.shx","data/geospatial/MP14_SUBZONE_WEB_PL.dbf","data/geospatial/MP14_SUBZONE_WEB_PL.prj","data/geospatial/MP14_SUBZONE_WEB_PL.sbn","data/geospatial/MP14_SUBZONE_WEB_PL.sbx","data/geospatial/MP14_SUBZONE_WEB_PL.shp","data/geospatial/MP14_SUBZONE_WEB_PL.shp.xml","data/geospatial/MP14_SUBZONE_WEB_PL.shx","data/geospatial/MRTLRTStnPtt.CPG","data/geospatial/MRTLRTStnPtt.dbf","data/geospatial/MRTLRTStnPtt.prj","data/geospatial/MRTLRTStnPtt.sbn","data/geospatial/MRTLRTStnPtt.sbx","data/geospatial/MRTLRTStnPtt.shp","data/geospatial/MRTLRTStnPtt.shx","take-home-exercise-2_files/anchor-4.2.2/anchor.min.js","take-home-exercise-2_files/bowser-1.9.3/bowser.min.js","take-home-exercise-2_files/distill-2.2.21/template.v2.js","take-home-exercise-2_files/figure-html5/unnamed-chunk-13-1.png","take-home-exercise-2_files/figure-html5/unnamed-chunk-14-1.png","take-home-exercise-2_files/figure-html5/unnamed-chunk-7-1.png","take-home-exercise-2_files/header-attrs-2.10/header-attrs.js","take-home-exercise-2_files/jquery-1.11.3/jquery.min.js","take-home-exercise-2_files/popper-2.6.0/popper.min.js","take-home-exercise-2_files/tippy-6.2.7/tippy-bundle.umd.min.js","take-home-exercise-2_files/tippy-6.2.7/tippy-light-border.css","take-home-exercise-2_files/tippy-6.2.7/tippy.css","take-home-exercise-2_files/tippy-6.2.7/tippy.umd.min.js","take-home-exercise-2_files/webcomponents-2.0.0/webcomponents.js"]}
   </script>
   <!--radix_placeholder_navigation_in_header-->
   <!--/radix_placeholder_navigation_in_header-->
@@ -1920,7 +1920,413 @@ PROJCRS[&quot;SVY21 / Singapore TM&quot;,
 </div>
 <p><img src="take-home-exercise-2_files/figure-html5/unnamed-chunk-7-1.png" width="624" /></p>
 </div>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<h1 id="data-import-and-preparation-for-aspatial-dataset">5 Data Import and Preparation for Aspatial Dataset</h1>
+<p>For aspatial data, we have to check for NA values because if NA values are not properly handled, it might hinder with the analysis in the later steps. Additionally, we have to convert them to sf objects and assign them the right CRS, making these data sets suitable to be plotted on a map.</p>
+<h2 id="import-aspatial-data-sets">5.1 Import aspatial data sets</h2>
+<ul>
+<li><em>read_csv()</em> of <strong>readr</strong> package to import the aspatial data sets.</li>
+</ul>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>listings_2019</span> <span class='op'>&lt;-</span> <span class='fu'>read_csv</span><span class='op'>(</span><span class='st'>"data/aspatial/listings_June_2019.csv"</span><span class='op'>)</span>
+<span class='va'>hotels</span> <span class='op'>&lt;-</span> <span class='fu'>read_csv</span><span class='op'>(</span><span class='st'>"data/aspatial/hotels.csv"</span><span class='op'>)</span>
+<span class='va'>tourism</span> <span class='op'>&lt;-</span> <span class='fu'>read_csv</span><span class='op'>(</span><span class='st'>"data/aspatial/tourism.csv"</span><span class='op'>)</span>
+<span class='va'>listings_2021</span> <span class='op'>&lt;-</span> <span class='fu'>read_csv</span><span class='op'>(</span><span class='st'>"data/aspatial/listings_June_2021.csv"</span><span class='op'>)</span>
+</code></pre>
+</div>
+</div>
+<h2 id="look-into-the-data-sets">5.2 Look into the data sets</h2>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>glimpse</span><span class='op'>(</span><span class='va'>listings_2019</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>Rows: 8,293
+Columns: 16
+$ id                             &lt;dbl&gt; 49091, 50646, 56334, 71609, 7~
+$ name                           &lt;chr&gt; &quot;COZICOMFORT LONG TERM STAY R~
+$ host_id                        &lt;dbl&gt; 266763, 227796, 266763, 36704~
+$ host_name                      &lt;chr&gt; &quot;Francesca&quot;, &quot;Sujatha&quot;, &quot;Fran~
+$ neighbourhood_group            &lt;chr&gt; &quot;North Region&quot;, &quot;Central Regi~
+$ neighbourhood                  &lt;chr&gt; &quot;Woodlands&quot;, &quot;Bukit Timah&quot;, &quot;~
+$ latitude                       &lt;dbl&gt; 1.44255, 1.33235, 1.44246, 1.~
+$ longitude                      &lt;dbl&gt; 103.7958, 103.7852, 103.7967,~
+$ room_type                      &lt;chr&gt; &quot;Private room&quot;, &quot;Private room~
+$ price                          &lt;dbl&gt; 81, 80, 68, 200, 92, 102, 203~
+$ minimum_nights                 &lt;dbl&gt; 180, 90, 6, 1, 1, 1, 1, 7, 30~
+$ number_of_reviews              &lt;dbl&gt; 1, 18, 20, 12, 20, 35, 23, 15~
+$ last_review                    &lt;date&gt; 2013-10-21, 2014-12-26, 2015~
+$ reviews_per_month              &lt;dbl&gt; 0.01, 0.28, 0.21, 0.13, 0.21,~
+$ calculated_host_listings_count &lt;dbl&gt; 2, 1, 2, 9, 9, 9, 9, 1, 4, 4,~
+$ availability_365               &lt;dbl&gt; 365, 365, 365, 353, 353, 348,~</code></pre>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>glimpse</span><span class='op'>(</span><span class='va'>hotels</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>Rows: 422
+Columns: 9
+$ NAME              &lt;chr&gt; &quot;Jayleen Clarke Quay Hotel&quot;, &quot;JEN Singapor~
+$ ADDRESSPOSTALCODE &lt;dbl&gt; 59390, 238858, 249716, 399041, 238485, 399~
+$ ADDRESSSTREETNAME &lt;chr&gt; &quot;25 New Bridge Road&quot;, &quot;277 Orchard Road , ~
+$ HYPERLINK         &lt;chr&gt; &quot;jayleenclarkequay@gmail.com&quot;, &quot;singaporeo~
+$ TOTALROOMS        &lt;dbl&gt; 20, 499, 565, 42, 81, 33, 17, 634, 56, 451~
+$ KEEPERNAME        &lt;chr&gt; &quot;James Federick Chong Kah Yean&quot;, &quot;Kuok Oon~
+$ Lat               &lt;dbl&gt; 1.288715, 1.300510, 1.304271, 1.311586, 1.~
+$ Lng               &lt;dbl&gt; 103.8475, 103.8392, 103.8239, 103.8775, 10~
+$ ICON_NAME         &lt;chr&gt; &quot;hotel.gif&quot;, &quot;hotel.gif&quot;, &quot;hotel.gif&quot;, &quot;ho~</code></pre>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>glimpse</span><span class='op'>(</span><span class='va'>tourism</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>Rows: 107
+Columns: 17
+$ NAME              &lt;chr&gt; &quot;Chinatown Heritage Centre, Singapore&quot;, &quot;T~
+$ DESCRIPTION       &lt;chr&gt; &quot;Experience how Singapore’s early Chinese ~
+$ ADDRESSSTREETNAME &lt;chr&gt; &quot;48 Pagoda Street&quot;, &quot;158 Telok Ayer Street~
+$ HYPERLINK         &lt;chr&gt; &quot;http://www.singaporechinatown.com.sg/&quot;, &quot;~
+$ PHOTOURL          &lt;chr&gt; &quot;www.yoursingapore.com/content/dam/desktop~
+$ URL_PATH          &lt;chr&gt; &quot;www.yoursingapore.com/en/see-do-singapore~
+$ IMAGE_ALT_TEXT    &lt;chr&gt; &quot;Learn more about local Chinese culture at~
+$ PHOTOCREDITS      &lt;chr&gt; &quot;Joel Chua DY&quot;, &quot;Joel Chua DY&quot;, &quot;Joel Chua~
+$ LASTMODIFIED      &lt;dttm&gt; 2015-11-02 02:16:52, 2015-11-02 02:20:57,~
+$ LATITUDE          &lt;dbl&gt; 1.283510, 1.280940, 1.310070, 1.277219, 1.~
+$ LONGTITUDE        &lt;dbl&gt; 103.8444, 103.8476, 103.8994, 103.8373, 10~
+$ META_DESCRIPTION  &lt;chr&gt; &quot;At the Chinatown Heritage Centre, experie~
+$ OPENING_HOURS     &lt;chr&gt; &quot;Daily, 9am – 8pm,Last entry at 7pm.*China~
+$ Lat               &lt;dbl&gt; 1.283510, 1.280940, 1.310070, 1.277219, 1.~
+$ Lng               &lt;dbl&gt; 103.8444, 103.8476, 103.8994, 103.8373, 10~
+$ ICON_NAME         &lt;chr&gt; &quot;tourist_spot.gif&quot;, &quot;tourist_spot.gif&quot;, &quot;t~
+$ ADDRESSPOSTALCODE &lt;dbl&gt; NA, NA, NA, 0, NA, NA, NA, NA, NA, NA, NA,~</code></pre>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>glimpse</span><span class='op'>(</span><span class='va'>listings_2021</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>Rows: 4,238
+Columns: 16
+$ id                             &lt;dbl&gt; 49091, 50646, 56334, 71609, 7~
+$ name                           &lt;chr&gt; &quot;COZICOMFORT LONG TERM STAY R~
+$ host_id                        &lt;dbl&gt; 266763, 227796, 266763, 36704~
+$ host_name                      &lt;chr&gt; &quot;Francesca&quot;, &quot;Sujatha&quot;, &quot;Fran~
+$ neighbourhood_group            &lt;chr&gt; &quot;North Region&quot;, &quot;Central Regi~
+$ neighbourhood                  &lt;chr&gt; &quot;Woodlands&quot;, &quot;Bukit Timah&quot;, &quot;~
+$ latitude                       &lt;dbl&gt; 1.44129, 1.33432, 1.44041, 1.~
+$ longitude                      &lt;dbl&gt; 103.7957, 103.7852, 103.7967,~
+$ room_type                      &lt;chr&gt; &quot;Private room&quot;, &quot;Private room~
+$ price                          &lt;dbl&gt; 81, 80, 67, 177, 81, 81, 52, ~
+$ minimum_nights                 &lt;dbl&gt; 180, 90, 6, 90, 90, 90, 14, 1~
+$ number_of_reviews              &lt;dbl&gt; 1, 18, 20, 20, 24, 48, 20, 13~
+$ last_review                    &lt;date&gt; 2013-10-21, 2014-07-08, 2015~
+$ reviews_per_month              &lt;dbl&gt; 0.01, 0.22, 0.16, 0.29, 0.34,~
+$ calculated_host_listings_count &lt;dbl&gt; 2, 1, 2, 4, 4, 4, 50, 50, 7, ~
+$ availability_365               &lt;dbl&gt; 365, 365, 365, 365, 365, 365,~</code></pre>
+</div>
+<h2 id="data-cleaning">5.3 Data Cleaning</h2>
+<ul>
+<li>Remove NA values only from latitude and longitude columns as those are needed for analysis in the later steps.</li>
+<li>NA values in other columns do not have to be dropped as the <em>data</em> will be dropped later when converting Spatial* data frame into Spatial* objects.</li>
+</ul>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>listings_2019</span> <span class='op'>&lt;-</span> <span class='va'>listings_2019</span> <span class='op'>%&gt;%</span>
+  <span class='fu'>drop_na</span><span class='op'>(</span><span class='va'>latitude</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
+  <span class='fu'>drop_na</span><span class='op'>(</span><span class='va'>longitude</span><span class='op'>)</span>
+
+<span class='va'>hotels</span> <span class='op'>&lt;-</span> <span class='va'>hotels</span> <span class='op'>%&gt;%</span>
+  <span class='fu'>drop_na</span><span class='op'>(</span><span class='va'>Lat</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
+  <span class='fu'>drop_na</span><span class='op'>(</span><span class='va'>Lng</span><span class='op'>)</span>
+
+<span class='va'>tourism</span> <span class='op'>&lt;-</span> <span class='va'>tourism</span> <span class='op'>%&gt;%</span>
+  <span class='fu'>drop_na</span><span class='op'>(</span><span class='va'>LATITUDE</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
+  <span class='fu'>drop_na</span><span class='op'>(</span><span class='va'>LONGTITUDE</span><span class='op'>)</span>
+
+<span class='va'>listings_2021</span> <span class='op'>&lt;-</span> <span class='va'>listings_2021</span>  <span class='op'>%&gt;%</span>
+  <span class='fu'>drop_na</span><span class='op'>(</span><span class='va'>latitude</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
+  <span class='fu'>drop_na</span><span class='op'>(</span><span class='va'>longitude</span><span class='op'>)</span>
+</code></pre>
+</div>
+</div>
+<h2 id="convert-aspatial-data-frame-into-sf-object-and-assign-crs">5.4 Convert Aspatial data frame into sf object and assign CRS</h2>
+<ul>
+<li>The values in the latitude &amp; longitude columns are in decimal degrees, hence, this means that it is using WGS84.</li>
+<li>We then need to assign the epsg code of 4326 before transforming to SVY21.</li>
+</ul>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>listings_2019_sf</span> <span class='op'>&lt;-</span> <span class='fu'>st_as_sf</span><span class='op'>(</span><span class='va'>listings_2019</span>,
+                    coords <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"longitude"</span>, <span class='st'>"latitude"</span><span class='op'>)</span>,
+                    crs <span class='op'>=</span> <span class='fl'>4326</span><span class='op'>)</span>  <span class='op'>%&gt;%</span>
+  <span class='fu'>st_transform</span><span class='op'>(</span>crs <span class='op'>=</span> <span class='fl'>3414</span><span class='op'>)</span>
+
+
+<span class='va'>hotels_sf</span> <span class='op'>&lt;-</span> <span class='fu'>st_as_sf</span><span class='op'>(</span><span class='va'>hotels</span>,
+                    coords <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"Lng"</span>, <span class='st'>"Lat"</span><span class='op'>)</span>,
+                    crs <span class='op'>=</span> <span class='fl'>4326</span><span class='op'>)</span>  <span class='op'>%&gt;%</span>
+  <span class='fu'>st_transform</span><span class='op'>(</span>crs <span class='op'>=</span> <span class='fl'>3414</span><span class='op'>)</span>
+
+
+<span class='va'>tourism_sf</span> <span class='op'>&lt;-</span> <span class='fu'>st_as_sf</span><span class='op'>(</span><span class='va'>tourism</span>,
+                    coords <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"LONGTITUDE"</span>, <span class='st'>"LATITUDE"</span><span class='op'>)</span>,
+                    crs <span class='op'>=</span> <span class='fl'>4326</span><span class='op'>)</span>  <span class='op'>%&gt;%</span>
+  <span class='fu'>st_transform</span><span class='op'>(</span>crs <span class='op'>=</span> <span class='fl'>3414</span><span class='op'>)</span>
+
+<span class='va'>listings_2021_sf</span> <span class='op'>&lt;-</span> <span class='fu'>st_as_sf</span><span class='op'>(</span><span class='va'>listings_2021</span>,
+                    coords <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"longitude"</span>, <span class='st'>"latitude"</span><span class='op'>)</span>,
+                    crs <span class='op'>=</span> <span class='fl'>4326</span><span class='op'>)</span>  <span class='op'>%&gt;%</span>
+  <span class='fu'>st_transform</span><span class='op'>(</span>crs <span class='op'>=</span> <span class='fl'>3414</span><span class='op'>)</span>
+</code></pre>
+</div>
+</div>
+<h2 id="check-crs-1">5.5 Check CRS</h2>
+<ul>
+<li>Check CRS to ensure that it is EPSG:3414 - SVY21</li>
+</ul>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>st_crs</span><span class='op'>(</span><span class='va'>listings_2019_sf</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>Coordinate Reference System:
+  User input: EPSG:3414 
+  wkt:
+PROJCRS[&quot;SVY21 / Singapore TM&quot;,
+    BASEGEOGCRS[&quot;SVY21&quot;,
+        DATUM[&quot;SVY21&quot;,
+            ELLIPSOID[&quot;WGS 84&quot;,6378137,298.257223563,
+                LENGTHUNIT[&quot;metre&quot;,1]]],
+        PRIMEM[&quot;Greenwich&quot;,0,
+            ANGLEUNIT[&quot;degree&quot;,0.0174532925199433]],
+        ID[&quot;EPSG&quot;,4757]],
+    CONVERSION[&quot;Singapore Transverse Mercator&quot;,
+        METHOD[&quot;Transverse Mercator&quot;,
+            ID[&quot;EPSG&quot;,9807]],
+        PARAMETER[&quot;Latitude of natural origin&quot;,1.36666666666667,
+            ANGLEUNIT[&quot;degree&quot;,0.0174532925199433],
+            ID[&quot;EPSG&quot;,8801]],
+        PARAMETER[&quot;Longitude of natural origin&quot;,103.833333333333,
+            ANGLEUNIT[&quot;degree&quot;,0.0174532925199433],
+            ID[&quot;EPSG&quot;,8802]],
+        PARAMETER[&quot;Scale factor at natural origin&quot;,1,
+            SCALEUNIT[&quot;unity&quot;,1],
+            ID[&quot;EPSG&quot;,8805]],
+        PARAMETER[&quot;False easting&quot;,28001.642,
+            LENGTHUNIT[&quot;metre&quot;,1],
+            ID[&quot;EPSG&quot;,8806]],
+        PARAMETER[&quot;False northing&quot;,38744.572,
+            LENGTHUNIT[&quot;metre&quot;,1],
+            ID[&quot;EPSG&quot;,8807]]],
+    CS[Cartesian,2],
+        AXIS[&quot;northing (N)&quot;,north,
+            ORDER[1],
+            LENGTHUNIT[&quot;metre&quot;,1]],
+        AXIS[&quot;easting (E)&quot;,east,
+            ORDER[2],
+            LENGTHUNIT[&quot;metre&quot;,1]],
+    USAGE[
+        SCOPE[&quot;Cadastre, engineering survey, topographic mapping.&quot;],
+        AREA[&quot;Singapore - onshore and offshore.&quot;],
+        BBOX[1.13,103.59,1.47,104.07]],
+    ID[&quot;EPSG&quot;,3414]]</code></pre>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>st_crs</span><span class='op'>(</span><span class='va'>hotels_sf</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>Coordinate Reference System:
+  User input: EPSG:3414 
+  wkt:
+PROJCRS[&quot;SVY21 / Singapore TM&quot;,
+    BASEGEOGCRS[&quot;SVY21&quot;,
+        DATUM[&quot;SVY21&quot;,
+            ELLIPSOID[&quot;WGS 84&quot;,6378137,298.257223563,
+                LENGTHUNIT[&quot;metre&quot;,1]]],
+        PRIMEM[&quot;Greenwich&quot;,0,
+            ANGLEUNIT[&quot;degree&quot;,0.0174532925199433]],
+        ID[&quot;EPSG&quot;,4757]],
+    CONVERSION[&quot;Singapore Transverse Mercator&quot;,
+        METHOD[&quot;Transverse Mercator&quot;,
+            ID[&quot;EPSG&quot;,9807]],
+        PARAMETER[&quot;Latitude of natural origin&quot;,1.36666666666667,
+            ANGLEUNIT[&quot;degree&quot;,0.0174532925199433],
+            ID[&quot;EPSG&quot;,8801]],
+        PARAMETER[&quot;Longitude of natural origin&quot;,103.833333333333,
+            ANGLEUNIT[&quot;degree&quot;,0.0174532925199433],
+            ID[&quot;EPSG&quot;,8802]],
+        PARAMETER[&quot;Scale factor at natural origin&quot;,1,
+            SCALEUNIT[&quot;unity&quot;,1],
+            ID[&quot;EPSG&quot;,8805]],
+        PARAMETER[&quot;False easting&quot;,28001.642,
+            LENGTHUNIT[&quot;metre&quot;,1],
+            ID[&quot;EPSG&quot;,8806]],
+        PARAMETER[&quot;False northing&quot;,38744.572,
+            LENGTHUNIT[&quot;metre&quot;,1],
+            ID[&quot;EPSG&quot;,8807]]],
+    CS[Cartesian,2],
+        AXIS[&quot;northing (N)&quot;,north,
+            ORDER[1],
+            LENGTHUNIT[&quot;metre&quot;,1]],
+        AXIS[&quot;easting (E)&quot;,east,
+            ORDER[2],
+            LENGTHUNIT[&quot;metre&quot;,1]],
+    USAGE[
+        SCOPE[&quot;Cadastre, engineering survey, topographic mapping.&quot;],
+        AREA[&quot;Singapore - onshore and offshore.&quot;],
+        BBOX[1.13,103.59,1.47,104.07]],
+    ID[&quot;EPSG&quot;,3414]]</code></pre>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>st_crs</span><span class='op'>(</span><span class='va'>tourism_sf</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>Coordinate Reference System:
+  User input: EPSG:3414 
+  wkt:
+PROJCRS[&quot;SVY21 / Singapore TM&quot;,
+    BASEGEOGCRS[&quot;SVY21&quot;,
+        DATUM[&quot;SVY21&quot;,
+            ELLIPSOID[&quot;WGS 84&quot;,6378137,298.257223563,
+                LENGTHUNIT[&quot;metre&quot;,1]]],
+        PRIMEM[&quot;Greenwich&quot;,0,
+            ANGLEUNIT[&quot;degree&quot;,0.0174532925199433]],
+        ID[&quot;EPSG&quot;,4757]],
+    CONVERSION[&quot;Singapore Transverse Mercator&quot;,
+        METHOD[&quot;Transverse Mercator&quot;,
+            ID[&quot;EPSG&quot;,9807]],
+        PARAMETER[&quot;Latitude of natural origin&quot;,1.36666666666667,
+            ANGLEUNIT[&quot;degree&quot;,0.0174532925199433],
+            ID[&quot;EPSG&quot;,8801]],
+        PARAMETER[&quot;Longitude of natural origin&quot;,103.833333333333,
+            ANGLEUNIT[&quot;degree&quot;,0.0174532925199433],
+            ID[&quot;EPSG&quot;,8802]],
+        PARAMETER[&quot;Scale factor at natural origin&quot;,1,
+            SCALEUNIT[&quot;unity&quot;,1],
+            ID[&quot;EPSG&quot;,8805]],
+        PARAMETER[&quot;False easting&quot;,28001.642,
+            LENGTHUNIT[&quot;metre&quot;,1],
+            ID[&quot;EPSG&quot;,8806]],
+        PARAMETER[&quot;False northing&quot;,38744.572,
+            LENGTHUNIT[&quot;metre&quot;,1],
+            ID[&quot;EPSG&quot;,8807]]],
+    CS[Cartesian,2],
+        AXIS[&quot;northing (N)&quot;,north,
+            ORDER[1],
+            LENGTHUNIT[&quot;metre&quot;,1]],
+        AXIS[&quot;easting (E)&quot;,east,
+            ORDER[2],
+            LENGTHUNIT[&quot;metre&quot;,1]],
+    USAGE[
+        SCOPE[&quot;Cadastre, engineering survey, topographic mapping.&quot;],
+        AREA[&quot;Singapore - onshore and offshore.&quot;],
+        BBOX[1.13,103.59,1.47,104.07]],
+    ID[&quot;EPSG&quot;,3414]]</code></pre>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>st_crs</span><span class='op'>(</span><span class='va'>listings_2021_sf</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>Coordinate Reference System:
+  User input: EPSG:3414 
+  wkt:
+PROJCRS[&quot;SVY21 / Singapore TM&quot;,
+    BASEGEOGCRS[&quot;SVY21&quot;,
+        DATUM[&quot;SVY21&quot;,
+            ELLIPSOID[&quot;WGS 84&quot;,6378137,298.257223563,
+                LENGTHUNIT[&quot;metre&quot;,1]]],
+        PRIMEM[&quot;Greenwich&quot;,0,
+            ANGLEUNIT[&quot;degree&quot;,0.0174532925199433]],
+        ID[&quot;EPSG&quot;,4757]],
+    CONVERSION[&quot;Singapore Transverse Mercator&quot;,
+        METHOD[&quot;Transverse Mercator&quot;,
+            ID[&quot;EPSG&quot;,9807]],
+        PARAMETER[&quot;Latitude of natural origin&quot;,1.36666666666667,
+            ANGLEUNIT[&quot;degree&quot;,0.0174532925199433],
+            ID[&quot;EPSG&quot;,8801]],
+        PARAMETER[&quot;Longitude of natural origin&quot;,103.833333333333,
+            ANGLEUNIT[&quot;degree&quot;,0.0174532925199433],
+            ID[&quot;EPSG&quot;,8802]],
+        PARAMETER[&quot;Scale factor at natural origin&quot;,1,
+            SCALEUNIT[&quot;unity&quot;,1],
+            ID[&quot;EPSG&quot;,8805]],
+        PARAMETER[&quot;False easting&quot;,28001.642,
+            LENGTHUNIT[&quot;metre&quot;,1],
+            ID[&quot;EPSG&quot;,8806]],
+        PARAMETER[&quot;False northing&quot;,38744.572,
+            LENGTHUNIT[&quot;metre&quot;,1],
+            ID[&quot;EPSG&quot;,8807]]],
+    CS[Cartesian,2],
+        AXIS[&quot;northing (N)&quot;,north,
+            ORDER[1],
+            LENGTHUNIT[&quot;metre&quot;,1]],
+        AXIS[&quot;easting (E)&quot;,east,
+            ORDER[2],
+            LENGTHUNIT[&quot;metre&quot;,1]],
+    USAGE[
+        SCOPE[&quot;Cadastre, engineering survey, topographic mapping.&quot;],
+        AREA[&quot;Singapore - onshore and offshore.&quot;],
+        BBOX[1.13,103.59,1.47,104.07]],
+    ID[&quot;EPSG&quot;,3414]]</code></pre>
+</div>
+<p>Results above show that:</p>
+<ul>
+<li>All are in the right code of 3414.</li>
+</ul>
+<h2 id="plot-to-review-including-geospatial-data-excluding-listings_2021">5.6 Plot to review (including geospatial data, excluding listings_2021)</h2>
+<ul>
+<li>Plot all the point events of Airbnb listings 2019, hotels, tourist attractions and MRT services to ensure that they are being assigned the right CRS.</li>
+</ul>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>tm_shape</span><span class='op'>(</span><span class='va'>sg_sf</span><span class='op'>)</span> <span class='op'>+</span>
+  <span class='fu'>tm_polygons</span><span class='op'>(</span><span class='op'>)</span> <span class='op'>+</span>
+<span class='fu'>tm_shape</span><span class='op'>(</span><span class='va'>mpsz_sf</span><span class='op'>)</span> <span class='op'>+</span>
+  <span class='fu'>tm_polygons</span><span class='op'>(</span><span class='op'>)</span> <span class='op'>+</span>
+<span class='fu'>tm_shape</span><span class='op'>(</span><span class='va'>listings_2019_sf</span><span class='op'>)</span> <span class='op'>+</span>
+  <span class='fu'>tm_dots</span><span class='op'>(</span>alpha <span class='op'>=</span> <span class='fl'>0.4</span>,
+          col <span class='op'>=</span> <span class='st'>"blue"</span>,
+          size <span class='op'>=</span> <span class='fl'>0.05</span><span class='op'>)</span> <span class='op'>+</span>
+<span class='fu'>tm_shape</span><span class='op'>(</span><span class='va'>hotels_sf</span><span class='op'>)</span> <span class='op'>+</span>
+  <span class='fu'>tm_dots</span><span class='op'>(</span>alpha <span class='op'>=</span> <span class='fl'>0.4</span>,
+          col <span class='op'>=</span> <span class='st'>"red"</span>,
+          size <span class='op'>=</span> <span class='fl'>0.05</span><span class='op'>)</span> <span class='op'>+</span>
+<span class='fu'>tm_shape</span><span class='op'>(</span><span class='va'>tourism_sf</span><span class='op'>)</span> <span class='op'>+</span>
+  <span class='fu'>tm_dots</span><span class='op'>(</span>alpha <span class='op'>=</span> <span class='fl'>0.4</span>,
+          col <span class='op'>=</span> <span class='st'>"green"</span>,
+          size <span class='op'>=</span> <span class='fl'>0.05</span><span class='op'>)</span> <span class='op'>+</span>
+<span class='fu'>tm_shape</span><span class='op'>(</span><span class='va'>mrt_sf</span><span class='op'>)</span> <span class='op'>+</span>
+  <span class='fu'>tm_dots</span><span class='op'>(</span>alpha <span class='op'>=</span> <span class='fl'>0.4</span>,
+          col <span class='op'>=</span> <span class='st'>"orange"</span>,
+          size <span class='op'>=</span> <span class='fl'>0.05</span><span class='op'>)</span>
+</code></pre>
+</div>
+<p><img src="take-home-exercise-2_files/figure-html5/unnamed-chunk-13-1.png" width="624" /></p>
+</div>
+<h2 id="plot-to-review-including-geospatial-data-excluding-listings_2019">5.7 Plot to review (including geospatial data, excluding listings_2019)</h2>
+<ul>
+<li>Plot all the point events of Airbnb listings 2021, hotels, tourist attractions and MRT services to ensure that it is being assigned the right CRS.</li>
+</ul>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>tm_shape</span><span class='op'>(</span><span class='va'>sg_sf</span><span class='op'>)</span> <span class='op'>+</span>
+  <span class='fu'>tm_polygons</span><span class='op'>(</span><span class='op'>)</span> <span class='op'>+</span>
+<span class='fu'>tm_shape</span><span class='op'>(</span><span class='va'>mpsz_sf</span><span class='op'>)</span> <span class='op'>+</span>
+  <span class='fu'>tm_polygons</span><span class='op'>(</span><span class='op'>)</span> <span class='op'>+</span>
+<span class='fu'>tm_shape</span><span class='op'>(</span><span class='va'>listings_2021_sf</span><span class='op'>)</span> <span class='op'>+</span>
+  <span class='fu'>tm_dots</span><span class='op'>(</span>alpha <span class='op'>=</span> <span class='fl'>0.4</span>,
+          col <span class='op'>=</span> <span class='st'>"blue"</span>,
+          size <span class='op'>=</span> <span class='fl'>0.05</span><span class='op'>)</span> <span class='op'>+</span>
+<span class='fu'>tm_shape</span><span class='op'>(</span><span class='va'>hotels_sf</span><span class='op'>)</span> <span class='op'>+</span>
+  <span class='fu'>tm_dots</span><span class='op'>(</span>alpha <span class='op'>=</span> <span class='fl'>0.4</span>,
+          col <span class='op'>=</span> <span class='st'>"red"</span>,
+          size <span class='op'>=</span> <span class='fl'>0.05</span><span class='op'>)</span> <span class='op'>+</span>
+<span class='fu'>tm_shape</span><span class='op'>(</span><span class='va'>tourism_sf</span><span class='op'>)</span> <span class='op'>+</span>
+  <span class='fu'>tm_dots</span><span class='op'>(</span>alpha <span class='op'>=</span> <span class='fl'>0.4</span>,
+          col <span class='op'>=</span> <span class='st'>"green"</span>,
+          size <span class='op'>=</span> <span class='fl'>0.05</span><span class='op'>)</span> <span class='op'>+</span>
+<span class='fu'>tm_shape</span><span class='op'>(</span><span class='va'>mrt_sf</span><span class='op'>)</span> <span class='op'>+</span>
+  <span class='fu'>tm_dots</span><span class='op'>(</span>alpha <span class='op'>=</span> <span class='fl'>0.4</span>,
+          col <span class='op'>=</span> <span class='st'>"orange"</span>,
+          size <span class='op'>=</span> <span class='fl'>0.05</span><span class='op'>)</span>
+</code></pre>
+</div>
+<p><img src="take-home-exercise-2_files/figure-html5/unnamed-chunk-14-1.png" width="624" /></p>
+</div>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->
 </div>
