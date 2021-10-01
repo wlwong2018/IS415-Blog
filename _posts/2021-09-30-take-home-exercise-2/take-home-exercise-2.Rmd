@@ -23,15 +23,15 @@ set.seed(1234)
 
 # 1 Objectives
 
-- To investigate if the distribution of Airbnb listings are affected by location factors such as near to existing hotels, MRT services and tourist attractions. 
+- To investigate if the distribution of Airbnb listings are affected by location factors such as existing hotels, MRT services and tourist attractions. 
 - To analyse the impact of COVID-19 on Airbnb business in Singapore by comparing Airbnb listings data on June 2019 and June 2021
 
 # 2 Dataset
 
 - Airbnb listings for June 2019 and June 2021 from Inside Airbnb.
-- Hotels, tourist attractions, MRT services and other appropriate geospatial data sets were supposed to be extracted from SLA OneMap Service by using onemapsgapi. However, due to some issues of creating a onemap account, Prof. Kam has kindly provided us with the data in CSV format. 
+- Hotels, tourist attractions, MRT services were supposed to be extracted from SLA OneMap Service by using onemapsgapi. However, due to some issues of creating a onemap account, Prof. Kam has kindly provided us with the data in CSV format. 
 - Coastaloutline is used for binding the Singapore boundary which is also provided by Prof. Kam. 
-- Sub zones from data.gov.sg 
+- Master Plan 2014 Subzone Boundary (Web) from data.gov.sg 
 
 # 3 Install and Load Packages
 
@@ -56,15 +56,15 @@ Explanation on the uses of each package:
     
 - **sf:** For importing and processing of geospatial data such as encoding spatial vector data.
     
-- **tmap:** For plotting interactive maps
+- **tmap:** For plotting interactive maps.
 
-- **maptools:** For maanipulating geospatial data
+- **maptools:** For maanipulating geospatial data.
 
 - **spatstat:** For statistical analysis of spatial data.
 
-- **raster:** For processing geospatial data to plot KDE maps on OpenStreetMap
+- **raster:** For processing geospatial data to plot KDE maps on OpenStreetMap.
     
-- **gridExtra:** For arranging KDE maps when plotted into grid objects
+- **gridExtra:** For arranging KDE maps when plotted into grid objects.
 
 # 4 Data Import and Preparation for Geospatial Dataset
 
@@ -83,8 +83,8 @@ sg_sf <- st_read(dsn = "data/geospatial", layer="CostalOutline")
 
 From the results above: 
 
-- The geometry type is point, multipolygon and polygon for the mrt, mpsz and sg data set.
-- The assigned CRS for all is SVY21.
+- The geometry type is point, multipolygon and polygon for the mrt_sf, mpsz_sf and sg_sf data set.
+- The assigned CRS for all is **SVY21**.
 
 ## 4.2 Check CRS
 
@@ -137,7 +137,7 @@ From the results above:
 
 ## 4.5 Handle the invalid geometries and check again
 
-- *st_make_valid()* to make the geometries valid for the mpsz and sg data set only since MRT has no invalid geometries
+- *st_make_valid()* to make the geometries valid for the *mpsz_sf* and *sg_sf* data set only since MRT has no invalid geometries
 
 ```{r echo=TRUE, eval=TRUE}
 mpsz_sf <- st_make_valid(mpsz_sf)
@@ -149,7 +149,7 @@ length(which(st_is_valid(sg_sf) == FALSE))
 
 Result above show that:
 
-- There are no longer any invalid geometries
+- There are no longer any invalid geometries.
 
 ## 4.6 Visualise the MRT services on the Singapore map
 
@@ -169,7 +169,7 @@ tm_shape(mrt_sf) +
 
 # 5 Data Import and Preparation for Aspatial Dataset
 
-For aspatial data, we have to check for NA values because if NA values are not properly handled, it might hinder with the analysis in the later steps. Additionally, we have to convert them to sf objects and assign them the right CRS, making these data sets suitable to be plotted on a map. 
+We have to check for NA values because if NA values are not properly handled, it might hinder with the analysis in the later steps. Additionally, we have to convert them to sf objects and assign them the right CRS, making these data sets suitable to be plotted on a map. 
 
 ## 5.1 Import aspatial data sets
 
@@ -185,6 +185,8 @@ listings_2021 <- read_csv("data/aspatial/listings_June_2021.csv")
 
 ## 5.2 Look into the data sets
 
+- *glimpse()* is used to look into the data sets.
+
 ```{r echo=TRUE, eval=TRUE}
 glimpse(listings_2019)
 glimpse(hotels)
@@ -197,7 +199,7 @@ glimpse(listings_2021)
 ## 5.3 Data Cleaning
 
 - Remove NA values only from latitude and longitude columns as those are needed for analysis in the later steps.
-- NA values in other columns do not have to be dropped as the *data* will be dropped later when converting Spatial* data frame into Spatial* objects.
+- NA values in other columns do not have to be dropped as the *data* will be dropped evetually when converting Spatial* data frame into Spatial* objects.
 
 ```{r echo=TRUE, eval=TRUE}
 listings_2019 <- listings_2019 %>%
@@ -222,8 +224,9 @@ listings_2021 <- listings_2021  %>%
 
 ## 5.4 Convert Aspatial data frame into sf object and assign CRS
 
+- *st_as_sf()* of **sf** package is used to convert the the 4 data frames into sf data frames.
 - The values in the latitude & longitude columns are in decimal degrees, hence, this means that it is using WGS84. 
-- We then need to assign the epsg code of 4326 before transforming to SVY21.
+- We then need to assign the epsg code of 4326 using *st_transform()* of **sf** package.
 
 ```{r echo=TRUE, eval=TRUE}
 listings_2019_sf <- st_as_sf(listings_2019,
@@ -378,6 +381,8 @@ listings_2021_ppp <- as(listings_2021_sp, "ppp")
 
 ## 6.4 Summary statistics of the newly created ppp objects
 
+- Look into the summary of the newly created ppp objects
+
 ```{r echo=TRUE, eval=TRUE}
 summary(listings_2019_ppp)
 summary(hotels_ppp)
@@ -413,10 +418,9 @@ From the results above:
 ## 6.6 Handle duplicated points using jitter
 
 - *rjitter()* of **spatstat** package is being used
-- To avoid points overlapping, rjitter() will add a small perturbation to the duplicated points so that they do not occupy the exact same space 
-- *any()* and *duplicated()* are used to ensure that there are no duplicated points after using *rjitter()*
-- From the previous step, even though *mrt_ppp* object is being shown that there are 0 duplicated points, it is a good practice to verify by printing it again.
-
+- To avoid points overlapping, rjitter() will add a small perturbation to the duplicated points so that they do not occupy the exact same space. 
+- *any()* and *duplicated()* are used to ensure that there are no duplicated points after using *rjitter()*. The output will return FALSE, if there are no duplicated points, else, it will return TRUE.
+- From the previous step, even though *mrt_ppp* object is being shown that there are 0 duplicated points, it is still a good practice to verify using *any()* and *duplicated()*.
 
 ```{r echo=TRUE, eval=TRUE}
 listings_2019_ppp_jit <- rjitter(listings_2019_ppp,
@@ -458,10 +462,10 @@ any(duplicated(listings_2021_ppp_jit))
 
 ## 6.7 Create an owin object
 
-- It is a good practice to confine the spatial point patterns analysis with a geographical area such as the Singapore boundary.
+- It is a good practice to confine the spatial point patterns analysis within a geographical area such as the Singapore boundary.
 - In **spatstat** package, this polygonal region is known as **owin**, an object specially designed to represent this boundary.
 
-- Convert *sg* SpatialPolygon object to owin object of **spatstat** package 
+- *as()* with the argument *owin* to convert *sg* SpatialPolygon object to owin object of **spatstat** package 
 
 ```{r echo=TRUE, eval=TRUE}
 sg_owin <- as(sg_sp, "owin")
@@ -478,8 +482,6 @@ tourisms_ppp = tourisms_ppp_jit[sg_owin]
 hotels_ppp = hotels_ppp_jit[sg_owin]
 mrt_ppp = mrt_ppp_jit[sg_owin]
 listings_2021_ppp = listings_2021_ppp_jit[sg_owin]
-
-plot(listings_2019_ppp)
 ```
 
 ## 6.9 Visualise the ppp objects
@@ -501,7 +503,7 @@ plot(listings_2021_ppp)
 
 - For the analysis in the later steps, kernel density estimation (KDE) will be computed. 
 - However, since the default unit of measurement of SVY21 is in metre, we have to convert the KDE values to kilometre so that the values would not be too small to look for useful insights.
-- *rescale()* is used to convert the KDE values from metre to kilometre.
+- *rescale()* of **BaseR** is used to convert the KDE values from metre to kilometre.
 
 ```{r echo=TRUE, eval=TRUE}
 listings_2019_ppp.km <- rescale(listings_2019_ppp, 1000, "km")
@@ -573,7 +575,7 @@ plot(kde_ppl(mrt_ppp.km), main = "mrt bw.ppl")
 Results above show that: 
 
 - There is a concentrated area for Hotels and Tourism and a few concentrated areas for MRT services. 
-- Listings are generally less concentrated in the same area.
+- Airbnb listings are generally less concentrated in the same area.
 
 ##### Reveal density
 
@@ -599,7 +601,7 @@ Results above show that:
 ##### 7.1.1.2.1 Compute KDE maps with metres instead of kilometers
 
 - Since OpenStreetMap's default units is in metres, we have to compute the KDE in metres, instead of using the previously calculated KDE in kilometres. 
-- Compute KDE with bw.ppl() using metres.
+- Compute KDE with *bw.ppl()* using metres.
 
 ```{r echo=TRUE, eval=TRUE}
 kde_listings_2019_ppl_m <- density(listings_2019_ppp, sigma=bw.ppl, edge=TRUE,kernel="gaussian") 
@@ -622,7 +624,7 @@ gridded_kde_mrt_ppl <- as.SpatialGridDataFrame.im(kde_mrt_ppl_m)
 
 ```
 
-- Distribution above will be the same, only legend will be different it is being plotted in meters instead of kilometers. 
+- Distribution above will be the same since only the units have been converted to meters instead of kilometers. 
 
 
 ##### 7.1.1.2.3 Convert gridded output into raster
@@ -675,6 +677,7 @@ From the results above:
 
 - Create function for plotting the visualisation on OpenStreetMap
 - Use **tmap** package to display raster in OpenStreetMap of Singapore.
+- *tm_basemap()* of  **tmap** package to specify the visualization to be in OpenStreetMap
 
 ```{r echo=TRUE, eval=TRUE}
 oms <- function(data1, data2, legend1, legend2, main_title) {
@@ -692,7 +695,7 @@ oms <- function(data1, data2, legend1, legend2, main_title) {
 
 ##### 7.1.1.3.1 Plot Airbnb Listings 2019 against Hotels
 
-- tm_basemap() to specify the visualization to be in OpenStreetMap
+- Use function created in *Section 7.1.1.3* to plot the map.
 
 ```{r echo=TRUE, eval=TRUE}
 oms(kde_hotels_ppl_raster, kde_listings_2019_ppl_raster, "Hotels", "Airbnb Listings 2019")
@@ -703,7 +706,7 @@ tmap_mode("plot")
 
 **Spatial patterns revealed by the kernel density map above:**
 
-- Shades of blue represent Airbnb listings in 2019 while shades of red represent Hotels.
+- Shades of red represent Hotels while shades of blue represent Airbnb listings in 2019. .
 - The shades of the colours shows the number of Airbnb listings and hotels on the map. 
 - It is observed that the dark blue colour is prominent in the Southern-Eastern region of Singapore, which indicates a higher number of Airbnb listings in this region. 
 - From the intensity of the colours of the blue spots, it can be seen that many Airbnb listings are cluttered in the South-East region. 
@@ -711,6 +714,8 @@ tmap_mode("plot")
 
 
 ##### 7.1.1.3.2 Plot Airbnb Listings 2019 against Tourist Attractions
+
+- Use function created in *Section 7.1.1.3* to plot the map.
 
 ```{r echo=TRUE, eval=TRUE}
 oms(kde_tourism_ppl_raster, kde_listings_2019_ppl_raster, "Tourism", "Airbnb Listings 2019")
@@ -720,13 +725,15 @@ tmap_mode("plot")
 
 **Spatial patterns revealed by the kernel density map above:**
 
-- Shades of blue represent Airbnb listing in 2019 while shades of red represent Tourism.
-- Similar to the tmap of Airbnb Listings 2019 against Hotels, it can also be observed that the South-East region of Singapore has a high number of tourist attraction and is therefore dense since the red is darker in this region. 
-- However, for tourism, it can be seen that it is slightly more concentrated in the middle as compared to hotels which is slightly more spread out. 
+- Shades of red represent Tourism while shades of blue represent Airbnb listings in 2019.
+- Similar to the tmap of Airbnb Listings 2019 against Hotels, it can also be observed that the South-East region of Singapore has a high number of tourist attractions and is therefore dense since the red is darker in this region. 
+- However, for tourism, it can be seen that it is slightly more concentrated in the middle as compared to hotels which is slightly more spread out in the previous plot. 
 
 <br>
 
 ##### 7.1.1.3.3 Plot Airbnb Listings 2019 against MRT services
+
+- Use function created in *Section 7.1.1.3* to plot the map.
 
 ```{r echo=TRUE, eval=TRUE}
 oms(kde_mrt_ppl_raster, kde_listings_2019_ppl_raster, "MRT", "Airbnb Listings 2019")
@@ -736,11 +743,11 @@ tmap_mode("plot")
 
 **Spatial patterns revealed by the kernel density map above:**
 
-- Shades of blue represent Airbnb listings in 2019 while shades of red represent MRT services.
+- Shades of red represent MRT services while shades of blue represent Airbnb listings in 2019. .
 - Mrt services are dense not only in the same area as the Airbnb listings in 2019, it is also dense in the North-East and North-West region of Singapore. 
 - This can be observed from the red spots above. 
 - In the South-East region of Singapore, it can be observed that MRT services are not as concentrated as compared to tourism and hotels. MRT services are slightly more spread out within the South-East region of Singapore.
-- MRT services is in fact more spread out than hotels within the South-East region of Singapore.
+- MRT services is in fact more spread out than hotels and tourists attractions within the South-East region of Singapore.
 
  
 <br>
@@ -773,7 +780,7 @@ Because of the reasons listed above, **Cross L-Function** would be used.
 ### 7.2.1 Prepare and visualise subzones
 
 - Before diving into the computation of the Cross Functions, we first select a sub zone as it is computationally expensive to perform Second Order Spatial Point Patterns Analysis on the entire Singapore.
-- Sub zone "DOWNTOWN CORE" will be selected since based on the Exploratory Spatial Data Analysis, most point events for all are clustered around this sub zone. 
+- Sub zone **"DOWNTOWN CORE"** will be selected since based on the Exploratory Spatial Data Analysis, most point events for all are clustered around this sub zone. 
 
 - The code chunk below:
 
@@ -798,7 +805,7 @@ tm_shape(mpsz_sf) +
 
 #### 7.2.2.1 Create owin for each subzones
 
-- Create function to create owin objects for each sub zones.
+- Create function for creating owin objects for each sub zones.
 - Apply the function created on the selected study area.
 
 ```{r echo=TRUE, eval=TRUE}
@@ -848,7 +855,7 @@ all_downtowncore_ppp <- superimpose(dc_2019_mark=downtowncore_2019_ppp,
     + *Lcross()* of **spatstat** package is used to compute the Cross L-Function estimation.
     + *plot()* to visualise the relationship.
     
-- Finally, the function created is being called to plot the graphs
+- Finally, the function created is being called to plot the graphs.
 
 ```{r echo=TRUE, eval=TRUE, fig.width=12, fig.height=8}
 par(mfrow=c(2,2))
@@ -871,7 +878,7 @@ Results above show that:
 - However, a hypothesis test is still required to confirm this observation statistically.
 
 
-#### 7.2.3.2 Perform CSR test on Cross L-Function
+#### 7.2.3.2 Perform Complete Spatial Randomness (CSR) test on Cross L-Function
 
 - The hypothesis and test are as follows:
 
@@ -883,7 +890,7 @@ Results above show that:
 
 #### 7.2.3.3 Monte Carlo test with Cross L-Function
 
-- *envelope()* of **spatstat** package is used to perform CSR test
+- *envelope()* of **spatstat** package is used to perform CSR test.
 - A total of 100 simulations will be ran. Using **spatstat** package, the end is always 1 less as the 1st simulation is 0 (and not 1), hence in the argument *nsim*, it is defined as 99 and not 100. 
 - A global *set.seed()* is used to ensure that the same output is computed each time the code is being ran. (*set.seed(1234)* is being used and it is placed at the top of the .RMD file, which cannot be seen here.)
 
@@ -928,8 +935,8 @@ Results above show that:
 
 - For Airbnb listings 2019 vs Tourism
 
-    + The black line is below the red line which shows signs of regular pattern. But it is only significant for ditances **after 250m**.
-    + Hence, only for distances **after 250m**, we have enough statistical evidence to **reject the null hypothesis** at 90% confidence interval. We can hence infer that it is NOT spatially independent and for ditances **after 250m** and it has **significant regular patterns.**
+    + The black line is below the red line which shows signs of regular pattern. But it is only significant for distances **after 250m**.
+    + Hence, only for distances **after 250m**, we have enough statistical evidence to **reject the null hypothesis** at 90% confidence interval. We can hence infer that it is NOT spatially independent and for distances **after 250m** and it has **significant regular patterns.**
 
 - For Airbnb listings 2019 vs MRT
 
@@ -945,11 +952,15 @@ This section is to analyse the impact of COVID-19 on Airbnb business in Singapor
 
 ## 8.1 Exploratory Spatial Data Analysis
 
+This section is to analyse the impact of COVID-19 on Airbnb business in Singapore by comparing Airbnb listings data on June 2019 and June 2021. To determine the objective, we will first compute and plot Kernel Density Estimation maps then confirm the insights found by using Second-Order Spatial Point Patterns Analysis to draw statistical conclusions.
+
 ### 8.1.1 Kernel Density Estimation
 
-- *unique()* to find out the categories of room types in Airbnb Listings in 2019 & 2021.
+- KDE has been explained in Section 7.1.1
 
 #### 8.1.1.1 Retrieve categories of room_types
+
+- *unique()* to find out the categories of room types in Airbnb Listings in 2019 & 2021.
 
 ```{r echo=TRUE, eval=TRUE}
 unique(listings_2019_sf$room_type)
@@ -961,12 +972,12 @@ From the results above,
 
 - There are 3 categories in Airbnb Listings in 2019, namely Private room, Entire home/apt and Shared room
 - There are 3 categories in Airbnb Listings in 2021, namely Private room, Entire home/apt, Shared room and Hotel room.
+- Since **Hotel room** is not available in Airbnb listings in 2019, it will be **excluded** from the analysis. 
 
 #### 8.1.1.2 Subset categories into different ppp objects
 
 - *subset()* to retrieve the ppp objects of the different categories for both Airbnb Listings in 2019 and 2020. 
 - This is for calculating and plotting KDE maps in later part of the section.
-- Since "Hotel Room" is not available in the Airbnb listings in 2021, it will be excluded from the analysis. 
 
 ```{r echo=TRUE, eval=TRUE}
 listings_2019_ppp_pr <- subset(listings_2019_ppp, listings_2019_sf$room_type == "Private room")
@@ -976,14 +987,13 @@ listings_2019_ppp_sr <- subset(listings_2019_ppp, listings_2019_sf$room_type == 
 listings_2021_ppp_pr <- subset(listings_2021_ppp, listings_2021_sf$room_type == "Private room")
 listings_2021_ppp_ea <- subset(listings_2021_ppp, listings_2021_sf$room_type == "Entire home/apt")
 listings_2021_ppp_sr <- subset(listings_2021_ppp, listings_2021_sf$room_type == "Shared room")
-# listings_2021_ppp_hr <- subset(listings_2021_ppp, listings_2021_sf$room_type == "Hotel room")
 
 ```
 
 ####  8.1.1.3 Re-scale KDE Values
 
-- However, since the default unit of measurement of SVY21 is in meter, we have to convert the KDE values to km so that the values would not be too small to look for useful insights.
-- *rescale()* is used to convert the KDE values from meter to kilometer.
+- However, since the default unit of measurement of SVY21 is in metre, we have to convert the KDE values to km so that the values would not be too small to look for useful insights.
+- *rescale()* of **BaseR** is used to convert the KDE values from metre to kilometre.
 
 ```{r echo=TRUE, eval=TRUE}
 listings_2019_ppp_pr.km <- rescale(listings_2019_ppp_pr, 1000, "km")
@@ -993,8 +1003,6 @@ listings_2019_ppp_sr.km <- rescale(listings_2019_ppp_sr, 1000, "km")
 listings_2021_ppp_pr.km <- rescale(listings_2021_ppp_pr, 1000, "km")
 listings_2021_ppp_ea.km <- rescale(listings_2021_ppp_ea, 1000, "km")
 listings_2021_ppp_sr.km <- rescale(listings_2021_ppp_sr, 1000, "km")
-# listings_2021_ppp_hr.km <- rescale(listings_2021_ppp_hr, 1000, "km")
-
 ```
 
 
@@ -1006,8 +1014,8 @@ listings_2021_ppp_sr.km <- rescale(listings_2021_ppp_sr, 1000, "km")
 
 ###### Airbnb Listings 2019
 
-- The function used was created in Section A, to plot KDE maps using the bandwidth *bw.ppl()*
-- par() is used to arrange the maps in a side-by-side manner
+- The function used was created in *Section 7.1.1.1*, to plot KDE maps using the bandwidth *bw.ppl()*
+- par() is used to arrange the maps in a side-by-side manner.
 
 ```{r echo=TRUE, eval=TRUE, fig.width=10, fig.height=8}
 par(mfrow=c(2,2))
@@ -1020,10 +1028,13 @@ plot(kde_ppl(listings_2019_ppp_sr.km), main = "listings 2019 shared room bw.ppl"
 
 Results above show that: 
 
-- There is a concentrated area for Shared Rooms and a few less concentrated spots for Private Room and Entire room/apt. 
+- There is a concentrated area for Shared Rooms and a few concentrated spots for Private Room and Entire room/apt. 
 
 
 ###### Airbnb Listings 2021
+
+- The function used was created in *Section 7.1.1.1*, to plot KDE maps using the bandwidth *bw.ppl()*
+- par() is used to arrange the maps in a side-by-side manner.
 
 ```{r echo=TRUE, eval=TRUE, fig.width=10, fig.height=8}
 par(mfrow=c(2,2))
@@ -1061,10 +1072,10 @@ Results above show that:
 - Private Room 2021 have the highest density of 2.73, followed by Entire home/apt then Shared Room with a density of 2.42 and 0.23 units per km square respectively.
 
 
-### 8.1.1.3 Data Preparation for visualising Kernel Density Maps on openstreetmap of Singapore
+#### 8.1.1.5 Data Preparation for visualising Kernel Density Maps on openstreetmap of Singapore
 
 
-##### 8.1.1.3.1 Compute KDE maps with metres instead of kilometers
+##### 8.1.1.5.1 Compute KDE maps with metres instead of kilometers
 
 - Since OpenStreetMap's default units is in metres, we have to compute the KDE in metres, instead of using the previously calculated KDE in kilometres. 
 - Compute KDE with bw.ppl() using metres
@@ -1083,7 +1094,7 @@ kde_listings_2021_ppl <- density(listings_2021_ppp, sigma=bw.ppl, edge=TRUE, ker
 ```
 
 
-##### 8.1.1.3.2 Convert KDE output into grid object
+##### 8.1.1.5.2 Convert KDE output into grid object
 
 - For suitability of mapping.
 - grid.arrange() of gridExtra package to arrange the grids side-by-side
@@ -1101,7 +1112,7 @@ gridded_kde_listings_2021_ppl <- as.SpatialGridDataFrame.im(kde_listings_2021_pp
 
 ```
 
-##### 8.1.1.3.3 Convert gridded output into raster
+##### 8.1.1.5.3 Convert gridded output into raster
 
 - Use *raster()* of **raster** package to convert the gridded kernel density objects to RasterLayer object. 
 - Print 1 raster object as an example
@@ -1124,7 +1135,7 @@ From the results above,
 
 - The CRS is NA, hence we have to assign a projection system to it.
 
-##### 8.1.1.3.4 Assign projection systems
+##### 8.1.1.5.4 Assign projection systems
 
 - Assign the epsg code of 3414
 
@@ -1142,11 +1153,11 @@ projection(kde_listings_2021_ppl_raster) <- CRS("+init=EPSG:3414")
 ```
 
 
-##### 8.1.1.3.5 Visualise output in openstreetmap
+##### 8.1.1.5.5 Visualise output in openstreetmap
 
 ###### Plot Airbnb Listings 2019 vs 2021
 
-- Use function created in Section A to plot on OpenStreetMap Singapore.
+- Use function created in *Section 7.1.1.1* to plot on OpenStreetMap Singapore.
 
 ```{r echo=TRUE, eval=TRUE}
 oms(kde_listings_2019_ppl_raster, kde_listings_2021_ppl_raster, "Airbnb Listings 2019", "Airbnb Listings 2021")
@@ -1160,13 +1171,13 @@ tmap_mode('plot')
 - Shades of red represent Airbnb Listings in 2019 while shades of blue represent Airbnb Listings in 2021.
 - In general (without specifying the room types), the Airbnb listings in 2021 has fallen from Airbnb listings in 2019. 
 - This can be observed by having less shades of blue as compared to more shades of red.
-- In 2021, the more prominent areas are in and around Chinatown,Bendemeer as well as near Geylang. 
+- In 2021, the more prominent areas are in and around Chinatown, Bendemeer as well as near Geylang. 
 - This is a significant decrease from 2019 where most parts of the Southern-Eastern region of Singapore are coloured red, representing more number of Airbnb listings in 2019.
 
 
 ###### Plot Private Room 2019 vs 2021
 
-- Use function created in Section A to plot on OpenStreetMap Singapore.
+- Use function created in *Section 7.1.1.1* to plot on OpenStreetMap Singapore.
 
 ```{r echo=TRUE, eval=TRUE}
 oms(kde_listings_2019_ppl_raster_pr, kde_listings_2021_ppl_raster_pr, "Private Room 2019", "Private Room 2021")
@@ -1184,11 +1195,9 @@ tmap_mode('plot')
 - Hence, there are fewer areas with Private listings in 2021 as compared to 2019.
 
 
-
-
 ###### Plot Entire/Apt Room 2019 vs 2021
 
-- Use function created in Section A to plot on OpenStreetMap Singapore.
+- Use function created in *Section 7.1.1.1* to plot on OpenStreetMap Singapore.
 
 ```{r echo=TRUE, eval=TRUE}
 oms(kde_listings_2019_ppl_raster_ea, kde_listings_2021_ppl_raster_ea, "Entire home/apt 2019", "Entire home/apt 2021")
@@ -1225,17 +1234,17 @@ tmap_mode('plot')
 
 **Conclusion for Section B's Exploratory Spatial Data Analysis:**
 
-- With kernel density maps however, even though we do see that the changes in distribution of Private Room, Entire home/apt and Shared Room in 2019 and 2021, we cannot conclude for sure that the distribution of these Airbnb listings room types are impacted by COVID-19. 
+- With kernel density maps however, even though we do see that the changes in distribution of Private Room, Entire home/apt and Shared Room from 2019 to 2021, we cannot conclude for sure that the distribution of these Airbnb listings room types are impacted by COVID-19. 
 - Hence, we need to employ **Second-order Spatial Point Patterns Analysis** to draw statistical conclusions. 
-
 
 
 ## 8.2 Second Order Spatial Point Patterns Analysis 
 
 #### 8.2.1 Combine SpatialPoints objects with owin objects
 
-```{r echo=TRUE, eval=TRUE}
+- To only extract point events from the Downtown Core region.
 
+```{r echo=TRUE, eval=TRUE}
 dc_2019_pr <- listings_2019_ppp_pr[downtowncore_owin]
 dc_2021_pr <- listings_2021_ppp_pr[downtowncore_owin]
 
@@ -1285,4 +1294,113 @@ Results above show that:
 
 - There is a sign that the marked spatial point events are not randomly distributed at certain distances for all plots except for Shared Room in 2021.
 - However, a hypothesis test is still required to confirm this observation statistically.
+
+
+#### 8.2.2.2 Perform CSR test on L-Function
+
+- The hypothesis and test are as follows:
+
+    + Ho = The distribution of Airbnb listings in 2019/2021 by room type are randomly distributed.
+    + H1 = The distribution of Airbnb listings in 2019/2021 by room type are **NOT** randomly distributed.
+    
+- The null hypothesis will be rejected if p-value is smaller than alpha value of 0.1 (i.e. at 90% confident interval).
+
+#### 8.2.2.3  Monte Carlo test with L-Function
+
+- *envelope()* of **spatstat** package is used to perform CSR test
+- A total of 100 simulations will be ran. Using **spatstat** package, the end is always 1 less as the 1st simulation is 0 (and not 1), hence in the argument *nsim*, it is defined as 99 and not 100. 
+- A global *set.seed()* is used to ensure that the same output is computed each time the code is being ran. (*set.seed(1234)* is being used and it is placed at the top of .RMD file)
+
+```{r echo=TRUE, eval=TRUE}
+
+dc_listings_2019_pr_L.csr <- envelope(dc_2019_pr, Lest, nsim = 99, rank = 1, global=TRUE)
+dc_listings_2021_pr_L.csr <- envelope(dc_2021_pr, Lest, nsim = 99, rank = 1, global=TRUE)
+
+dc_listings_2019_ea_L.csr <- envelope(dc_2019_ea, Lest, nsim = 99, rank = 1, global=TRUE)
+dc_listings_2021_ea_L.csr <- envelope(dc_2021_ea, Lest, nsim = 99, rank = 1, global=TRUE)
+
+dc_listings_2019_sr_L.csr <- envelope(dc_2019_sr, Lest, nsim = 99, rank = 1, global=TRUE)
+dc_listings_2021_sr_L.csr <- envelope(dc_2021_sr, Lest, nsim = 99, rank = 1, global=TRUE)
+
+```
+
+
+#### 8.2.2.4  Plot L-Function
+
+- plot() is used to plot the simulated L-Function
+
+```{r echo=TRUE, eval=TRUE, fig.width=12, fig.height=8}
+par(mfrow=c(3,2))
+
+plot(dc_listings_2019_pr_L.csr, . -r ~ r, xlab = "distance(m)")
+plot(dc_listings_2021_pr_L.csr, . -r ~ r, xlab = "distance(m)")
+
+plot(dc_listings_2019_ea_L.csr, . -r ~ r, xlab = "distance(m)")
+plot(dc_listings_2021_ea_L.csr, . -r ~ r, xlab = "distance(m)")
+
+plot(dc_listings_2019_sr_L.csr, . -r ~ r, xlab = "distance(m)")
+plot(dc_listings_2021_sr_L.csr, . -r ~ r, xlab = "distance(m)")
+
+```
+
+Results above show that:
+
+**Private Rooms**
+
+- For both years, the black line (observed curve) is well above the red line (theoretical curve) as well as the envelope after about 20m.
+- Hence, we can **reject the null hypothesis** (of it being randomly distributed) at 90% confidence interval and infer that its **clustering patterns are statistically significant**.
+- In 2021, we can tell that the curve reaches L(r) - r above 400 while in 2019, the curve only reaches about 250. Hence, this shows that the clustering patterns actually increased in 2021.  
+
+**Entire Home/Apt**
+
+- For both years, the black line is well above the red line as well as the envelope after about 20m.
+- Hence, we can **reject the null hypothesis** (of it being randomly distributed) at 90% confidence interval and infer that its **clustering patterns are statistically significant**.
+- Additionally, both the curve reach about L(r) - r = 410. Hence, the clustering patterns are similar for both years.
+
+**Shared Rooms**
+
+- For both years, even though certain parts of the black line is above red line, it is not out of the envelope. 
+- Hence, we **cannot reject the null hypothesis** at 90% confidence interval and infer that the the clustering patterns are **not** statistically significant.
+- Additionally, in both years, the curve reach about L(r) - r = 500. However, in 2021, before the distance of 290m, it actually shows signs of regular patterns. But since it is not below the envelope, the **regular patterns are not statistically significant**.
+
+
+# 9 Conclusion
+
+## 9.1 Section A: Airbnb Distribution in 2019
+
+- Based on the results, **signs of clustering patterns between Airbnb Listings with Hotels and MRT services** are  **statistically significant** only at certain distances.
+- Whereas **signs of regular relationships between Airbnb Listings with Tourist Attractions** are  **statistically significant** at certain distances.
+
+
+## 9.2 Section B: Impact of COVID-19
+
+- **Entire Home/Apt** and **Shared Room** are found to be **not randomly distributed** and they have clustered patterns in both 2019 and 2021, with only **Entire Home/Apt** being **statistically significant**. In fact, the clustering patterns are similar for both years (based on L(r) - r).
+- **Private Room** on the other hand shows an opposite where 2021 are found to have more clustered pattern than 2019.
+- However, we must realise that these observations might not be conclusive due to limitations such as the amount of data available. Further analysis should still be done to confirm the results.
+
+
+## 9.3 Summary
+
+Airbnb listings in 2019 were found to be **NOT spatially independent** in the study area of Downtown Core with Hotels and MRT services and were found to have **significant clustered patterns at certain distances**. Airbnb listings were found to be **NOT spatially independent** with Tourists Attractions and were found to have **significant regular patterns at certain distances**.
+
+Surprisingly, with COVID-19, Section B has revealed that it did not cause much of an impact on the distributions of Airbnb listings in 2021 when compared to 2019. With that being said, due to limitations such as the amount of data available, further analysis should still be performed to affirm the results. 
+
+
+# 10 References
+
+"density.ppp: Kernel Smoothed Intensity of Point Pattern" (n.d.)  Retrieved from:  https://www.rdocumentation.org/packages/spatstat/versions/1.64-1/topics/density.ppp
+
+"How Kernel Density works" (n.d.) Retrieved from: https://pro.arcgis.com/en/pro-app/latest/tool-reference/spatial-analyst/how-kernel-density-works.htm
+
+Manuel.G (2021) Chapter 11 Point Pattern Analysis. Retrieved from:  https://mgimond.github.io/Spatial/chp11_0.html#distance-based-analysis
+
+Tin Seong.K (n.d.) Hands-on Exercise 4: Spatial Point Patterns Analysis-spatstat methods. Retrieved from: https://is415.netlify.app/hands-on_ex/hands-on_ex04/hands-on_ex04-sppa#second-order-spatial-point-patterns-analysis
+
+Tin Seong.K (2021) Hands-on Exercise 5: Analysing Marked Point Patterns. Retrieved from: https://is415.netlify.app/hands-on_ex/hands-on_ex05/hands-on_ex05-markedsppa
+
+Tin Seong.K (2021) Lesson 4: Spatial Point Patterns Analysis. Retrieved from:  https://is415.netlify.app/lesson/lesson04/lesson04-sppa#1
+
+
+
+
 
