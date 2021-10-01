@@ -11,8 +11,10 @@ navbar:
       - text: "Take-home Exercise 1"
         href: https://wlwong2018-is415-blog.netlify.app/posts/2021-09-09-take-home-exercise-1/
       - text: "Take-home Exercise 2"
-        href:
-    
+        href: https://wlwong2018-is415-blog.netlify.app/posts/2021-09-30-take-home-exercise-2/
+      - text: "Take-home Exercise 3"
+        href: 
+        
     - text: "In-Class Exercise"
       menu:
       - text: "In-Class Exercise 2"

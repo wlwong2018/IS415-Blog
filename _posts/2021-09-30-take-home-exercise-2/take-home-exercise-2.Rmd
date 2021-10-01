@@ -1400,7 +1400,3 @@ Tin Seong.K (2021) Hands-on Exercise 5: Analysing Marked Point Patterns. Retriev
 
 Tin Seong.K (2021) Lesson 4: Spatial Point Patterns Analysis. Retrieved from:  https://is415.netlify.app/lesson/lesson04/lesson04-sppa#1
 
-
-
-
-
