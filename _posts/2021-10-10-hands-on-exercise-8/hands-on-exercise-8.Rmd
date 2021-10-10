@@ -9,6 +9,9 @@ date: 10-10-2021
 output:
   distill::distill_article:
     self_contained: false
+    toc: true
+    toc_float: true
+    number_sections: true
 ---
 
 
@@ -34,7 +37,7 @@ Both data sets are download from Myanmar Information Management Unit (MIMU)
 
 - Spatial data handling
 
-    +sf, rgdal and spdep
+    + sf, rgdal and spdep
     
 - Attribute data handling
 
@@ -61,5 +64,211 @@ for (p in packages){
 }
 ```
 
-# 4 
+# 4 Data Import and Preparation
+
+## 4.1 Importing geospatial data into R environment
+
+- The Myanmar Township Boundary GIS data is in ESRI shapefile format.
+- Use *st_read()* function of **sf** package.
+
+```{r echo=TRUE, eval=TRUE}
+shan_sf <- st_read(dsn = "data/geospatial", layer = "myanmar_township_boundaries") %>%
+  filter(ST %in% c("Shan (East)", "Shan (North)", "Shan (South)"))
+```
+
+## 4.2 View newly created sf dataframe
+
+- View shan_sf 
+- Since shan_sf is conformed to tidy framework, we can also *glimpse()* to reveal the data type of it’s fields.
+
+```{r echo=TRUE, eval=TRUE}
+shan_sf
+glimpse(shan_sf)
+```
+
+## 4.3 Importing aspatial data into R environment
+
+- Use *read_csv()* function of **readr** package
+- It is saved in R’s * tibble data.frame* format.
+- Use *summary()* to reveal the summary statistics of ict data.frame
+
+```{r echo=TRUE, eval=TRUE}
+ict <- read_csv ("data/aspatial/Shan-ICT.csv")
+
+summary(ict)
+```
+
+Results above show that:
+
+- There are a total of eleven fields and 55 observation in the tibble data.frame.
+
+## 4.4 Derive new variables using dplyr package
+
+- The unit of measurement of the values are number of household.
+- Using these values directly will be **bias** by the underlying total number of households.
+- In general, the townships with relatively higher total number of households will also have higher number of households owning radio, TV, etc.
+- In order to overcome this problem, we will **derive the penetration rate** of each ICT variable
+- - Use *summary()* to reveal the summary statistics of ict_derived data.frame
+
+```{r echo=TRUE, eval=TRUE}
+ict_derived <- ict %>%
+  mutate(`RADIO_PR` = `Radio`/`Total households`*1000) %>%
+  mutate(`TV_PR` = `Television`/`Total households`*1000) %>%
+  mutate(`LLPHONE_PR` = `Land line phone`/`Total households`*1000) %>%
+  mutate(`MPHONE_PR` = `Mobile phone`/`Total households`*1000) %>%
+  mutate(`COMPUTER_PR` = `Computer`/`Total households`*1000) %>%
+  mutate(`INTERNET_PR` = `Internet at home`/`Total households`*1000) %>%
+  rename(`DT_PCODE` =`District Pcode`,`DT`=`District Name`,
+         `TS_PCODE`=`Township Pcode`, `TS`=`Township Name`,
+         `TT_HOUSEHOLDS`=`Total households`,
+         `RADIO`=`Radio`, `TV`=`Television`, 
+         `LLPHONE`=`Land line phone`, `MPHONE`=`Mobile phone`,
+         `COMPUTER`=`Computer`, `INTERNET`=`Internet at home`) 
+
+summary(ict_derived)
+
+```
+
+# 5 Exploratory Data Analysis (EDA)
+
+## 5.1 EDA using statistical graphics
+
+### 5.1.1 Histograms
+
+- Plot the distribution of the variables (i.e. Number of households with radio) 
+- Histogram is useful to identify the overall distribution of the data values (i.e. left skew, right skew or normal distribution)
+
+```{r echo=TRUE, eval=TRUE}
+ggplot(data=ict_derived, aes(x=`RADIO`)) +
+  geom_histogram(bins=20, color="black", fill="light blue")
+```
+
+### 5.1.2 Boxplot
+
+- Boxplots are useful to detect if there are outliers.
+
+```{r echo=TRUE, eval=TRUE}
+ggplot(data=ict_derived, aes(x=`RADIO`)) +
+  geom_boxplot(color="black", fill="light blue")
+```
+
+### 5.1.3 Histograms (newly derived variables)
+
+- Plot the distribution of the newly derived variables (i.e. Radio penetration rate)
+
+```{r echo=TRUE, eval=TRUE}
+ggplot(data=ict_derived, aes(x=`RADIO_PR`)) +
+  geom_histogram(bins=20, color="black", fill="light blue")
+```
+
+### 5.1.4 Boxplot (newly derived variables)
+
+
+```{r echo=TRUE, eval=TRUE}
+ggplot(data=ict_derived, aes(x=`RADIO_PR`)) +
+  geom_boxplot(color="black", fill="light blue")
+```
+
+### 5.1.4 Multiple Histograms (selected variables)
+
+- Multiple histograms are plotted to reveal the distribution of the selected variables in the ict_derived data.frame
+- *ggarange()* function of **ggpubr** package is used to group these histograms together.
+
+```{r echo=TRUE, eval=TRUE}
+radio <- ggplot(data=ict_derived, 
+             aes(x= `RADIO_PR`)) +
+  geom_histogram(bins=20, 
+                 color="black", 
+                 fill="light blue")
+
+tv <- ggplot(data=ict_derived, 
+             aes(x= `TV_PR`)) +
+  geom_histogram(bins=20, 
+                 color="black", 
+                 fill="light blue")
+
+llphone <- ggplot(data=ict_derived, 
+             aes(x= `LLPHONE_PR`)) +
+  geom_histogram(bins=20, 
+                 color="black", 
+                 fill="light blue")
+
+mphone <- ggplot(data=ict_derived, 
+             aes(x= `MPHONE_PR`)) +
+  geom_histogram(bins=20, 
+                 color="black", 
+                 fill="light blue")
+
+computer <- ggplot(data=ict_derived, 
+             aes(x= `COMPUTER_PR`)) +
+  geom_histogram(bins=20, 
+                 color="black", 
+                 fill="light blue")
+
+internet <- ggplot(data=ict_derived, 
+             aes(x= `INTERNET_PR`)) +
+  geom_histogram(bins=20, 
+                 color="black", 
+                 fill="light blue")
+
+ggarrange(radio, tv, llphone, mphone, computer, internet, 
+          ncol = 3, 
+          nrow = 2)
+```
+
+
+```{r echo=TRUE, eval=TRUE}
+
+```
+
+
+```{r echo=TRUE, eval=TRUE}
+
+```
+
+
+```{r echo=TRUE, eval=TRUE}
+
+```
+
+
+```{r echo=TRUE, eval=TRUE}
+
+```
+
+
+```{r echo=TRUE, eval=TRUE}
+
+```
+
+
+```{r echo=TRUE, eval=TRUE}
+
+```
+
+
+```{r echo=TRUE, eval=TRUE}
+
+```
+
+
+```{r echo=TRUE, eval=TRUE}
+
+```
+
+
+```{r echo=TRUE, eval=TRUE}
+
+```
+
+
+```{r echo=TRUE, eval=TRUE}
+
+```
+
+
+```{r echo=TRUE, eval=TRUE}
+
+```
+
 
