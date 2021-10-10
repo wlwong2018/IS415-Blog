@@ -1,0 +1,20 @@
+---
+title: "Hands-on Exercise 8"
+description: |
+  In Hands-on Exercise 8, I have learnt how to perform geographical segmentation by using appropriate R packages.I have also been exposed to R packages for performing cluster analysis and visualising clustering results.
+author:
+  - name: Wong Wei Ling
+    url: www.google.com
+date: 10-10-2021
+output:
+  distill::distill_article:
+    self_contained: false
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+
+

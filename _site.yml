@@ -46,6 +46,8 @@ navbar:
         href: https://wlwong2018-is415-blog.netlify.app/posts/2021-09-26-hands-on-exercise-7/
       - text: "Hands-on Exercise 8"
         href: 
+      - text: "Hands-on Exercise 9"
+        href: 
         
     - text: "About"
       href: about.html
