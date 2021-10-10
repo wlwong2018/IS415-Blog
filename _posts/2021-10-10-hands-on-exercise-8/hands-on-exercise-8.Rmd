@@ -41,7 +41,7 @@ Both data sets are download from Myanmar Information Management Unit (MIMU)
     
 - Attribute data handling
 
-  + tidyverse, especially readr, ggplot2 and dplyr
+    + tidyverse, especially readr, ggplot2 and dplyr
   
 - Choropleth mapping
 
@@ -216,45 +216,126 @@ ggarrange(radio, tv, llphone, mphone, computer, internet,
           nrow = 2)
 ```
 
+## 5.2 EDA using choropleth map
+
+### 5.2.1 Joining geospatial data with aspatial data
+
+- Combine both the geospatial data object (i.e. shan_sf) and aspatial data.frame object (i.e. ict_derived) into one
+- Use the *left_join* function of **dplyr** package
+- *shan_sf* simple feature data.frame will be used as the base data object and the *ict_derived* data.frame will be used as the join table.
+- The unique identifier used to join both data objects is *TS_PCODE*
 
 ```{r echo=TRUE, eval=TRUE}
+shan_sf <- left_join(shan_sf, ict_derived, by=c("TS_PCODE"="TS_PCODE"))
 
 ```
 
+- It is important to note that there is no new output data been created. Instead, the data fields from ict_derived data frame are now updated into the data frame of shan_sf.
+
+### 5.2.2 Preparing a choropleth map
+
+- using the *qtm()* function of **tmap** package to  look at the distribution of Radio penetration rate of Shan State at township
 
 ```{r echo=TRUE, eval=TRUE}
+qtm(shan_sf, "RADIO_PR")
 
 ```
 
+### 5.2.3 Reveal distribution (bias)
+
+- Create two choropleth maps, one for the total number of households (i.e. TT_HOUSEHOLDS.map) and one for the total number of household with Radio (RADIO.map) to  **reveal the distribution shown in the choropleth map above are bias** to the underlying total number of households at the townships
 
 ```{r echo=TRUE, eval=TRUE}
+TT_HOUSEHOLDS.map <- tm_shape(shan_sf) + 
+  tm_fill(col = "TT_HOUSEHOLDS",
+          n = 5,
+          style = "jenks", 
+          title = "Total households") + 
+  tm_borders(alpha = 0.5) 
 
+RADIO.map <- tm_shape(shan_sf) + 
+  tm_fill(col = "RADIO",
+          n = 5,
+          style = "jenks",
+          title = "Number Radio ") + 
+  tm_borders(alpha = 0.5) 
+
+tmap_arrange(TT_HOUSEHOLDS.map, RADIO.map,
+             asp=NA, ncol=2)
 ```
 
+Results above show that:
+ 
+-  Townships with relatively larger number of households are also showing relatively higher number of radio ownership.
+
+### 5.2.4 Distribution of total number of households and Radio penetration rate
 
 ```{r echo=TRUE, eval=TRUE}
-
+tm_shape(shan_sf) +
+    tm_polygons(c("TT_HOUSEHOLDS", "RADIO_PR"),
+                style="jenks") +
+    tm_facets(sync = TRUE, ncol = 2) +
+  tm_legend(legend.position = c("right", "bottom"))+
+  tm_layout(outer.margins=0, asp=0)
 ```
 
+Question: Can you identify the differences?
+
+## 5.3 Correlation Analysis
+
+Before we perform cluster analysis, it is important for us to ensure that the cluster variables are not highly correlated.
+
+- Use *corrplot.mixed()* function of **corrplot** package to visualise and analyse the correlation of the input variables.
 
 ```{r echo=TRUE, eval=TRUE}
-
+cluster_vars.cor = cor(ict_derived[,12:17])
+corrplot.mixed(cluster_vars.cor,
+         lower = "ellipse", 
+               upper = "number",
+               tl.pos = "lt",
+               diag = "l",
+               tl.col = "black")
 ```
 
+Results above show that:
+
+- Correlation plot shows that COMPUTER_PR and INTERNET_PR are highly correlated.
+- This suggest that only one of them should be used in the cluster analysis instead of both.
+
+# 6 Hierarchy Cluster Analysis
+
+## 6.1 Prepare variables
+
+### 6.1.1 Extrating clustering variables
+
+- To extract the clustering variables from the shan_sf simple feature object into data.frame.
 
 ```{r echo=TRUE, eval=TRUE}
-
+cluster_vars <- shan_sf %>%
+  st_set_geometry(NULL) %>%
+  select("TS.x", "RADIO_PR", "TV_PR", "LLPHONE_PR", "MPHONE_PR", "COMPUTER_PR")
+head(cluster_vars,10)
 ```
 
+**Note:** Final clustering variables list **does not include variable INTERNET_PR** because it is highly correlated with variable COMPUTER_PR.
+
+### 6.1.2 Change row names
+
+- Change the rows by township name instead of row number 
 
 ```{r echo=TRUE, eval=TRUE}
-
+row.names(cluster_vars) <- cluster_vars$"TS.x"
+head(cluster_vars,10)
 ```
 
+### 6.1.3 Delete TS.x field
 
 ```{r echo=TRUE, eval=TRUE}
-
+shan_ict <- select(cluster_vars, c(2:6))
+head(shan_ict, 10)
 ```
+
+## 6.2 Data Standardisation
 
 
 ```{r echo=TRUE, eval=TRUE}

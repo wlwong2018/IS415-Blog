@@ -117,7 +117,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <!--/radix_placeholder_rmarkdown_metadata-->
   
   <script type="text/json" id="radix-resource-manifest">
-  {"type":"character","attributes":{},"value":["data/aspatial/Shan-ICT.csv","data/geospatial/myanmar_township_boundaries.cst","data/geospatial/myanmar_township_boundaries.dbf","data/geospatial/myanmar_township_boundaries.prj","data/geospatial/myanmar_township_boundaries.shp","data/geospatial/myanmar_township_boundaries.shx","hands-on-exercise-8_files/anchor-4.2.2/anchor.min.js","hands-on-exercise-8_files/bowser-1.9.3/bowser.min.js","hands-on-exercise-8_files/distill-2.2.21/template.v2.js","hands-on-exercise-8_files/figure-html5/unnamed-chunk-10-1.png","hands-on-exercise-8_files/figure-html5/unnamed-chunk-6-1.png","hands-on-exercise-8_files/figure-html5/unnamed-chunk-7-1.png","hands-on-exercise-8_files/figure-html5/unnamed-chunk-8-1.png","hands-on-exercise-8_files/figure-html5/unnamed-chunk-9-1.png","hands-on-exercise-8_files/header-attrs-2.10/header-attrs.js","hands-on-exercise-8_files/jquery-1.11.3/jquery.min.js","hands-on-exercise-8_files/popper-2.6.0/popper.min.js","hands-on-exercise-8_files/tippy-6.2.7/tippy-bundle.umd.min.js","hands-on-exercise-8_files/tippy-6.2.7/tippy-light-border.css","hands-on-exercise-8_files/tippy-6.2.7/tippy.css","hands-on-exercise-8_files/tippy-6.2.7/tippy.umd.min.js","hands-on-exercise-8_files/webcomponents-2.0.0/webcomponents.js"]}
+  {"type":"character","attributes":{},"value":["data/aspatial/Shan-ICT.csv","data/geospatial/myanmar_township_boundaries.cst","data/geospatial/myanmar_township_boundaries.dbf","data/geospatial/myanmar_township_boundaries.prj","data/geospatial/myanmar_township_boundaries.shp","data/geospatial/myanmar_township_boundaries.shx","hands-on-exercise-8_files/anchor-4.2.2/anchor.min.js","hands-on-exercise-8_files/bowser-1.9.3/bowser.min.js","hands-on-exercise-8_files/distill-2.2.21/template.v2.js","hands-on-exercise-8_files/figure-html5/unnamed-chunk-10-1.png","hands-on-exercise-8_files/figure-html5/unnamed-chunk-12-1.png","hands-on-exercise-8_files/figure-html5/unnamed-chunk-13-1.png","hands-on-exercise-8_files/figure-html5/unnamed-chunk-14-1.png","hands-on-exercise-8_files/figure-html5/unnamed-chunk-15-1.png","hands-on-exercise-8_files/figure-html5/unnamed-chunk-6-1.png","hands-on-exercise-8_files/figure-html5/unnamed-chunk-7-1.png","hands-on-exercise-8_files/figure-html5/unnamed-chunk-8-1.png","hands-on-exercise-8_files/figure-html5/unnamed-chunk-9-1.png","hands-on-exercise-8_files/header-attrs-2.10/header-attrs.js","hands-on-exercise-8_files/jquery-1.11.3/jquery.min.js","hands-on-exercise-8_files/popper-2.6.0/popper.min.js","hands-on-exercise-8_files/tippy-6.2.7/tippy-bundle.umd.min.js","hands-on-exercise-8_files/tippy-6.2.7/tippy-light-border.css","hands-on-exercise-8_files/tippy-6.2.7/tippy.css","hands-on-exercise-8_files/tippy-6.2.7/tippy.umd.min.js","hands-on-exercise-8_files/webcomponents-2.0.0/webcomponents.js"]}
   </script>
   <!--radix_placeholder_navigation_in_header-->
 <meta name="distill:offset" content="../.."/>
@@ -2492,6 +2492,24 @@ Hands-on Exercise
 <li><a href="#boxplot-newly-derived-variables">5.1.4 Boxplot (newly derived variables)</a></li>
 <li><a href="#multiple-histograms-selected-variables">5.1.4 Multiple Histograms (selected variables)</a></li>
 </ul></li>
+<li><a href="#eda-using-choropleth-map">5.2 EDA using choropleth map</a>
+<ul>
+<li><a href="#joining-geospatial-data-with-aspatial-data">5.2.1 Joining geospatial data with aspatial data</a></li>
+<li><a href="#preparing-a-choropleth-map">5.2.2 Preparing a choropleth map</a></li>
+<li><a href="#reveal-distribution-bias">5.2.3 Reveal distribution (bias)</a></li>
+<li><a href="#distribution-of-total-number-of-households-and-radio-penetration-rate">5.2.4 Distribution of total number of households and Radio penetration rate</a></li>
+</ul></li>
+<li><a href="#correlation-analysis">5.3 Correlation Analysis</a></li>
+</ul></li>
+<li><a href="#hierarchy-cluster-analysis">6 Hierarchy Cluster Analysis</a>
+<ul>
+<li><a href="#prepare-variables">6.1 Prepare variables</a>
+<ul>
+<li><a href="#extrating-clustering-variables">6.1.1 Extrating clustering variables</a></li>
+<li><a href="#change-row-names">6.1.2 Change row names</a></li>
+<li><a href="#delete-ts.x-field">6.1.3 Delete TS.x field</a></li>
+</ul></li>
+<li><a href="#data-standardisation">6.2 Data Standardisation</a></li>
 </ul></li>
 </ul>
 </nav>
@@ -2508,7 +2526,9 @@ Hands-on Exercise
 <h1 id="install-and-load-packages">3 Install and Load Packages</h1>
 <ul>
 <li><p>Spatial data handling</p>
-<p>+sf, rgdal and spdep</p></li>
+<ul>
+<li>sf, rgdal and spdep</li>
+</ul></li>
 <li><p>Attribute data handling</p>
 <ul>
 <li>tidyverse, especially readr, ggplot2 and dplyr</li>
@@ -2562,7 +2582,7 @@ Geodetic CRS:  WGS 84</code></pre>
 <h2 id="view-newly-created-sf-dataframe">4.2 View newly created sf dataframe</h2>
 <ul>
 <li>View shan_sf</li>
-<li>Since shan_sf is conformed to tidy framework, we can also glimpse() to reveal the data type of it’s fields.</li>
+<li>Since shan_sf is conformed to tidy framework, we can also <em>glimpse()</em> to reveal the data type of it’s fields.</li>
 </ul>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
@@ -2806,7 +2826,7 @@ $ geometry   &lt;MULTIPOLYGON [°]&gt; MULTIPOLYGON (((96.96001 23..., MULT~</co
 </div>
 <h3 id="multiple-histograms-selected-variables">5.1.4 Multiple Histograms (selected variables)</h3>
 <ul>
-<li>multiple histograms are plotted to reveal the distribution of the selected variables in the ict_derived data.frame</li>
+<li>Multiple histograms are plotted to reveal the distribution of the selected variables in the ict_derived data.frame</li>
 <li><em>ggarange()</em> function of <strong>ggpubr</strong> package is used to group these histograms together.</li>
 </ul>
 <div class="layout-chunk" data-layout="l-body">
@@ -2854,6 +2874,181 @@ $ geometry   &lt;MULTIPOLYGON [°]&gt; MULTIPOLYGON (((96.96001 23..., MULT~</co
 </div>
 <p><img src="hands-on-exercise-8_files/figure-html5/unnamed-chunk-10-1.png" width="624" /></p>
 </div>
+<h2 id="eda-using-choropleth-map">5.2 EDA using choropleth map</h2>
+<h3 id="joining-geospatial-data-with-aspatial-data">5.2.1 Joining geospatial data with aspatial data</h3>
+<ul>
+<li>Combine both the geospatial data object (i.e. shan_sf) and aspatial data.frame object (i.e. ict_derived) into one</li>
+<li>Use the <em>left_join</em> function of <strong>dplyr</strong> package</li>
+<li><em>shan_sf</em> simple feature data.frame will be used as the base data object and the <em>ict_derived</em> data.frame will be used as the join table.</li>
+<li>The unique identifier used to join both data objects is <em>TS_PCODE</em></li>
+</ul>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>shan_sf</span> <span class='op'>&lt;-</span> <span class='fu'>left_join</span><span class='op'>(</span><span class='va'>shan_sf</span>, <span class='va'>ict_derived</span>, by<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"TS_PCODE"</span><span class='op'>=</span><span class='st'>"TS_PCODE"</span><span class='op'>)</span><span class='op'>)</span>
+</code></pre>
+</div>
+</div>
+<ul>
+<li>It is important to note that there is no new output data been created. Instead, the data fields from ict_derived data frame are now updated into the data frame of shan_sf.</li>
+</ul>
+<h3 id="preparing-a-choropleth-map">5.2.2 Preparing a choropleth map</h3>
+<ul>
+<li>using the <em>qtm()</em> function of <strong>tmap</strong> package to look at the distribution of Radio penetration rate of Shan State at township</li>
+</ul>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>qtm</span><span class='op'>(</span><span class='va'>shan_sf</span>, <span class='st'>"RADIO_PR"</span><span class='op'>)</span>
+</code></pre>
+</div>
+<p><img src="hands-on-exercise-8_files/figure-html5/unnamed-chunk-12-1.png" width="624" /></p>
+</div>
+<h3 id="reveal-distribution-bias">5.2.3 Reveal distribution (bias)</h3>
+<ul>
+<li>Create two choropleth maps, one for the total number of households (i.e. TT_HOUSEHOLDS.map) and one for the total number of household with Radio (RADIO.map) to <strong>reveal the distribution shown in the choropleth map above are bias</strong> to the underlying total number of households at the townships</li>
+</ul>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>TT_HOUSEHOLDS.map</span> <span class='op'>&lt;-</span> <span class='fu'>tm_shape</span><span class='op'>(</span><span class='va'>shan_sf</span><span class='op'>)</span> <span class='op'>+</span> 
+  <span class='fu'>tm_fill</span><span class='op'>(</span>col <span class='op'>=</span> <span class='st'>"TT_HOUSEHOLDS"</span>,
+          n <span class='op'>=</span> <span class='fl'>5</span>,
+          style <span class='op'>=</span> <span class='st'>"jenks"</span>, 
+          title <span class='op'>=</span> <span class='st'>"Total households"</span><span class='op'>)</span> <span class='op'>+</span> 
+  <span class='fu'>tm_borders</span><span class='op'>(</span>alpha <span class='op'>=</span> <span class='fl'>0.5</span><span class='op'>)</span> 
+
+<span class='va'>RADIO.map</span> <span class='op'>&lt;-</span> <span class='fu'>tm_shape</span><span class='op'>(</span><span class='va'>shan_sf</span><span class='op'>)</span> <span class='op'>+</span> 
+  <span class='fu'>tm_fill</span><span class='op'>(</span>col <span class='op'>=</span> <span class='st'>"RADIO"</span>,
+          n <span class='op'>=</span> <span class='fl'>5</span>,
+          style <span class='op'>=</span> <span class='st'>"jenks"</span>,
+          title <span class='op'>=</span> <span class='st'>"Number Radio "</span><span class='op'>)</span> <span class='op'>+</span> 
+  <span class='fu'>tm_borders</span><span class='op'>(</span>alpha <span class='op'>=</span> <span class='fl'>0.5</span><span class='op'>)</span> 
+
+<span class='fu'>tmap_arrange</span><span class='op'>(</span><span class='va'>TT_HOUSEHOLDS.map</span>, <span class='va'>RADIO.map</span>,
+             asp<span class='op'>=</span><span class='cn'>NA</span>, ncol<span class='op'>=</span><span class='fl'>2</span><span class='op'>)</span>
+</code></pre>
+</div>
+<p><img src="hands-on-exercise-8_files/figure-html5/unnamed-chunk-13-1.png" width="624" /></p>
+</div>
+<p>Results above show that:</p>
+<ul>
+<li>Townships with relatively larger number of households are also showing relatively higher number of radio ownership.</li>
+</ul>
+<h3 id="distribution-of-total-number-of-households-and-radio-penetration-rate">5.2.4 Distribution of total number of households and Radio penetration rate</h3>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>tm_shape</span><span class='op'>(</span><span class='va'>shan_sf</span><span class='op'>)</span> <span class='op'>+</span>
+    <span class='fu'>tm_polygons</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"TT_HOUSEHOLDS"</span>, <span class='st'>"RADIO_PR"</span><span class='op'>)</span>,
+                style<span class='op'>=</span><span class='st'>"jenks"</span><span class='op'>)</span> <span class='op'>+</span>
+    <span class='fu'>tm_facets</span><span class='op'>(</span>sync <span class='op'>=</span> <span class='cn'>TRUE</span>, ncol <span class='op'>=</span> <span class='fl'>2</span><span class='op'>)</span> <span class='op'>+</span>
+  <span class='fu'>tm_legend</span><span class='op'>(</span>legend.position <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"right"</span>, <span class='st'>"bottom"</span><span class='op'>)</span><span class='op'>)</span><span class='op'>+</span>
+  <span class='fu'>tm_layout</span><span class='op'>(</span>outer.margins<span class='op'>=</span><span class='fl'>0</span>, asp<span class='op'>=</span><span class='fl'>0</span><span class='op'>)</span>
+</code></pre>
+</div>
+<p><img src="hands-on-exercise-8_files/figure-html5/unnamed-chunk-14-1.png" width="624" /></p>
+</div>
+<p>Question: Can you identify the differences?</p>
+<h2 id="correlation-analysis">5.3 Correlation Analysis</h2>
+<p>Before we perform cluster analysis, it is important for us to ensure that the cluster variables are not highly correlated.</p>
+<ul>
+<li>Use <em>corrplot.mixed()</em> function of <strong>corrplot</strong> package to visualise and analyse the correlation of the input variables.</li>
+</ul>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>cluster_vars.cor</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/stats/cor.html'>cor</a></span><span class='op'>(</span><span class='va'>ict_derived</span><span class='op'>[</span>,<span class='fl'>12</span><span class='op'>:</span><span class='fl'>17</span><span class='op'>]</span><span class='op'>)</span>
+<span class='fu'>corrplot.mixed</span><span class='op'>(</span><span class='va'>cluster_vars.cor</span>,
+         lower <span class='op'>=</span> <span class='st'>"ellipse"</span>, 
+               upper <span class='op'>=</span> <span class='st'>"number"</span>,
+               tl.pos <span class='op'>=</span> <span class='st'>"lt"</span>,
+               diag <span class='op'>=</span> <span class='st'>"l"</span>,
+               tl.col <span class='op'>=</span> <span class='st'>"black"</span><span class='op'>)</span>
+</code></pre>
+</div>
+<p><img src="hands-on-exercise-8_files/figure-html5/unnamed-chunk-15-1.png" width="624" /></p>
+</div>
+<p>Results above show that:</p>
+<ul>
+<li>Correlation plot shows that COMPUTER_PR and INTERNET_PR are highly correlated.</li>
+<li>This suggest that only one of them should be used in the cluster analysis instead of both.</li>
+</ul>
+<h1 id="hierarchy-cluster-analysis">6 Hierarchy Cluster Analysis</h1>
+<h2 id="prepare-variables">6.1 Prepare variables</h2>
+<h3 id="extrating-clustering-variables">6.1.1 Extrating clustering variables</h3>
+<ul>
+<li>To extract the clustering variables from the shan_sf simple feature object into data.frame.</li>
+</ul>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>cluster_vars</span> <span class='op'>&lt;-</span> <span class='va'>shan_sf</span> <span class='op'>%&gt;%</span>
+  <span class='fu'>st_set_geometry</span><span class='op'>(</span><span class='cn'>NULL</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
+  <span class='fu'>select</span><span class='op'>(</span><span class='st'>"TS.x"</span>, <span class='st'>"RADIO_PR"</span>, <span class='st'>"TV_PR"</span>, <span class='st'>"LLPHONE_PR"</span>, <span class='st'>"MPHONE_PR"</span>, <span class='st'>"COMPUTER_PR"</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>cluster_vars</span>,<span class='fl'>10</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>        TS.x RADIO_PR    TV_PR LLPHONE_PR MPHONE_PR COMPUTER_PR
+1    Mongmit 286.1852 554.1313   35.30618  260.6944    12.15939
+2    Pindaya 417.4647 505.1300   19.83584  162.3917    12.88190
+3    Ywangan 484.5215 260.5734   11.93591  120.2856     4.41465
+4   Pinlaung 231.6499 541.7189   28.54454  249.4903    13.76255
+5     Mabein 449.4903 708.6423   72.75255  392.6089    16.45042
+6      Kalaw 280.7624 611.6204   42.06478  408.7951    29.63160
+7      Pekon 318.6118 535.8494   39.83270  214.8476    18.97032
+8   Lawksawk 387.1017 630.0035   31.51366  320.5686    21.76677
+9  Nawnghkio 349.3359 547.9456   38.44960  323.0201    15.76465
+10   Kyaukme 210.9548 601.1773   39.58267  372.4930    30.94709</code></pre>
+</div>
+<p><strong>Note:</strong> Final clustering variables list <strong>does not include variable INTERNET_PR</strong> because it is highly correlated with variable COMPUTER_PR.</p>
+<h3 id="change-row-names">6.1.2 Change row names</h3>
+<ul>
+<li>Change the rows by township name instead of row number</li>
+</ul>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/row.names.html'>row.names</a></span><span class='op'>(</span><span class='va'>cluster_vars</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='va'>cluster_vars</span><span class='op'>$</span><span class='st'>"TS.x"</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>cluster_vars</span>,<span class='fl'>10</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>               TS.x RADIO_PR    TV_PR LLPHONE_PR MPHONE_PR
+Mongmit     Mongmit 286.1852 554.1313   35.30618  260.6944
+Pindaya     Pindaya 417.4647 505.1300   19.83584  162.3917
+Ywangan     Ywangan 484.5215 260.5734   11.93591  120.2856
+Pinlaung   Pinlaung 231.6499 541.7189   28.54454  249.4903
+Mabein       Mabein 449.4903 708.6423   72.75255  392.6089
+Kalaw         Kalaw 280.7624 611.6204   42.06478  408.7951
+Pekon         Pekon 318.6118 535.8494   39.83270  214.8476
+Lawksawk   Lawksawk 387.1017 630.0035   31.51366  320.5686
+Nawnghkio Nawnghkio 349.3359 547.9456   38.44960  323.0201
+Kyaukme     Kyaukme 210.9548 601.1773   39.58267  372.4930
+          COMPUTER_PR
+Mongmit      12.15939
+Pindaya      12.88190
+Ywangan       4.41465
+Pinlaung     13.76255
+Mabein       16.45042
+Kalaw        29.63160
+Pekon        18.97032
+Lawksawk     21.76677
+Nawnghkio    15.76465
+Kyaukme      30.94709</code></pre>
+</div>
+<h3 id="delete-ts.x-field">6.1.3 Delete TS.x field</h3>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>shan_ict</span> <span class='op'>&lt;-</span> <span class='fu'>select</span><span class='op'>(</span><span class='va'>cluster_vars</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>2</span><span class='op'>:</span><span class='fl'>6</span><span class='op'>)</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>shan_ict</span>, <span class='fl'>10</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>          RADIO_PR    TV_PR LLPHONE_PR MPHONE_PR COMPUTER_PR
+Mongmit   286.1852 554.1313   35.30618  260.6944    12.15939
+Pindaya   417.4647 505.1300   19.83584  162.3917    12.88190
+Ywangan   484.5215 260.5734   11.93591  120.2856     4.41465
+Pinlaung  231.6499 541.7189   28.54454  249.4903    13.76255
+Mabein    449.4903 708.6423   72.75255  392.6089    16.45042
+Kalaw     280.7624 611.6204   42.06478  408.7951    29.63160
+Pekon     318.6118 535.8494   39.83270  214.8476    18.97032
+Lawksawk  387.1017 630.0035   31.51366  320.5686    21.76677
+Nawnghkio 349.3359 547.9456   38.44960  323.0201    15.76465
+Kyaukme   210.9548 601.1773   39.58267  372.4930    30.94709</code></pre>
+</div>
+<h2 id="data-standardisation">6.2 Data Standardisation</h2>
 <div class="layout-chunk" data-layout="l-body">
 
 </div>
@@ -2863,31 +3058,7 @@ $ geometry   &lt;MULTIPOLYGON [°]&gt; MULTIPOLYGON (((96.96001 23..., MULT~</co
 <div class="layout-chunk" data-layout="l-body">
 
 </div>
-<div class="layout-chunk" data-layout="l-body">
-
-</div>
-<div class="layout-chunk" data-layout="l-body">
-
-</div>
-<div class="layout-chunk" data-layout="l-body">
-
-</div>
-<div class="layout-chunk" data-layout="l-body">
-
-</div>
-<div class="layout-chunk" data-layout="l-body">
-
-</div>
-<div class="layout-chunk" data-layout="l-body">
-
-</div>
-<div class="layout-chunk" data-layout="l-body">
-
-</div>
-<div class="layout-chunk" data-layout="l-body">
-
-</div>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->
 </div>
