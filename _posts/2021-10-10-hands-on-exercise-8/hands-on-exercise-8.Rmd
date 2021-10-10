@@ -17,4 +17,49 @@ knitr::opts_chunk$set(echo = FALSE)
 ```
 
 
+# 1 The Analytical Question
+
+In geobusiness and spatial policy, it is a common practice to delineate the market or planning area into homogeneous regions by using multivariate data. In this hands-on exercise, we are interested to delineate Shan State, Myanmar into homogeneous regions by using multiple Information and Communication technology (ICT) measures, namely: Radio, Television, Land line phone, Mobile phone, Computer, and Internet at home.
+
+# 2 Dataset
+
+Two data sets will be used in this study. They are:
+
+- Myanmar Township Boundary Data (i.e. myanmar_township_boundaries) : This is a GIS data in ESRI shapefile format. It consists of township boundary information of Myanmar. The spatial data are captured in polygon features.
+- Shan-ICT.csv: This is an extract of The 2014 Myanmar Population and Housing Census Myanmar at the township level.
+
+Both data sets are download from Myanmar Information Management Unit (MIMU)
+
+# 3 Install and Load Packages
+
+- Spatial data handling
+
+    +sf, rgdal and spdep
+    
+- Attribute data handling
+
+  + tidyverse, especially readr, ggplot2 and dplyr
+  
+- Choropleth mapping
+
+    + tmap
+- Multivariate data visualisation and analysis
+
+    + coorplot, ggpubr, and heatmaply
+    
+- Cluster analysis
+
+    + cluster
+
+```{r echo=TRUE, eval=TRUE}
+packages = c('rgdal', 'spdep', 'tmap', 'sf', 'ggpubr', 'cluster', 'factoextra', 'NbClust', 'heatmaply', 'corrplot', 'psych', 'tidyverse')
+for (p in packages){
+  if(!require(p, character.only = T)){
+    install.packages(p)
+    }
+  library(p,character.only = T)
+}
+```
+
+# 4 
 
