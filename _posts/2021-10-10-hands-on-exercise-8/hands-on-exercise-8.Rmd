@@ -15,7 +15,7 @@ output:
 ---
 
 
-```{r setup, include=FALSE}
+```{r setup, include=FALSE, cache = TRUE}
 knitr::opts_chunk$set(echo = FALSE)
 ```
 
@@ -70,6 +70,7 @@ for (p in packages){
 
 - The Myanmar Township Boundary GIS data is in ESRI shapefile format.
 - Use *st_read()* function of **sf** package.
+- Filter extracts particular regions in Shan
 
 ```{r echo=TRUE, eval=TRUE}
 shan_sf <- st_read(dsn = "data/geospatial", layer = "myanmar_township_boundaries") %>%
@@ -285,7 +286,8 @@ Question: Can you identify the differences?
 
 Before we perform cluster analysis, it is important for us to ensure that the cluster variables are not highly correlated.
 
-- Use *corrplot.mixed()* function of **corrplot** package to visualise and analyse the correlation of the input variables.
+- Use *corrplot.mixed()* function of **corrplot** package to visualise and analyse the correlation of the input variables.The upper half shows numbers which represents the correlation.
+- Darker colours means it is highly correlated.
 
 ```{r echo=TRUE, eval=TRUE}
 cluster_vars.cor = cor(ict_derived[,12:17])
@@ -309,6 +311,7 @@ Results above show that:
 ### 6.1.1 Extrating clustering variables
 
 - To extract the clustering variables from the shan_sf simple feature object into data.frame.
+- *st_set_geometry(NULL)* drops geometric information
 
 ```{r echo=TRUE, eval=TRUE}
 cluster_vars <- shan_sf %>%
@@ -319,9 +322,9 @@ head(cluster_vars,10)
 
 **Note:** Final clustering variables list **does not include variable INTERNET_PR** because it is highly correlated with variable COMPUTER_PR.
 
-### 6.1.2 Change row names
+### 6.1.2 Change row labels
 
-- Change the rows by township name instead of row number 
+- Change the row label using township name instead of row number 
 
 ```{r echo=TRUE, eval=TRUE}
 row.names(cluster_vars) <- cluster_vars$"TS.x"
@@ -351,11 +354,11 @@ summary(shan_ict.std)
 
 Results above show that:
 
-- Values range of the Min-max standardised clustering variables are 0-1 now.
+- Values range of the Min-max standardised clustering variables are **0-1** now.
 
 ### 6.2.2 Z-score standardisation
 
-- Use *scale()* of Base R
+- Use *scale()* of **BaseR**
 - *describe()* of **psych** package is used here instead of summary() of Base R because the earlier provides standard deviation.
 
 ```{r echo=TRUE, eval=TRUE}
@@ -374,7 +377,7 @@ Results above show that:
 - It is a good practice to visualise their distribution graphically.
 - Plot the scaled Radio_PR field
 
-```{r echo=TRUE, eval=TRUE}
+```{r echo=TRUE, eval=TRUE, fig.width=8}
 r <- ggplot(data=ict_derived, 
              aes(x= `RADIO_PR`)) +
   geom_histogram(bins=20, 
@@ -459,9 +462,6 @@ Results above show that:
 - Ward’s method provides the strongest clustering structure among the four methods assessed.
 - Hence, in the subsequent analysis, only Ward’s method will be used.
 
-```{r echo=TRUE, eval=TRUE}
-
-```
 
 ## 6.6 Determining Optimal Clusters
 
@@ -499,7 +499,7 @@ fviz_gap_stat(gap_stat)
 Results above show that:
 
 - The recommended number of cluster to retain is 1.
-- However, it is not logical to retain only one cluster. By examine the gap statistic graph, the 6-cluster gives the largest gap statistic and should be the next best cluster to pick.
+- However, it is not logical to retain only one cluster. By examine the gap statistic graph, the **6-cluster** gives the largest gap statistic and should be the next best cluster to pick.
 
 **Note:** In addition to these commonly used approaches, the NbClust package, published by Charrad et al., 2014, provides 30 indices for determining the relevant number of clusters and proposes to users the best clustering scheme from the different results obtained by varying all combinations of number of clusters, distance measures, and clustering methods.
 
@@ -512,7 +512,8 @@ The height of the fusion, provided on the vertical axis, indicates the (dis)simi
 Note: conclusions about the **proximity** of two observations can be 8*drawn only based on the height where branches containing those two observations first are fused**. We cannot use the proximity of two observations along the horizontal axis as a criteria of their similarity.
 
 - Use *rect.hclust()* of **R** stats to draw the dendrogram with a border around the selected clusters.
-- The argument border is used to specify the border colors for the rectangles.
+- The argument border is used to specify the border colors for the rectangles. border is to have random colours for 2 to 5 of the clusters
+- There are 6 clusters, hence k = 6
 
 ```{r echo=TRUE, eval=TRUE}
 plot(hclust_ward, cex = 0.6)
@@ -536,6 +537,7 @@ shan_ict_mat <- data.matrix(shan_ict)
 ### 6.8.2 Plotting interactive cluster heatmap using heatmaply()
 
 - use *heatmaply()* to build an interactive cluster heatmap.
+- seriate argument is for standardization method
 
 ```{r echo=TRUE, eval=TRUE}
 heatmaply(normalize(shan_ict_mat),
@@ -558,9 +560,10 @@ heatmaply(normalize(shan_ict_mat),
 
 With closed examination of the dendragram above, we have decided to retain five clusters.
 
-### 6.9.1 Derive 5-cluster model
+### 6.9.1 Derive 6-cluster model
 
 - Use *cutree()* of **R Base**
+- *as.factor()* to convert the numbers into factors if not, we will not be able to map it as a categorical data. We want to plot it as a area-shading map, instead of a choropleth map. 
 
 ```{r echo=TRUE, eval=TRUE}
 groups <- as.factor(cutree(hclust_ward, k=6))
@@ -573,7 +576,7 @@ In order to visualise the clusters, the groups object need to be appended onto s
 
 - the groups list object will be converted into a matrix;
 - cbind() is used to append groups matrix onto shan_sf to produce an output simple feature object called shan_sf_cluster; and
-- rename of dplyr package is used to rename as.matrix.groups field as CLUSTER.
+- rename of dplyr package is used to rename as.matrix.groups field to CLUSTER.
 
 ```{r echo=TRUE, eval=TRUE}
 shan_sf_cluster <- cbind(shan_sf, as.matrix(groups)) %>%
@@ -590,12 +593,9 @@ qtm(shan_sf_cluster, "CLUSTER")
 
 Results above show that: 
 
+- Legend is 1,2,3 as it is a categorical 
 - Clusters are very fragmented.
 - This is one of the major limitations when non-spatial clustering algorithm such as hierarchical cluster analysis method is used.
-
-```{r echo=TRUE, eval=TRUE}
-
-```
 
 # 7 Spatially Constrained Clustering - SKATER approach
 
