@@ -563,84 +563,81 @@ Results above show that:
 
 - The **adjusted r-square of the gwr** is 0.8561185 which is **significantly better** than the **global multiple linear regression** model of 0.6472
 
+# 9 Visualising GWR Output
+
+In addition to regression residuals, the output feature class table includes fields for observed and predicted y values, condition number (cond), Local R2, residuals, and explanatory variable coefficients and standard errors:
+
+- Condition Number: this diagnostic evaluates local collinearity. In the presence of strong local collinearity, results become unstable. Results associated with condition numbers larger than 30, may be unreliable.
+
+- Local R2: these values range between 0.0 and 1.0 and indicate how well the local regression model fits observed y values. Very low values indicate the local model is performing poorly. Mapping the Local R2 values to see where GWR predicts well and where it predicts poorly may provide clues about important variables that may be missing from the regression model.
+
+- Predicted: these are the estimated (or fitted) y values 3. computed by GWR.
+
+- Residuals: to obtain the residual values, the fitted y values are subtracted from the observed y values. Standardized residuals have a mean of zero and a standard deviation of 1. A cold-to-hot rendered map of standardized residuals can be produce by using these values.
+
+- Coefficient Standard Error: these values measure the reliability of each coefficient estimate. Confidence in those estimates are higher when standard errors are small in relation to the actual coefficient values. Large standard errors may indicate problems with local collinearity.
+
+They are all stored in a SpatialPointsDataFrame or SpatialPolygonsDataFrame object integrated with fit.points, GWR coefficient estimates, y value, predicted values, coefficient standard errors and t-values in its “data” slot in an object called **SDF** of the output list.
+
+## 9.1 Converting SDF into sf data.frame
+
+- To visualise the fields in **SDF**, we need to first covert it into **sf** data.frame
+
 ```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+condo_resale.sf.adaptive <- st_as_sf(gwr.adaptive$SDF) %>%
+  st_transform(crs=3414)
+```
+
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+condo_resale.sf.adaptive.svy21 <- st_transform(condo_resale.sf.adaptive, 3414)
+condo_resale.sf.adaptive.svy21  
+```
+
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+gwr.adaptive.output <- as.data.frame(gwr.adaptive$SDF)
+condo_resale.sf.adaptive <- cbind(condo_resale.res.sf, as.matrix(gwr.adaptive.output))
+```
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+glimpse(condo_resale.sf.adaptive)
 
 ```
 
 
 ```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+summary(gwr.adaptive$SDF$yhat)
 
 ```
 
+## 9.2 Visualising local R2
+
+- To create an interactive point symbol map
+- **Note: currently, it is in plot mode**
 
 ```{r echo=TRUE, eval=TRUE,  cache=TRUE}
-
+tmap_mode("plot")
+tm_shape(mpsz_svy21)+
+  tm_polygons(alpha = 0.1) +
+tm_shape(condo_resale.sf.adaptive) +  
+  tm_dots(col = "Local_R2",
+          border.col = "gray60",
+          border.lwd = 1) +
+  tm_view(set.zoom.limits = c(11,14))
+tmap_mode("plot")
 ```
 
-```{r echo=TRUE, eval=TRUE,  cache=TRUE}
-
-```
-
+## 9.3 By URA Planning Region
 
 ```{r echo=TRUE, eval=TRUE,  cache=TRUE}
-
-```
-
-
-```{r echo=TRUE, eval=TRUE,  cache=TRUE}
-
-```
-
-
-```{r echo=TRUE, eval=TRUE,  cache=TRUE}
-
-```
-
-```{r echo=TRUE, eval=TRUE,  cache=TRUE}
-
-```
-
-
-```{r echo=TRUE, eval=TRUE,  cache=TRUE}
-
-```
-
-
-```{r echo=TRUE, eval=TRUE,  cache=TRUE}
-
-```
-
-
-```{r echo=TRUE, eval=TRUE,  cache=TRUE}
-
-```
-
-```{r echo=TRUE, eval=TRUE,  cache=TRUE}
-
-```
-
-
-```{r echo=TRUE, eval=TRUE,  cache=TRUE}
-
-```
-
-
-```{r echo=TRUE, eval=TRUE,  cache=TRUE}
-
-```
-
-
-```{r echo=TRUE, eval=TRUE,  cache=TRUE}
-
-```
-
-```{r echo=TRUE, eval=TRUE,  cache=TRUE}
-
-```
-
-
-```{r echo=TRUE, eval=TRUE,  cache=TRUE}
-
+tm_shape(mpsz_svy21[mpsz_svy21$REGION_N=="CENTRAL REGION", ])+
+  tm_polygons()+
+tm_shape(condo_resale.sf.adaptive) + 
+  tm_bubbles(col = "Local_R2",
+           size = 0.15,
+           border.col = "gray60",
+           border.lwd = 1)
 ```
 
 

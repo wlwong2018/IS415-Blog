@@ -116,7 +116,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   <!--/radix_placeholder_rmarkdown_metadata-->
   
   <script type="text/json" id="radix-resource-manifest">
-  {"type":"character","attributes":{},"value":["data/aspatial/Condo_resale_2015.csv","data/geospatial/MP14_SUBZONE_WEB_PL.dbf","data/geospatial/MP14_SUBZONE_WEB_PL.prj","data/geospatial/MP14_SUBZONE_WEB_PL.sbn","data/geospatial/MP14_SUBZONE_WEB_PL.sbx","data/geospatial/MP14_SUBZONE_WEB_PL.shp","data/geospatial/MP14_SUBZONE_WEB_PL.shp.xml","data/geospatial/MP14_SUBZONE_WEB_PL.shx","hands-on-exercise-9_files/anchor-4.2.2/anchor.min.js","hands-on-exercise-9_files/bowser-1.9.3/bowser.min.js","hands-on-exercise-9_files/distill-2.2.21/template.v2.js","hands-on-exercise-9_files/figure-html5/unnamed-chunk-10-1.png","hands-on-exercise-9_files/figure-html5/unnamed-chunk-12-1.png","hands-on-exercise-9_files/figure-html5/unnamed-chunk-13-1.png","hands-on-exercise-9_files/figure-html5/unnamed-chunk-14-1.png","hands-on-exercise-9_files/figure-html5/unnamed-chunk-17-1.png","hands-on-exercise-9_files/figure-html5/unnamed-chunk-18-1.png","hands-on-exercise-9_files/figure-html5/unnamed-chunk-22-1.png","hands-on-exercise-9_files/figure-html5/unnamed-chunk-23-1.png","hands-on-exercise-9_files/figure-html5/unnamed-chunk-28-1.png","hands-on-exercise-9_files/header-attrs-2.10/header-attrs.js","hands-on-exercise-9_files/jquery-1.11.3/jquery.min.js","hands-on-exercise-9_files/popper-2.6.0/popper.min.js","hands-on-exercise-9_files/tippy-6.2.7/tippy-bundle.umd.min.js","hands-on-exercise-9_files/tippy-6.2.7/tippy-light-border.css","hands-on-exercise-9_files/tippy-6.2.7/tippy.css","hands-on-exercise-9_files/tippy-6.2.7/tippy.umd.min.js","hands-on-exercise-9_files/webcomponents-2.0.0/webcomponents.js"]}
+  {"type":"character","attributes":{},"value":["data/aspatial/Condo_resale_2015.csv","data/geospatial/MP14_SUBZONE_WEB_PL.dbf","data/geospatial/MP14_SUBZONE_WEB_PL.prj","data/geospatial/MP14_SUBZONE_WEB_PL.sbn","data/geospatial/MP14_SUBZONE_WEB_PL.sbx","data/geospatial/MP14_SUBZONE_WEB_PL.shp","data/geospatial/MP14_SUBZONE_WEB_PL.shp.xml","data/geospatial/MP14_SUBZONE_WEB_PL.shx","hands-on-exercise-9_files/anchor-4.2.2/anchor.min.js","hands-on-exercise-9_files/bowser-1.9.3/bowser.min.js","hands-on-exercise-9_files/distill-2.2.21/template.v2.js","hands-on-exercise-9_files/figure-html5/unnamed-chunk-10-1.png","hands-on-exercise-9_files/figure-html5/unnamed-chunk-12-1.png","hands-on-exercise-9_files/figure-html5/unnamed-chunk-13-1.png","hands-on-exercise-9_files/figure-html5/unnamed-chunk-14-1.png","hands-on-exercise-9_files/figure-html5/unnamed-chunk-17-1.png","hands-on-exercise-9_files/figure-html5/unnamed-chunk-18-1.png","hands-on-exercise-9_files/figure-html5/unnamed-chunk-22-1.png","hands-on-exercise-9_files/figure-html5/unnamed-chunk-23-1.png","hands-on-exercise-9_files/figure-html5/unnamed-chunk-28-1.png","hands-on-exercise-9_files/figure-html5/unnamed-chunk-43-1.png","hands-on-exercise-9_files/figure-html5/unnamed-chunk-44-1.png","hands-on-exercise-9_files/header-attrs-2.10/header-attrs.js","hands-on-exercise-9_files/jquery-1.11.3/jquery.min.js","hands-on-exercise-9_files/popper-2.6.0/popper.min.js","hands-on-exercise-9_files/tippy-6.2.7/tippy-bundle.umd.min.js","hands-on-exercise-9_files/tippy-6.2.7/tippy-light-border.css","hands-on-exercise-9_files/tippy-6.2.7/tippy.css","hands-on-exercise-9_files/tippy-6.2.7/tippy.umd.min.js","hands-on-exercise-9_files/webcomponents-2.0.0/webcomponents.js"]}
   </script>
   <!--radix_placeholder_navigation_in_header-->
   <!--/radix_placeholder_navigation_in_header-->
@@ -1534,6 +1534,12 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <li><a href="#construct-the-adaptive-bandwidth-gwr-model">8.2.2 Construct the adaptive bandwidth gwr model</a></li>
 </ul></li>
 </ul></li>
+<li><a href="#visualising-gwr-output">9 Visualising GWR Output</a>
+<ul>
+<li><a href="#converting-sdf-into-sf-data.frame">9.1 Converting SDF into sf data.frame</a></li>
+<li><a href="#visualising-local-r2">9.2 Visualising local R2</a></li>
+<li><a href="#by-ura-planning-region">9.3 By URA Planning Region</a></li>
+</ul></li>
 </ul>
 </nav>
 </div>
@@ -2736,58 +2742,321 @@ Adaptive bandwidth: 30 CV score: 4.422088e+14 </code></pre>
 <ul>
 <li>The <strong>adjusted r-square of the gwr</strong> is 0.8561185 which is <strong>significantly better</strong> than the <strong>global multiple linear regression</strong> model of 0.6472</li>
 </ul>
+<h1 id="visualising-gwr-output">9 Visualising GWR Output</h1>
+<p>In addition to regression residuals, the output feature class table includes fields for observed and predicted y values, condition number (cond), Local R2, residuals, and explanatory variable coefficients and standard errors:</p>
+<ul>
+<li><p>Condition Number: this diagnostic evaluates local collinearity. In the presence of strong local collinearity, results become unstable. Results associated with condition numbers larger than 30, may be unreliable.</p></li>
+<li><p>Local R2: these values range between 0.0 and 1.0 and indicate how well the local regression model fits observed y values. Very low values indicate the local model is performing poorly. Mapping the Local R2 values to see where GWR predicts well and where it predicts poorly may provide clues about important variables that may be missing from the regression model.</p></li>
+<li><p>Predicted: these are the estimated (or fitted) y values 3. computed by GWR.</p></li>
+<li><p>Residuals: to obtain the residual values, the fitted y values are subtracted from the observed y values. Standardized residuals have a mean of zero and a standard deviation of 1. A cold-to-hot rendered map of standardized residuals can be produce by using these values.</p></li>
+<li><p>Coefficient Standard Error: these values measure the reliability of each coefficient estimate. Confidence in those estimates are higher when standard errors are small in relation to the actual coefficient values. Large standard errors may indicate problems with local collinearity.</p></li>
+</ul>
+<p>They are all stored in a SpatialPointsDataFrame or SpatialPolygonsDataFrame object integrated with fit.points, GWR coefficient estimates, y value, predicted values, coefficient standard errors and t-values in its “data” slot in an object called <strong>SDF</strong> of the output list.</p>
+<h2 id="converting-sdf-into-sf-data.frame">9.1 Converting SDF into sf data.frame</h2>
+<ul>
+<li>To visualise the fields in <strong>SDF</strong>, we need to first covert it into <strong>sf</strong> data.frame</li>
+</ul>
 <div class="layout-chunk" data-layout="l-body">
-
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>condo_resale.sf.adaptive</span> <span class='op'>&lt;-</span> <span class='fu'>st_as_sf</span><span class='op'>(</span><span class='va'>gwr.adaptive</span><span class='op'>$</span><span class='va'>SDF</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
+  <span class='fu'>st_transform</span><span class='op'>(</span>crs<span class='op'>=</span><span class='fl'>3414</span><span class='op'>)</span>
+</code></pre>
+</div>
 </div>
 <div class="layout-chunk" data-layout="l-body">
-
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>condo_resale.sf.adaptive.svy21</span> <span class='op'>&lt;-</span> <span class='fu'>st_transform</span><span class='op'>(</span><span class='va'>condo_resale.sf.adaptive</span>, <span class='fl'>3414</span><span class='op'>)</span>
+<span class='va'>condo_resale.sf.adaptive.svy21</span>  
+</code></pre>
+</div>
+<pre><code>Simple feature collection with 1436 features and 51 fields
+Geometry type: POINT
+Dimension:     XY
+Bounding box:  xmin: 14940.85 ymin: 24765.67 xmax: 43352.45 ymax: 48382.81
+Projected CRS: SVY21 / Singapore TM
+First 10 features:
+    Intercept  AREA_SQM        AGE  PROX_CBD PROX_CHILDCARE
+1   2050011.7  9561.892  -9514.634 -120681.9      319266.92
+2   1633128.2 16576.853 -58185.479 -149434.2      441102.18
+3   3433608.2 13091.861 -26707.386 -259397.8     -120116.82
+4    234358.9 20730.601 -93308.988 2426853.7      480825.28
+5   2285804.9  6722.836 -17608.018 -316835.5       90764.78
+6  -3568877.4  6039.581 -26535.592  327306.1     -152531.19
+7  -2874842.4 16843.575 -59166.727 -983577.2     -177810.50
+8   2038086.0  6905.135 -17681.897 -285076.6       70259.40
+9   1718478.4  9580.703 -14401.128  105803.4     -657698.02
+10  3457054.0 14072.011 -31579.884 -234895.4       79961.45
+   PROX_ELDERLYCARE PROX_URA_GROWTH_AREA    PROX_MRT  PROX_PARK
+1        -393417.79           -159980.20  -299742.96 -172104.47
+2         325188.74           -142290.39 -2510522.23  523379.72
+3         535855.81           -253621.21  -936853.28  209099.85
+4         314783.72          -2679297.89 -2039479.50 -759153.26
+5        -137384.61            303714.81   -44567.05  -10284.62
+6        -700392.85            -28051.25   733566.47 1511488.92
+7        -122384.02           1397676.38 -2745430.34  710114.74
+8         -96012.78            269368.71   -14552.99   73533.34
+9        -123276.00           -361974.72  -476785.32 -132067.59
+10        548581.04           -150024.38 -1503835.53  574155.47
+   PROX_PRIMARY_SCH PROX_SHOPPING_MALL PROX_BUS_STOP  NO_Of_UNITS
+1         242668.03         300881.390     1210615.4  104.8290640
+2        1106830.66         -87693.378     1843587.2 -288.3441183
+3         571462.33        -126732.712     1411924.9   -9.5532945
+4        3127477.21         -29593.342     7225577.5 -161.3551620
+5          30413.56          -7490.586      677577.0   42.2659674
+6         320878.23         258583.881     1086012.6 -214.3671271
+7        1786570.95        -384251.210     5094060.5   -0.9212521
+8          53359.73         -39634.902      735767.1   30.1741069
+9         -40128.92         276718.757     2815772.4  675.1615559
+10        108996.67        -454726.822     2123557.0  -21.3044311
+   FAMILY_FRIENDLY  FREEHOLD       y    yhat    residual CV_Score
+1        -9075.370  303955.6 3000000 2886532   113468.16        0
+2       310074.664  396221.3 3880000 3466801   413198.52        0
+3         5949.746  168821.7 3325000 3616527  -291527.20        0
+4      1556178.531 1212515.6 4250000 5435482 -1185481.63        0
+5        58986.951  328175.2 1400000 1388166    11834.26        0
+6       201992.641  471873.1 1320000 1516702  -196701.94        0
+7       359659.512  408871.9 3410000 3266881   143118.77        0
+8        55602.506  347075.0 1420000 1431955   -11955.27        0
+9       -30453.297  503872.8 2025000 1832799   192200.83        0
+10     -100935.586  213324.6 2550000 2223364   326635.53        0
+   Stud_residual Intercept_SE AREA_SQM_SE    AGE_SE PROX_CBD_SE
+1     0.38207013     516105.5    823.2860  5889.782    37411.22
+2     1.01433140     488083.5    825.2380  6226.916    23615.06
+3    -0.83780678     963711.4    988.2240  6510.236    56103.77
+4    -2.84614670     444185.5    617.4007  6010.511   469337.41
+5     0.03404453    2119620.6   1376.2778  8180.361   410644.47
+6    -0.72065800   28572883.7   2348.0091 14601.909  5272846.47
+7     0.41291992     679546.6    893.5893  8970.629   346164.20
+8    -0.03033109    2217773.1   1415.2604  8661.309   438035.69
+9     0.52018109     814281.8    943.8434 11791.208    89148.35
+10    1.10559735    2410252.0   1271.4073  9941.980   173532.77
+   PROX_CHILDCARE_SE PROX_ELDERLYCARE_SE PROX_URA_GROWTH_AREA_SE
+1           319111.1           120633.34                56207.39
+2           299705.3            84546.69                76956.50
+3           349128.5           129687.07                95774.60
+4           304965.2           127150.69               470762.12
+5           698720.6           327371.55               474339.56
+6          1141599.8          1653002.19              5496627.21
+7           530101.1           148598.71               371692.97
+8           742532.8           399221.05               517977.91
+9           704630.7           329683.30               153436.22
+10          500976.2           281876.74               239182.57
+   PROX_MRT_SE PROX_PARK_SE PROX_PRIMARY_SCH_SE PROX_SHOPPING_MALL_SE
+1     185181.3     205499.6            152400.7              109268.8
+2     281133.9     229358.7            165150.7               98906.8
+3     275483.7     314124.3            196662.6              119913.3
+4     279877.1     227249.4            240878.9              177104.1
+5     363830.0     364580.9            249087.7              301032.9
+6     730453.2    1741712.0            683265.5             2931208.6
+7     375511.9     297400.9            344602.8              249969.5
+8     423155.4     440984.4            261251.2              351634.0
+9     285325.4     304998.4            278258.5              289872.7
+10    571355.7     599131.8            331284.8              265529.7
+   PROX_BUS_STOP_SE NO_Of_UNITS_SE FAMILY_FRIENDLY_SE FREEHOLD_SE
+1          600668.6       218.1258           131474.7    115954.0
+2          410222.1       208.9410           114989.1    130110.0
+3          464156.7       210.9828           146607.2    141031.5
+4          562810.8       361.7767           108726.6    138239.1
+5          740922.4       299.5034           160663.7    210641.1
+6         1418333.3       602.5571           331727.0    374347.3
+7          821236.4       532.1978           129241.2    182216.9
+8          775038.4       338.6777           171895.1    216649.4
+9          850095.5       439.9037           220223.4    220473.7
+10         631399.2       259.0169           189125.5    206346.2
+   Intercept_TV AREA_SQM_TV     AGE_TV PROX_CBD_TV PROX_CHILDCARE_TV
+1     3.9720784   11.614302  -1.615447 -3.22582173        1.00048819
+2     3.3460017   20.087361  -9.344188 -6.32792021        1.47178634
+3     3.5629010   13.247868  -4.102368 -4.62353528       -0.34404755
+4     0.5276150   33.577223 -15.524302  5.17080808        1.57665606
+5     1.0784029    4.884795  -2.152474 -0.77155660        0.12990138
+6    -0.1249043    2.572214  -1.817269  0.06207388       -0.13361179
+7    -4.2305303   18.849348  -6.595605 -2.84136028       -0.33542751
+8     0.9189786    4.879056  -2.041481 -0.65080678        0.09462126
+9     2.1104224   10.150733  -1.221345  1.18682383       -0.93339393
+10    1.4343123   11.068059  -3.176418 -1.35360852        0.15961128
+   PROX_ELDERLYCARE_TV PROX_URA_GROWTH_AREA_TV PROX_MRT_TV
+1           -3.2612693            -2.846248368 -1.61864578
+2            3.8462625            -1.848971738 -8.92998600
+3            4.1319138            -2.648105057 -3.40075727
+4            2.4756745            -5.691404992 -7.28705261
+5           -0.4196596             0.640289855 -0.12249416
+6           -0.4237096            -0.005103357  1.00426206
+7           -0.8235874             3.760298131 -7.31116712
+8           -0.2405003             0.520038994 -0.03439159
+9           -0.3739225            -2.359121712 -1.67102293
+10           1.9461735            -0.627237944 -2.63204802
+   PROX_PARK_TV PROX_PRIMARY_SCH_TV PROX_SHOPPING_MALL_TV
+1   -0.83749312           1.5923022            2.75358842
+2    2.28192684           6.7019454           -0.88662640
+3    0.66565951           2.9058009           -1.05686949
+4   -3.34061770          12.9836105           -0.16709578
+5   -0.02820944           0.1220998           -0.02488294
+6    0.86781794           0.4696245            0.08821750
+7    2.38773567           5.1844351           -1.53719231
+8    0.16674816           0.2042469           -0.11271635
+9   -0.43301073          -0.1442145            0.95462153
+10   0.95831249           0.3290120           -1.71252687
+   PROX_BUS_STOP_TV NO_Of_UNITS_TV FAMILY_FRIENDLY_TV FREEHOLD_TV
+1         2.0154464    0.480589953        -0.06902748    2.621347
+2         4.4941192   -1.380026395         2.69655779    3.045280
+3         3.0419145   -0.045279967         0.04058290    1.197050
+4        12.8383775   -0.446007570        14.31276425    8.771149
+5         0.9145046    0.141120178         0.36714544    1.557983
+6         0.7656963   -0.355762335         0.60891234    1.260522
+7         6.2029165   -0.001731033         2.78285441    2.243875
+8         0.9493299    0.089093858         0.32346758    1.602012
+9         3.3123012    1.534793921        -0.13828365    2.285410
+10        3.3632555   -0.082251138        -0.53369623    1.033819
+    Local_R2                  geometry
+1  0.8846744 POINT (22085.12 29951.54)
+2  0.8899773  POINT (25656.84 34546.2)
+3  0.8947007  POINT (23963.99 32890.8)
+4  0.9073605 POINT (27044.28 32319.77)
+5  0.9510057 POINT (41042.56 33743.64)
+6  0.9247586  POINT (39717.04 32943.1)
+7  0.8310458  POINT (28419.1 33513.37)
+8  0.9463936 POINT (40763.57 33879.61)
+9  0.8380365 POINT (23595.63 28884.78)
+10 0.9080753 POINT (24586.56 33194.31)</code></pre>
 </div>
 <div class="layout-chunk" data-layout="l-body">
-
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>gwr.adaptive.output</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/as.data.frame.html'>as.data.frame</a></span><span class='op'>(</span><span class='va'>gwr.adaptive</span><span class='op'>$</span><span class='va'>SDF</span><span class='op'>)</span>
+<span class='va'>condo_resale.sf.adaptive</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/cbind.html'>cbind</a></span><span class='op'>(</span><span class='va'>condo_resale.res.sf</span>, <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>as.matrix</a></span><span class='op'>(</span><span class='va'>gwr.adaptive.output</span><span class='op'>)</span><span class='op'>)</span>
+</code></pre>
+</div>
 </div>
 <div class="layout-chunk" data-layout="l-body">
-
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>glimpse</span><span class='op'>(</span><span class='va'>condo_resale.sf.adaptive</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>Rows: 1,436
+Columns: 77
+$ POSTCODE                &lt;dbl&gt; 118635, 288420, 267833, 258380, 4671~
+$ SELLING_PRICE           &lt;dbl&gt; 3000000, 3880000, 3325000, 4250000, ~
+$ AREA_SQM                &lt;dbl&gt; 309, 290, 248, 127, 145, 139, 218, 1~
+$ AGE                     &lt;dbl&gt; 30, 32, 33, 7, 28, 22, 24, 24, 27, 3~
+$ PROX_CBD                &lt;dbl&gt; 7.941259, 6.609797, 6.898000, 4.0388~
+$ PROX_CHILDCARE          &lt;dbl&gt; 0.16597932, 0.28027246, 0.42922669, ~
+$ PROX_ELDERLYCARE        &lt;dbl&gt; 2.5198118, 1.9333338, 0.5021395, 1.9~
+$ PROX_URA_GROWTH_AREA    &lt;dbl&gt; 6.618741, 7.505109, 6.463887, 4.9065~
+$ PROX_HAWKER_MARKET      &lt;dbl&gt; 1.76542207, 0.54507614, 0.37789301, ~
+$ PROX_KINDERGARTEN       &lt;dbl&gt; 0.05835552, 0.61592412, 0.14120309, ~
+$ PROX_MRT                &lt;dbl&gt; 0.5607188, 0.6584461, 0.3053433, 0.6~
+$ PROX_PARK               &lt;dbl&gt; 1.1710446, 0.1992269, 0.2779886, 0.9~
+$ PROX_PRIMARY_SCH        &lt;dbl&gt; 1.6340256, 0.9747834, 1.4715016, 1.4~
+$ PROX_TOP_PRIMARY_SCH    &lt;dbl&gt; 3.3273195, 0.9747834, 1.4715016, 2.3~
+$ PROX_SHOPPING_MALL      &lt;dbl&gt; 2.2102717, 2.9374279, 1.2256850, 0.3~
+$ PROX_SUPERMARKET        &lt;dbl&gt; 0.9103958, 0.5900617, 0.4135583, 0.4~
+$ PROX_BUS_STOP           &lt;dbl&gt; 0.10336166, 0.28673408, 0.28504777, ~
+$ NO_Of_UNITS             &lt;dbl&gt; 18, 20, 27, 30, 30, 31, 32, 32, 32, ~
+$ FAMILY_FRIENDLY         &lt;dbl&gt; 0, 0, 0, 0, 0, 1, 1, 0, 1, 1, 0, 0, ~
+$ FREEHOLD                &lt;dbl&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, ~
+$ LEASEHOLD_99YR          &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ~
+$ LOG_SELLING_PRICE       &lt;dbl&gt; 14.91412, 15.17135, 15.01698, 15.262~
+$ MLR_RES                 &lt;dbl&gt; -1489099.55, 415494.57, 194129.69, 1~
+$ Intercept               &lt;dbl&gt; 2050011.67, 1633128.24, 3433608.17, ~
+$ AREA_SQM.1              &lt;dbl&gt; 9561.892, 16576.853, 13091.861, 2073~
+$ AGE.1                   &lt;dbl&gt; -9514.634, -58185.479, -26707.386, -~
+$ PROX_CBD.1              &lt;dbl&gt; -120681.94, -149434.22, -259397.77, ~
+$ PROX_CHILDCARE.1        &lt;dbl&gt; 319266.925, 441102.177, -120116.816,~
+$ PROX_ELDERLYCARE.1      &lt;dbl&gt; -393417.79, 325188.74, 535855.81, 31~
+$ PROX_URA_GROWTH_AREA.1  &lt;dbl&gt; -159980.203, -142290.389, -253621.20~
+$ PROX_MRT.1              &lt;dbl&gt; -299742.96, -2510522.23, -936853.28,~
+$ PROX_PARK.1             &lt;dbl&gt; -172104.47, 523379.72, 209099.85, -7~
+$ PROX_PRIMARY_SCH.1      &lt;dbl&gt; 242668.03, 1106830.66, 571462.33, 31~
+$ PROX_SHOPPING_MALL.1    &lt;dbl&gt; 300881.390, -87693.378, -126732.712,~
+$ PROX_BUS_STOP.1         &lt;dbl&gt; 1210615.44, 1843587.22, 1411924.90, ~
+$ NO_Of_UNITS.1           &lt;dbl&gt; 104.8290640, -288.3441183, -9.553294~
+$ FAMILY_FRIENDLY.1       &lt;dbl&gt; -9075.370, 310074.664, 5949.746, 155~
+$ FREEHOLD.1              &lt;dbl&gt; 303955.61, 396221.27, 168821.75, 121~
+$ y                       &lt;dbl&gt; 3000000, 3880000, 3325000, 4250000, ~
+$ yhat                    &lt;dbl&gt; 2886531.8, 3466801.5, 3616527.2, 543~
+$ residual                &lt;dbl&gt; 113468.16, 413198.52, -291527.20, -1~
+$ CV_Score                &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ~
+$ Stud_residual           &lt;dbl&gt; 0.38207013, 1.01433140, -0.83780678,~
+$ Intercept_SE            &lt;dbl&gt; 516105.5, 488083.5, 963711.4, 444185~
+$ AREA_SQM_SE             &lt;dbl&gt; 823.2860, 825.2380, 988.2240, 617.40~
+$ AGE_SE                  &lt;dbl&gt; 5889.782, 6226.916, 6510.236, 6010.5~
+$ PROX_CBD_SE             &lt;dbl&gt; 37411.22, 23615.06, 56103.77, 469337~
+$ PROX_CHILDCARE_SE       &lt;dbl&gt; 319111.1, 299705.3, 349128.5, 304965~
+$ PROX_ELDERLYCARE_SE     &lt;dbl&gt; 120633.34, 84546.69, 129687.07, 1271~
+$ PROX_URA_GROWTH_AREA_SE &lt;dbl&gt; 56207.39, 76956.50, 95774.60, 470762~
+$ PROX_MRT_SE             &lt;dbl&gt; 185181.3, 281133.9, 275483.7, 279877~
+$ PROX_PARK_SE            &lt;dbl&gt; 205499.6, 229358.7, 314124.3, 227249~
+$ PROX_PRIMARY_SCH_SE     &lt;dbl&gt; 152400.7, 165150.7, 196662.6, 240878~
+$ PROX_SHOPPING_MALL_SE   &lt;dbl&gt; 109268.8, 98906.8, 119913.3, 177104.~
+$ PROX_BUS_STOP_SE        &lt;dbl&gt; 600668.6, 410222.1, 464156.7, 562810~
+$ NO_Of_UNITS_SE          &lt;dbl&gt; 218.1258, 208.9410, 210.9828, 361.77~
+$ FAMILY_FRIENDLY_SE      &lt;dbl&gt; 131474.7, 114989.1, 146607.2, 108726~
+$ FREEHOLD_SE             &lt;dbl&gt; 115954.0, 130110.0, 141031.5, 138239~
+$ Intercept_TV            &lt;dbl&gt; 3.9720784, 3.3460017, 3.5629010, 0.5~
+$ AREA_SQM_TV             &lt;dbl&gt; 11.614302, 20.087361, 13.247868, 33.~
+$ AGE_TV                  &lt;dbl&gt; -1.6154474, -9.3441881, -4.1023685, ~
+$ PROX_CBD_TV             &lt;dbl&gt; -3.22582173, -6.32792021, -4.6235352~
+$ PROX_CHILDCARE_TV       &lt;dbl&gt; 1.000488185, 1.471786337, -0.3440475~
+$ PROX_ELDERLYCARE_TV     &lt;dbl&gt; -3.2612693, 3.8462625, 4.1319138, 2.~
+$ PROX_URA_GROWTH_AREA_TV &lt;dbl&gt; -2.846248368, -1.848971738, -2.64810~
+$ PROX_MRT_TV             &lt;dbl&gt; -1.61864578, -8.92998600, -3.4007572~
+$ PROX_PARK_TV            &lt;dbl&gt; -0.83749312, 2.28192684, 0.66565951,~
+$ PROX_PRIMARY_SCH_TV     &lt;dbl&gt; 1.59230221, 6.70194543, 2.90580089, ~
+$ PROX_SHOPPING_MALL_TV   &lt;dbl&gt; 2.75358842, -0.88662640, -1.05686949~
+$ PROX_BUS_STOP_TV        &lt;dbl&gt; 2.0154464, 4.4941192, 3.0419145, 12.~
+$ NO_Of_UNITS_TV          &lt;dbl&gt; 0.480589953, -1.380026395, -0.045279~
+$ FAMILY_FRIENDLY_TV      &lt;dbl&gt; -0.06902748, 2.69655779, 0.04058290,~
+$ FREEHOLD_TV             &lt;dbl&gt; 2.6213469, 3.0452799, 1.1970499, 8.7~
+$ Local_R2                &lt;dbl&gt; 0.8846744, 0.8899773, 0.8947007, 0.9~
+$ coords.x1               &lt;dbl&gt; 22085.12, 25656.84, 23963.99, 27044.~
+$ coords.x2               &lt;dbl&gt; 29951.54, 34546.20, 32890.80, 32319.~
+$ geometry                &lt;POINT [m]&gt; POINT (22085.12 29951.54), POI~</code></pre>
 </div>
 <div class="layout-chunk" data-layout="l-body">
-
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>gwr.adaptive</span><span class='op'>$</span><span class='va'>SDF</span><span class='op'>$</span><span class='va'>yhat</span><span class='op'>)</span>
+</code></pre>
 </div>
+<pre><code>    Min.  1st Qu.   Median     Mean  3rd Qu.     Max. 
+  171347  1102001  1385528  1751842  1982307 13887901 </code></pre>
+</div>
+<h2 id="visualising-local-r2">9.2 Visualising local R2</h2>
+<ul>
+<li>To create an interactive point symbol map</li>
+<li><strong>Note: currently, it is in plot mode</strong></li>
+</ul>
 <div class="layout-chunk" data-layout="l-body">
-
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>tmap_mode</span><span class='op'>(</span><span class='st'>"plot"</span><span class='op'>)</span>
+<span class='fu'>tm_shape</span><span class='op'>(</span><span class='va'>mpsz_svy21</span><span class='op'>)</span><span class='op'>+</span>
+  <span class='fu'>tm_polygons</span><span class='op'>(</span>alpha <span class='op'>=</span> <span class='fl'>0.1</span><span class='op'>)</span> <span class='op'>+</span>
+<span class='fu'>tm_shape</span><span class='op'>(</span><span class='va'>condo_resale.sf.adaptive</span><span class='op'>)</span> <span class='op'>+</span>  
+  <span class='fu'>tm_dots</span><span class='op'>(</span>col <span class='op'>=</span> <span class='st'>"Local_R2"</span>,
+          border.col <span class='op'>=</span> <span class='st'>"gray60"</span>,
+          border.lwd <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span> <span class='op'>+</span>
+  <span class='fu'>tm_view</span><span class='op'>(</span>set.zoom.limits <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>11</span>,<span class='fl'>14</span><span class='op'>)</span><span class='op'>)</span>
+</code></pre>
 </div>
+<img src="hands-on-exercise-9_files/figure-html5/unnamed-chunk-43-1.png" width="624" />
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>tmap_mode</span><span class='op'>(</span><span class='st'>"plot"</span><span class='op'>)</span>
+</code></pre>
+</div>
+</div>
+<h2 id="by-ura-planning-region">9.3 By URA Planning Region</h2>
 <div class="layout-chunk" data-layout="l-body">
-
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>tm_shape</span><span class='op'>(</span><span class='va'>mpsz_svy21</span><span class='op'>[</span><span class='va'>mpsz_svy21</span><span class='op'>$</span><span class='va'>REGION_N</span><span class='op'>==</span><span class='st'>"CENTRAL REGION"</span>, <span class='op'>]</span><span class='op'>)</span><span class='op'>+</span>
+  <span class='fu'>tm_polygons</span><span class='op'>(</span><span class='op'>)</span><span class='op'>+</span>
+<span class='fu'>tm_shape</span><span class='op'>(</span><span class='va'>condo_resale.sf.adaptive</span><span class='op'>)</span> <span class='op'>+</span> 
+  <span class='fu'>tm_bubbles</span><span class='op'>(</span>col <span class='op'>=</span> <span class='st'>"Local_R2"</span>,
+           size <span class='op'>=</span> <span class='fl'>0.15</span>,
+           border.col <span class='op'>=</span> <span class='st'>"gray60"</span>,
+           border.lwd <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span>
+</code></pre>
 </div>
-<div class="layout-chunk" data-layout="l-body">
-
+<p><img src="hands-on-exercise-9_files/figure-html5/unnamed-chunk-44-1.png" width="624" /></p>
 </div>
-<div class="layout-chunk" data-layout="l-body">
-
-</div>
-<div class="layout-chunk" data-layout="l-body">
-
-</div>
-<div class="layout-chunk" data-layout="l-body">
-
-</div>
-<div class="layout-chunk" data-layout="l-body">
-
-</div>
-<div class="layout-chunk" data-layout="l-body">
-
-</div>
-<div class="layout-chunk" data-layout="l-body">
-
-</div>
-<div class="layout-chunk" data-layout="l-body">
-
-</div>
-<div class="layout-chunk" data-layout="l-body">
-
-</div>
-<div class="layout-chunk" data-layout="l-body">
-
-</div>
-<div class="sourceCode" id="cb23"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->
 </div>
