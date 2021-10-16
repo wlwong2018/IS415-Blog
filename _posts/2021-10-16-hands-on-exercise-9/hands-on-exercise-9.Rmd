@@ -389,67 +389,179 @@ Results above show that:
 
 - p-values of the four tests are way smaller than the alpha value of 0.05. Hence we will reject the null hypothesis that the residual is NOT resemble normal distribution.
 
+### 7.2.6 Test for Spatial Autocorrelation
+
+The hedonic model we try to build are using geographically referenced attributes, hence it is also important for us to visual the residual of the hedonic pricing model.
+
+In order to perform spatial autocorrelation test, we need to convert **condo_resale.sf** simple into a SpatialPointsDataFrame.
+
+#### 7.2.6.1 Export residual of hedonic pricing model
+
+- export the residual of the hedonic pricing model and save it as a data frame.
+
 ```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+mlr.output <- as.data.frame(condo.mlr1$residuals)
 
 ```
 
+#### 7.2.6.2 Join with **condo_resale.sf** object
+
+-  join the newly created data frame with condo_resale.sf object.
 
 ```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+condo_resale.res.sf <- cbind(condo_resale.sf, 
+                        condo.mlr1$residuals) %>%
+rename(`MLR_RES` = `condo.mlr1.residuals`)
+```
 
+#### 7.2.6.3 Convert to SpatialPointsDataFrame 
+
+- Convert **condo_resale.res.sf** simple feature object into a SpatialPointsDataFrame because **spdep** package can only process sp conformed spatial data objects
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+condo_resale.sp <- as_Spatial(condo_resale.res.sf)
+condo_resale.sp
+```
+
+#### 7.2.6.4 Display interactive point symbol map
+
+**Note: it is currently in plot mode**
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+tmap_mode("plot")
+
+tm_shape(mpsz_svy21)+
+  tm_polygons(alpha = 0.4) +
+tm_shape(condo_resale.res.sf) +  
+  tm_dots(col = "MLR_RES",
+          alpha = 0.6,
+          style="quantile") +
+  tm_view(set.zoom.limits = c(11,14))
+
+tmap_mode("plot")
 ```
 
 
+Results above show that:
+
+- There is sign of spatial autocorrelation.
+- To proof that our observation is indeed true, the Moran’s I test will be performed
+
+#### 7.2.6.5 Compute the distance-based weight matrix
+
+-  Compute the distance-based weight matrix by using *dnearneigh()* function of **spdep**.
+
 ```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+nb <- dnearneigh(coordinates(condo_resale.sp), 0, 1500, longlat = FALSE)
+summary(nb)
+```
+
+#### 7.2.6.6 Convert to a spatial weights
+
+- *nb2listw()* of **spdep** packge will be used to convert the output neighbours lists (i.e. nb) into a spatial weights
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+nb_lw <- nb2listw(nb, style = 'W')
+summary(nb_lw)
+```
+
+#### 7.2.6.7 Perform  Moran’s I test for residual spatial autocorrelation
+
+- Use *lm.morantest()* of **spdep** package 
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+lm.morantest(condo.mlr1, nb_lw)
 
 ```
 
+Results above show that:
+
+- p-value is less than 0.00000000000000022 which is less than the alpha value of 0.05. Hence, we will reject the null hypothesis that the residuals are randomly distributed.
+- Since the Observed Global Moran I = 0.1424418 which is greater than 0, we can infer than the residuals resemble cluster distribution.
+
+# 8 Building Hedonic Pricing Models using GWmodel
+
+Learn how to modelling hedonic pricing using both the fixed and adaptive bandwidth schemes
+
+## 8.1 Build Fixed Bandwidth GWR Model
+
+### 8.1.1 Compute fixed bandwith
+
+- *bw.gwr()* of **GWModel** package is used to determine the optimal fixed bandwidth to use in the model. Notice that the argument adaptive is set to FALSE indicates that we are interested to compute the fixed bandwidth.
+- There are two possible approaches  to determine the stopping rule, they are: **CV cross-validation approach** and **AIC corrected (AICc) approach**. We define the stopping rule using approach argument.
 
 ```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+bw.fixed <- bw.gwr(formula = SELLING_PRICE ~ AREA_SQM + AGE  + PROX_CBD + PROX_CHILDCARE + PROX_ELDERLYCARE  + PROX_URA_GROWTH_AREA + PROX_MRT  + PROX_PARK  + PROX_PRIMARY_SCH + PROX_SHOPPING_MALL  + PROX_BUS_STOP  + NO_Of_UNITS + FAMILY_FRIENDLY + FREEHOLD, data=condo_resale.sp, approach="CV", kernel="gaussian", adaptive=FALSE, longlat=FALSE)
 
 ```
 
+Results above show that:
+
+- The recommended bandwidth is 971.3398 metres.
+
+Quiz: Why is it in metre?
+
+- to be answered-
+
+### 8.1.2 GWModel method - fixed bandwith
+
+- To calibrate the gwr model using fixed bandwidth and gaussian kernel.
+
 ```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+gwr.fixed <- gwr.basic(formula = SELLING_PRICE ~ AREA_SQM + AGE  + PROX_CBD + PROX_CHILDCARE + PROX_ELDERLYCARE  + PROX_URA_GROWTH_AREA + PROX_MRT  + PROX_PARK  + PROX_PRIMARY_SCH + PROX_SHOPPING_MALL  + PROX_BUS_STOP  + NO_Of_UNITS + FAMILY_FRIENDLY + FREEHOLD, data=condo_resale.sp, bw=bw.fixed, kernel = 'gaussian', longlat = FALSE)
 
 ```
 
+- The output is saved in a list of class “gwrm
+
+
+The code below can be used to display the model output.
 
 ```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+gwr.fixed
 
 ```
 
+Results above show that:
+
+- The **adjusted r-square of the gwr** is 0.8430418 which is **significantly better** than the **global multiple linear regression** model of 0.6472.
+
+## 8.2 Build Adaptive Bandwidth GWR Model
+
+Calibrate the gwr-based hedonic pricing model by using adaptive bandwidth approach.
+
+### 8.2.1 Compute the adaptive bandwidth
+
+- Similar to the earlier section, we will first use bw.ger() to determine the recommended data point to use.
+- Note: adaptive argument set to TRUE.
 
 ```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+bw.adaptive <- bw.gwr(formula = SELLING_PRICE ~ AREA_SQM + AGE  + PROX_CBD + PROX_CHILDCARE + PROX_ELDERLYCARE  + PROX_URA_GROWTH_AREA + PROX_MRT  + PROX_PARK  + PROX_PRIMARY_SCH + PROX_SHOPPING_MALL  + PROX_BUS_STOP  + NO_Of_UNITS + FAMILY_FRIENDLY + FREEHOLD, data=condo_resale.sp, approach="CV", kernel="gaussian",
+adaptive=TRUE, longlat=FALSE)
+```
+
+Results above show that:
+
+- 30 is the recommended data points to be used
+
+### 8.2.2 Construct the adaptive bandwidth gwr model
+
+-  Calibrate the gwr-based hedonic pricing model by using adaptive bandwidth and gaussian kernel 
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+gwr.adaptive <- gwr.basic(formula = SELLING_PRICE ~ AREA_SQM + AGE  + PROX_CBD + PROX_CHILDCARE + PROX_ELDERLYCARE  + PROX_URA_GROWTH_AREA + PROX_MRT  + PROX_PARK  + PROX_PRIMARY_SCH + PROX_SHOPPING_MALL  + PROX_BUS_STOP  + NO_Of_UNITS + FAMILY_FRIENDLY + FREEHOLD, data=condo_resale.sp, bw=bw.adaptive, kernel = 'gaussian', adaptive=TRUE, longlat = FALSE)
 
 ```
 
+Display the model output
 
 ```{r echo=TRUE, eval=TRUE,  cache=TRUE}
-
+gwr.adaptive
 ```
 
-```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+Results above show that:
 
-```
-
-
-```{r echo=TRUE, eval=TRUE,  cache=TRUE}
-
-```
-
-
-```{r echo=TRUE, eval=TRUE,  cache=TRUE}
-
-```
-
-
-```{r echo=TRUE, eval=TRUE,  cache=TRUE}
-
-```
-
-```{r echo=TRUE, eval=TRUE,  cache=TRUE}
-
-```
-
+- The **adjusted r-square of the gwr** is 0.8561185 which is **significantly better** than the **global multiple linear regression** model of 0.6472
 
 ```{r echo=TRUE, eval=TRUE,  cache=TRUE}
 
