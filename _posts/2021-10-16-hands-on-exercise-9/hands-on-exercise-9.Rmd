@@ -138,27 +138,100 @@ head(condo_resale.sf)
 
 # 6 Exploratory Data Analysis
 
-```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+## 6.1 EDA using statistical graphics
 
+### 6.1.1 Plot distribution
+
+- Plot the distribution of SELLING_PRICE by using appropriate Exploratory Data Analysis (EDA) 
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+ggplot(data=condo_resale.sf, aes(x=`SELLING_PRICE`)) +
+  geom_histogram(bins=20, color="black", fill="light blue")
 ```
 
+Results above show that: 
+
+- Reveals a right skewed distribution. This means that more condominium units were transacted at relative lower prices.
+
+### 6.1.2 Normalise using Log Transformation
+
+- Statistically, the skewed distribution can be normalised by using log transformation. 
+- Use to derive a new variable called **LOG_SELLING_PRICE** by using a log transformation on the variable SELLING_PRICE.
+- It is performed using *mutate()* of **dplyr** package.
 
 ```{r echo=TRUE, eval=TRUE,  cache=TRUE}
-
+condo_resale.sf <- condo_resale.sf %>%
+  mutate(`LOG_SELLING_PRICE` = log(SELLING_PRICE))
 ```
 
+### 6.1.3 Plot **LOG_SELLING_PRICE** 
 
 ```{r echo=TRUE, eval=TRUE,  cache=TRUE}
-
+ggplot(data=condo_resale.sf, aes(x=`LOG_SELLING_PRICE`)) +
+  geom_histogram(bins=20, color="black", fill="light blue")
 ```
 
-```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+Notice that the distribution is relatively **less skewed after the transformation**.
 
+## 6.2 Multiple Histogram Plots distribution of variables
+
+- The code chunk below is used to create 12 histograms.
+- *ggarrnage()* of **ggpubr** package is used to organised these histogram into a 3 columns by 4 rows small multiple plot.
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+AREA_SQM <- ggplot(data=condo_resale.sf, aes(x= `AREA_SQM`)) +
+  geom_histogram(bins=20, color="black", fill="light blue")
+AGE <- ggplot(data=condo_resale.sf, aes(x= `AGE`)) +
+  geom_histogram(bins=20, color="black", fill="light blue")  
+PROX_CBD <- ggplot(data=condo_resale.sf, aes(x= `PROX_CBD`)) +
+  geom_histogram(bins=20, color="black", fill="light blue")
+PROX_CHILDCARE <- ggplot(data=condo_resale.sf, aes(x= `PROX_CHILDCARE`)) +
+  geom_histogram(bins=20, color="black", fill="light blue")
+PROX_ELDERLYCARE <- ggplot(data=condo_resale.sf, aes(x= `PROX_ELDERLYCARE`)) +
+  geom_histogram(bins=20, color="black", fill="light blue")
+PROX_URA_GROWTH_AREA <- ggplot(data=condo_resale.sf, aes(x= `PROX_URA_GROWTH_AREA`)) +
+  geom_histogram(bins=20, color="black", fill="light blue")
+PROX_HAWKER_MARKET <- ggplot(data=condo_resale.sf, aes(x= `PROX_HAWKER_MARKET`)) +
+  geom_histogram(bins=20, color="black", fill="light blue")
+PROX_KINDERGARTEN <- ggplot(data=condo_resale.sf, aes(x= `PROX_KINDERGARTEN`)) +
+  geom_histogram(bins=20, color="black", fill="light blue")
+PROX_MRT <- ggplot(data=condo_resale.sf, aes(x= `PROX_MRT`)) +
+  geom_histogram(bins=20, color="black", fill="light blue")
+PROX_PARK <- ggplot(data=condo_resale.sf, aes(x= `PROX_PARK`)) +
+  geom_histogram(bins=20, color="black", fill="light blue")
+PROX_PRIMARY_SCH <- ggplot(data=condo_resale.sf, aes(x= `PROX_PRIMARY_SCH`)) +
+  geom_histogram(bins=20, color="black", fill="light blue")
+PROX_TOP_PRIMARY_SCH <- ggplot(data=condo_resale.sf, aes(x= `PROX_TOP_PRIMARY_SCH`)) +
+  geom_histogram(bins=20, color="black", fill="light blue")
+
+ggarrange(AREA_SQM, AGE, PROX_CBD, PROX_CHILDCARE, PROX_ELDERLYCARE, PROX_URA_GROWTH_AREA, PROX_HAWKER_MARKET, PROX_KINDERGARTEN, PROX_MRT, PROX_PARK, PROX_PRIMARY_SCH, PROX_TOP_PRIMARY_SCH,  ncol = 3, nrow = 4)
 ```
 
+## 6.3 Drawing Statistical Point Map
+
+-  Reveal the geospatial distribution condominium resale prices in Singapore. The map will be prepared by using tmap package.
+- *tmap_mode("plot")* to use the interactive mode of tmap
+- Then, create an interactive point symbol map
+
+- *tm_dots()* is used instead of *tm_bubbles()*
+
+    + set.zoom.limits argument of tm_view() sets the minimum and maximum zoom level to 11 and 14 respectively.
+    
+- Lastly, *tmap_mode("plot")* to display plot mode
+
 
 ```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+tmap_mode("plot")
 
+tm_shape(mpsz_svy21)+
+  tm_polygons() +
+tm_shape(condo_resale.sf) +  
+  tm_dots(col = "SELLING_PRICE",
+          alpha = 0.6,
+          style="quantile") +
+  tm_view(set.zoom.limits = c(11,14))
+
+tmap_mode("plot")
 ```
 
 

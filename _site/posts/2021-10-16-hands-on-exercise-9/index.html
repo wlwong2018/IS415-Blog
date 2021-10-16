@@ -117,7 +117,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <!--/radix_placeholder_rmarkdown_metadata-->
   
   <script type="text/json" id="radix-resource-manifest">
-  {"type":"character","attributes":{},"value":["data/aspatial/Condo_resale_2015.csv","data/geospatial/MP14_SUBZONE_WEB_PL.dbf","data/geospatial/MP14_SUBZONE_WEB_PL.prj","data/geospatial/MP14_SUBZONE_WEB_PL.sbn","data/geospatial/MP14_SUBZONE_WEB_PL.sbx","data/geospatial/MP14_SUBZONE_WEB_PL.shp","data/geospatial/MP14_SUBZONE_WEB_PL.shp.xml","data/geospatial/MP14_SUBZONE_WEB_PL.shx"]}
+  {"type":"character","attributes":{},"value":["data/aspatial/Condo_resale_2015.csv","data/geospatial/MP14_SUBZONE_WEB_PL.dbf","data/geospatial/MP14_SUBZONE_WEB_PL.prj","data/geospatial/MP14_SUBZONE_WEB_PL.sbn","data/geospatial/MP14_SUBZONE_WEB_PL.sbx","data/geospatial/MP14_SUBZONE_WEB_PL.shp","data/geospatial/MP14_SUBZONE_WEB_PL.shp.xml","data/geospatial/MP14_SUBZONE_WEB_PL.shx","hands-on-exercise-9_files/anchor-4.2.2/anchor.min.js","hands-on-exercise-9_files/bowser-1.9.3/bowser.min.js","hands-on-exercise-9_files/distill-2.2.21/template.v2.js","hands-on-exercise-9_files/figure-html5/unnamed-chunk-10-1.png","hands-on-exercise-9_files/figure-html5/unnamed-chunk-12-1.png","hands-on-exercise-9_files/figure-html5/unnamed-chunk-13-1.png","hands-on-exercise-9_files/figure-html5/unnamed-chunk-14-1.png","hands-on-exercise-9_files/header-attrs-2.10/header-attrs.js","hands-on-exercise-9_files/jquery-1.11.3/jquery.min.js","hands-on-exercise-9_files/popper-2.6.0/popper.min.js","hands-on-exercise-9_files/tippy-6.2.7/tippy-bundle.umd.min.js","hands-on-exercise-9_files/tippy-6.2.7/tippy-light-border.css","hands-on-exercise-9_files/tippy-6.2.7/tippy.css","hands-on-exercise-9_files/tippy-6.2.7/tippy.umd.min.js","hands-on-exercise-9_files/webcomponents-2.0.0/webcomponents.js"]}
   </script>
   <!--radix_placeholder_navigation_in_header-->
 <meta name="distill:offset" content="../.."/>
@@ -2737,20 +2737,112 @@ Projected CRS: SVY21 / Singapore TM
 #   FREEHOLD &lt;dbl&gt;, LEASEHOLD_99YR &lt;dbl&gt;, geometry &lt;POINT [m]&gt;</code></pre>
 </div>
 <h1 id="exploratory-data-analysis">6 Exploratory Data Analysis</h1>
+<h2 id="eda-using-statistical-graphics">6.1 EDA using statistical graphics</h2>
+<h3 id="plot-distribution">6.1.1 Plot distribution</h3>
+<ul>
+<li>Plot the distribution of SELLING_PRICE by using appropriate Exploratory Data Analysis (EDA)</li>
+</ul>
 <div class="layout-chunk" data-layout="l-body">
-
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>ggplot</span><span class='op'>(</span>data<span class='op'>=</span><span class='va'>condo_resale.sf</span>, <span class='fu'>aes</span><span class='op'>(</span>x<span class='op'>=</span><span class='va'>`SELLING_PRICE`</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>+</span>
+  <span class='fu'>geom_histogram</span><span class='op'>(</span>bins<span class='op'>=</span><span class='fl'>20</span>, color<span class='op'>=</span><span class='st'>"black"</span>, fill<span class='op'>=</span><span class='st'>"light blue"</span><span class='op'>)</span>
+</code></pre>
 </div>
-<div class="layout-chunk" data-layout="l-body">
-
+<p><img src="hands-on-exercise-9_files/figure-html5/unnamed-chunk-10-1.png" width="624" /></p>
 </div>
+<p>Results above show that:</p>
+<ul>
+<li>Reveals a right skewed distribution. This means that more condominium units were transacted at relative lower prices.</li>
+</ul>
+<h3 id="normalise-using-log-transformation">6.1.2 Normalise using Log Transformation</h3>
+<ul>
+<li>Statistically, the skewed distribution can be normalised by using log transformation.</li>
+<li>Use to derive a new variable called <strong>LOG_SELLING_PRICE</strong> by using a log transformation on the variable SELLING_PRICE.</li>
+<li>It is performed using <em>mutate()</em> of <strong>dplyr</strong> package.</li>
+</ul>
 <div class="layout-chunk" data-layout="l-body">
-
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>condo_resale.sf</span> <span class='op'>&lt;-</span> <span class='va'>condo_resale.sf</span> <span class='op'>%&gt;%</span>
+  <span class='fu'>mutate</span><span class='op'>(</span>`LOG_SELLING_PRICE` <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/Log.html'>log</a></span><span class='op'>(</span><span class='va'>SELLING_PRICE</span><span class='op'>)</span><span class='op'>)</span>
+</code></pre>
 </div>
-<div class="layout-chunk" data-layout="l-body">
-
 </div>
+<h3 id="plot-log_selling_price">6.1.3 Plot <strong>LOG_SELLING_PRICE</strong></h3>
 <div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>ggplot</span><span class='op'>(</span>data<span class='op'>=</span><span class='va'>condo_resale.sf</span>, <span class='fu'>aes</span><span class='op'>(</span>x<span class='op'>=</span><span class='va'>`LOG_SELLING_PRICE`</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>+</span>
+  <span class='fu'>geom_histogram</span><span class='op'>(</span>bins<span class='op'>=</span><span class='fl'>20</span>, color<span class='op'>=</span><span class='st'>"black"</span>, fill<span class='op'>=</span><span class='st'>"light blue"</span><span class='op'>)</span>
+</code></pre>
+</div>
+<p><img src="hands-on-exercise-9_files/figure-html5/unnamed-chunk-12-1.png" width="624" /></p>
+</div>
+<p>Notice that the distribution is relatively <strong>less skewed after the transformation</strong>.</p>
+<h2 id="multiple-histogram-plots-distribution-of-variables">6.2 Multiple Histogram Plots distribution of variables</h2>
+<ul>
+<li>The code chunk below is used to create 12 histograms.</li>
+<li><em>ggarrnage()</em> of <strong>ggpubr</strong> package is used to organised these histogram into a 3 columns by 4 rows small multiple plot.</li>
+</ul>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>AREA_SQM</span> <span class='op'>&lt;-</span> <span class='fu'>ggplot</span><span class='op'>(</span>data<span class='op'>=</span><span class='va'>condo_resale.sf</span>, <span class='fu'>aes</span><span class='op'>(</span>x<span class='op'>=</span> <span class='va'>`AREA_SQM`</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>+</span>
+  <span class='fu'>geom_histogram</span><span class='op'>(</span>bins<span class='op'>=</span><span class='fl'>20</span>, color<span class='op'>=</span><span class='st'>"black"</span>, fill<span class='op'>=</span><span class='st'>"light blue"</span><span class='op'>)</span>
+<span class='va'>AGE</span> <span class='op'>&lt;-</span> <span class='fu'>ggplot</span><span class='op'>(</span>data<span class='op'>=</span><span class='va'>condo_resale.sf</span>, <span class='fu'>aes</span><span class='op'>(</span>x<span class='op'>=</span> <span class='va'>`AGE`</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>+</span>
+  <span class='fu'>geom_histogram</span><span class='op'>(</span>bins<span class='op'>=</span><span class='fl'>20</span>, color<span class='op'>=</span><span class='st'>"black"</span>, fill<span class='op'>=</span><span class='st'>"light blue"</span><span class='op'>)</span>  
+<span class='va'>PROX_CBD</span> <span class='op'>&lt;-</span> <span class='fu'>ggplot</span><span class='op'>(</span>data<span class='op'>=</span><span class='va'>condo_resale.sf</span>, <span class='fu'>aes</span><span class='op'>(</span>x<span class='op'>=</span> <span class='va'>`PROX_CBD`</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>+</span>
+  <span class='fu'>geom_histogram</span><span class='op'>(</span>bins<span class='op'>=</span><span class='fl'>20</span>, color<span class='op'>=</span><span class='st'>"black"</span>, fill<span class='op'>=</span><span class='st'>"light blue"</span><span class='op'>)</span>
+<span class='va'>PROX_CHILDCARE</span> <span class='op'>&lt;-</span> <span class='fu'>ggplot</span><span class='op'>(</span>data<span class='op'>=</span><span class='va'>condo_resale.sf</span>, <span class='fu'>aes</span><span class='op'>(</span>x<span class='op'>=</span> <span class='va'>`PROX_CHILDCARE`</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>+</span>
+  <span class='fu'>geom_histogram</span><span class='op'>(</span>bins<span class='op'>=</span><span class='fl'>20</span>, color<span class='op'>=</span><span class='st'>"black"</span>, fill<span class='op'>=</span><span class='st'>"light blue"</span><span class='op'>)</span>
+<span class='va'>PROX_ELDERLYCARE</span> <span class='op'>&lt;-</span> <span class='fu'>ggplot</span><span class='op'>(</span>data<span class='op'>=</span><span class='va'>condo_resale.sf</span>, <span class='fu'>aes</span><span class='op'>(</span>x<span class='op'>=</span> <span class='va'>`PROX_ELDERLYCARE`</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>+</span>
+  <span class='fu'>geom_histogram</span><span class='op'>(</span>bins<span class='op'>=</span><span class='fl'>20</span>, color<span class='op'>=</span><span class='st'>"black"</span>, fill<span class='op'>=</span><span class='st'>"light blue"</span><span class='op'>)</span>
+<span class='va'>PROX_URA_GROWTH_AREA</span> <span class='op'>&lt;-</span> <span class='fu'>ggplot</span><span class='op'>(</span>data<span class='op'>=</span><span class='va'>condo_resale.sf</span>, <span class='fu'>aes</span><span class='op'>(</span>x<span class='op'>=</span> <span class='va'>`PROX_URA_GROWTH_AREA`</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>+</span>
+  <span class='fu'>geom_histogram</span><span class='op'>(</span>bins<span class='op'>=</span><span class='fl'>20</span>, color<span class='op'>=</span><span class='st'>"black"</span>, fill<span class='op'>=</span><span class='st'>"light blue"</span><span class='op'>)</span>
+<span class='va'>PROX_HAWKER_MARKET</span> <span class='op'>&lt;-</span> <span class='fu'>ggplot</span><span class='op'>(</span>data<span class='op'>=</span><span class='va'>condo_resale.sf</span>, <span class='fu'>aes</span><span class='op'>(</span>x<span class='op'>=</span> <span class='va'>`PROX_HAWKER_MARKET`</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>+</span>
+  <span class='fu'>geom_histogram</span><span class='op'>(</span>bins<span class='op'>=</span><span class='fl'>20</span>, color<span class='op'>=</span><span class='st'>"black"</span>, fill<span class='op'>=</span><span class='st'>"light blue"</span><span class='op'>)</span>
+<span class='va'>PROX_KINDERGARTEN</span> <span class='op'>&lt;-</span> <span class='fu'>ggplot</span><span class='op'>(</span>data<span class='op'>=</span><span class='va'>condo_resale.sf</span>, <span class='fu'>aes</span><span class='op'>(</span>x<span class='op'>=</span> <span class='va'>`PROX_KINDERGARTEN`</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>+</span>
+  <span class='fu'>geom_histogram</span><span class='op'>(</span>bins<span class='op'>=</span><span class='fl'>20</span>, color<span class='op'>=</span><span class='st'>"black"</span>, fill<span class='op'>=</span><span class='st'>"light blue"</span><span class='op'>)</span>
+<span class='va'>PROX_MRT</span> <span class='op'>&lt;-</span> <span class='fu'>ggplot</span><span class='op'>(</span>data<span class='op'>=</span><span class='va'>condo_resale.sf</span>, <span class='fu'>aes</span><span class='op'>(</span>x<span class='op'>=</span> <span class='va'>`PROX_MRT`</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>+</span>
+  <span class='fu'>geom_histogram</span><span class='op'>(</span>bins<span class='op'>=</span><span class='fl'>20</span>, color<span class='op'>=</span><span class='st'>"black"</span>, fill<span class='op'>=</span><span class='st'>"light blue"</span><span class='op'>)</span>
+<span class='va'>PROX_PARK</span> <span class='op'>&lt;-</span> <span class='fu'>ggplot</span><span class='op'>(</span>data<span class='op'>=</span><span class='va'>condo_resale.sf</span>, <span class='fu'>aes</span><span class='op'>(</span>x<span class='op'>=</span> <span class='va'>`PROX_PARK`</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>+</span>
+  <span class='fu'>geom_histogram</span><span class='op'>(</span>bins<span class='op'>=</span><span class='fl'>20</span>, color<span class='op'>=</span><span class='st'>"black"</span>, fill<span class='op'>=</span><span class='st'>"light blue"</span><span class='op'>)</span>
+<span class='va'>PROX_PRIMARY_SCH</span> <span class='op'>&lt;-</span> <span class='fu'>ggplot</span><span class='op'>(</span>data<span class='op'>=</span><span class='va'>condo_resale.sf</span>, <span class='fu'>aes</span><span class='op'>(</span>x<span class='op'>=</span> <span class='va'>`PROX_PRIMARY_SCH`</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>+</span>
+  <span class='fu'>geom_histogram</span><span class='op'>(</span>bins<span class='op'>=</span><span class='fl'>20</span>, color<span class='op'>=</span><span class='st'>"black"</span>, fill<span class='op'>=</span><span class='st'>"light blue"</span><span class='op'>)</span>
+<span class='va'>PROX_TOP_PRIMARY_SCH</span> <span class='op'>&lt;-</span> <span class='fu'>ggplot</span><span class='op'>(</span>data<span class='op'>=</span><span class='va'>condo_resale.sf</span>, <span class='fu'>aes</span><span class='op'>(</span>x<span class='op'>=</span> <span class='va'>`PROX_TOP_PRIMARY_SCH`</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>+</span>
+  <span class='fu'>geom_histogram</span><span class='op'>(</span>bins<span class='op'>=</span><span class='fl'>20</span>, color<span class='op'>=</span><span class='st'>"black"</span>, fill<span class='op'>=</span><span class='st'>"light blue"</span><span class='op'>)</span>
 
+<span class='fu'>ggarrange</span><span class='op'>(</span><span class='va'>AREA_SQM</span>, <span class='va'>AGE</span>, <span class='va'>PROX_CBD</span>, <span class='va'>PROX_CHILDCARE</span>, <span class='va'>PROX_ELDERLYCARE</span>, <span class='va'>PROX_URA_GROWTH_AREA</span>, <span class='va'>PROX_HAWKER_MARKET</span>, <span class='va'>PROX_KINDERGARTEN</span>, <span class='va'>PROX_MRT</span>, <span class='va'>PROX_PARK</span>, <span class='va'>PROX_PRIMARY_SCH</span>, <span class='va'>PROX_TOP_PRIMARY_SCH</span>,  ncol <span class='op'>=</span> <span class='fl'>3</span>, nrow <span class='op'>=</span> <span class='fl'>4</span><span class='op'>)</span>
+</code></pre>
+</div>
+<p><img src="hands-on-exercise-9_files/figure-html5/unnamed-chunk-13-1.png" width="624" /></p>
+</div>
+<h2 id="drawing-statistical-point-map">6.3 Drawing Statistical Point Map</h2>
+<ul>
+<li><p>Reveal the geospatial distribution condominium resale prices in Singapore. The map will be prepared by using tmap package.</p></li>
+<li><p><em>tmap_mode(“plot”)</em> to use the interactive mode of tmap</p></li>
+<li><p>Then, create an interactive point symbol map</p></li>
+<li><p><em>tm_dots()</em> is used instead of <em>tm_bubbles()</em></p>
+<ul>
+<li>set.zoom.limits argument of tm_view() sets the minimum and maximum zoom level to 11 and 14 respectively.</li>
+</ul></li>
+<li><p>Lastly, <em>tmap_mode(“plot”)</em> to display plot mode</p></li>
+</ul>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>tmap_mode</span><span class='op'>(</span><span class='st'>"plot"</span><span class='op'>)</span>
+
+<span class='fu'>tm_shape</span><span class='op'>(</span><span class='va'>mpsz_svy21</span><span class='op'>)</span><span class='op'>+</span>
+  <span class='fu'>tm_polygons</span><span class='op'>(</span><span class='op'>)</span> <span class='op'>+</span>
+<span class='fu'>tm_shape</span><span class='op'>(</span><span class='va'>condo_resale.sf</span><span class='op'>)</span> <span class='op'>+</span>  
+  <span class='fu'>tm_dots</span><span class='op'>(</span>col <span class='op'>=</span> <span class='st'>"SELLING_PRICE"</span>,
+          alpha <span class='op'>=</span> <span class='fl'>0.6</span>,
+          style<span class='op'>=</span><span class='st'>"quantile"</span><span class='op'>)</span> <span class='op'>+</span>
+  <span class='fu'>tm_view</span><span class='op'>(</span>set.zoom.limits <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>11</span>,<span class='fl'>14</span><span class='op'>)</span><span class='op'>)</span>
+</code></pre>
+</div>
+<img src="hands-on-exercise-9_files/figure-html5/unnamed-chunk-14-1.png" width="624" />
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>tmap_mode</span><span class='op'>(</span><span class='st'>"plot"</span><span class='op'>)</span>
+</code></pre>
+</div>
 </div>
 <div class="layout-chunk" data-layout="l-body">
 
