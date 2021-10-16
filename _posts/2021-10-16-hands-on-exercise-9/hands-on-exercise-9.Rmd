@@ -1,0 +1,209 @@
+---
+title: "Hands-on Exercise 9"
+description: |
+  Inhands-on exercise 9, I have learnt how to calibrate geographically weighted regression models by using GWmodel package of R.
+author:
+  - name: Wong Wei Ling
+    url: www.google.com
+date: 10-16-2021
+output:
+  distill::distill_article:
+    self_contained: false
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+
+
+# 1 Overview
+
+Geographically weighted regression (GWR) is a spatial statistical technique that takes non-stationary variables into consideration (e.g., climate; demographic factors; physical environment characteristics) and models the local relationships between these independent variables and an outcome of interest (also known as dependent variable).
+
+In this hands-on exercise, I have learnt to build hedonic pricing models by using GWR methods. The dependent variable is the resale prices of condominium in 2015. The independent variables are divided into either structural and locational.
+
+# 2 Data
+
+Two data sets will be used in this model building exercise, they are:
+
+- URA Master Plan subzone boundary in shapefile format (i.e. MP14_SUBZONE_WEB_PL)
+- condo_resale_2015 in csv format (i.e. condo_resale_2015.csv)
+
+# 3 Import packages
+
+-Geospatial statistical modelling package: **GWmodel**
+-Spatial data handling: **sf**
+-Attribute data handling: **tidyverse**, especially **read**r, **ggplot2** and **dplyr**
+-Choropleth mapping: **tmap**
+
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+packages = c('olsrr', 'corrplot', 'ggpubr', 'sf', 'spdep', 'GWmodel', 'tmap', 'tidyverse')
+for (p in packages){
+  if(!require(p, character.only = T)){
+    install.packages(p)
+  }
+  library(p,character.only = T)
+}
+```
+
+**A short note about GWmodel**
+
+GWmodel package provides a collection of localised spatial statistical methods, namely: GW summary statistics, GW principal components analysis, GW discriminant analysis and various forms of GW regression; some of which are provided in basic and robust (outlier resistant) forms. Commonly, outputs or parameters of the GWmodel are mapped to provide a useful exploratory tool, which can often precede (and direct) a more traditional or sophisticated statistical analysis.
+
+# 4 Geospatial Data Wrangling
+
+# 4.1 Import geospatial data
+
+- Import *MP_SUBZONE_WEB_PL* shapefile by using *st_read()* of **sf** packages.
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+mpsz = st_read(dsn = "data/geospatial", layer = "MP14_SUBZONE_WEB_PL")
+
+```
+
+Results above show that:
+
+- R object used to contain the imported MP14_SUBZONE_WEB_PL shapefile is called mpsz and it is a simple feature object.
+- The geometry type is multipolygon. 
+- It is also important to note that mpsz simple feature object does not have EPSG information.
+
+# 4.2 Update CRS information
+
+- Update the newly imported mpsz with the correct ESPG code (i.e. 3414)
+- Verify  the newly transformed mpsz_svy21.
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+mpsz_svy21 <- st_transform(mpsz, 3414)
+st_crs(mpsz_svy21)
+
+```
+
+# 4.3 reveal the extent of mpsz_svy21
+
+- Use *st_bbox()* of **sf** package
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+st_bbox(mpsz_svy21)
+```
+
+# 5 Aspatial Data Wrangling
+
+# 5.1 Import the aspatial data
+
+-  Use *read_csv()* function of **readr** package to import condo_resale_2015 into R as a tibble data frame called condo_resale.
+-  use *glimpse()* to display the data structure
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+condo_resale <- read_csv("data/aspatial/Condo_resale_2015.csv")
+glimpse(condo_resale)
+
+```
+
+- See the data in XCOORD column
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+head(condo_resale$LONGITUDE) 
+
+```
+
+- See the data in YCOORD column
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+head(condo_resale$LATITUDE) 
+
+```
+
+- See summary statsitics of *condo_resale*
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+summary(condo_resale)
+
+```
+
+# 5.2 Convert aspatial data frame into a sf object
+
+- Use *st_as_sf()* of sf packages.
+- *st_transform()* of **sf** package is used to convert the coordinates from wgs84 (i.e. crs:4326) to svy21 (i.e. crs=3414).
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+condo_resale.sf <- st_as_sf(condo_resale,
+                            coords = c("LONGITUDE", "LATITUDE"),
+                            crs=4326) %>%
+  st_transform(crs=3414)
+head(condo_resale.sf)
+```
+
+# 6 Exploratory Data Analysis
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+
+```
+
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+
+```
+
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+
+```
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+
+```
+
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+
+```
+
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+
+```
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+
+```
+
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+
+```
+
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+
+```
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+
+```
+
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+
+```
+
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+
+```
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+
+```
+
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+
+```
+
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+
+```
