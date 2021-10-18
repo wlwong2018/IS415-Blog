@@ -1,7 +1,7 @@
 ---
 title: "Hands-on Exercise 8"
 description: |
-  In Hands-on Exercise 8, I have learnt how to perform geographical segmentation by using appropriate R packages.I have also been exposed to R packages for performing cluster analysis and visualising clustering results.
+  In Hands-on Exercise 8, I have learnt how to perform geographical segmentation by using appropriate R packages.I have also been exposed to R packages for performing cluster analysis and visualising clustering results. (contains additional notes taken in class)
 author:
   - name: Wong Wei Ling
     url: www.google.com

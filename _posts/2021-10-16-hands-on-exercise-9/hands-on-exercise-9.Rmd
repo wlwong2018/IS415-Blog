@@ -1,7 +1,7 @@
 ---
 title: "Hands-on Exercise 9"
 description: |
-  Inhands-on exercise 9, I have learnt how to calibrate geographically weighted regression models by using GWmodel package of R.
+  In hands-on exercise 9, I have learnt how to calibrate geographically weighted regression models by using GWmodel package of R. (contains additional notes taken in class)
 author:
   - name: Wong Wei Ling
     url: www.google.com
@@ -36,10 +36,29 @@ Two data sets will be used in this model building exercise, they are:
 
 # 3 Import packages
 
--Geospatial statistical modelling package: **GWmodel**
--Spatial data handling: **sf**
--Attribute data handling: **tidyverse**, especially **read**r, **ggplot2** and **dplyr**
--Choropleth mapping: **tmap**
+- R package for building OLS and performing diagnostics tests
+
+    + **olsrr**
+    
+- R package for calibrating geographical weighted family of models
+
+    + **GWmodel**
+    
+- R package for multivariate data visualisation and analysis
+
+    + **corrplot**
+    
+- Spatial data handling
+
+  + **sf**
+  
+- Attribute data handling
+
+    + **tidyverse**, especially **readr**, **ggplot2** and **dplyr**
+    
+- Choropleth mapping
+
+    + **tmap**
 
 
 ```{r echo=TRUE, eval=TRUE,  cache=TRUE}
@@ -105,6 +124,8 @@ glimpse(condo_resale)
 
 ```
 
+Note: units is **km** and not m
+
 - See the data in XCOORD column
 
 ```{r echo=TRUE, eval=TRUE,  cache=TRUE}
@@ -125,6 +146,11 @@ head(condo_resale$LATITUDE)
 summary(condo_resale)
 
 ```
+
+Results above show that:
+
+- FREEHOLD and LEASEHOLD_99YR are examples of dummy variables since they are 1 or 0
+- We need to reduce these when calibrating regression models
 
 # 5.2 Convert aspatial data frame into a sf object
 
@@ -179,7 +205,7 @@ Notice that the distribution is relatively **less skewed after the transformatio
 ## 6.2 Multiple Histogram Plots distribution of variables
 
 - The code chunk below is used to create 12 histograms.
-- *ggarrnage()* of **ggpubr** package is used to organised these histogram into a 3 columns by 4 rows small multiple plot.
+- *ggarrange()* of **ggpubr** package is used to organised these histogram into a 3 columns by 4 rows small multiple plot.
 
 ```{r echo=TRUE, eval=TRUE,  cache=TRUE}
 AREA_SQM <- ggplot(data=condo_resale.sf, aes(x= `AREA_SQM`)) +
@@ -212,20 +238,24 @@ ggarrange(AREA_SQM, AGE, PROX_CBD, PROX_CHILDCARE, PROX_ELDERLYCARE, PROX_URA_GR
 
 ## 6.3 Drawing Statistical Point Map
 
+- To fix tmap_mode("view") error when using current version of **sf** package
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+tmap_options(check.and.fix = TRUE)
+```
+
 -  Reveal the geospatial distribution condominium resale prices in Singapore. The map will be prepared by using tmap package.
 - *tmap_mode("view")* to use the interactive mode of tmap
+
 - Then, create an interactive point symbol map
 
-- *tm_dots()* is used instead of *tm_bubbles()*
-
+    +*tm_dots()* is used instead of *tm_bubbles()*
     + set.zoom.limits argument of tm_view() sets the minimum and maximum zoom level to 11 and 14 respectively.
     
 - Lastly, *tmap_mode("plot")* to display plot mode
 
-**Note: Display as plot mode for now**
-
 ```{r echo=TRUE, eval=TRUE,  cache=TRUE}
-tmap_mode("plot")
+tmap_mode("view")
 
 tm_shape(mpsz_svy21)+
   tm_polygons() +
@@ -292,7 +322,10 @@ Ensure that the independent variables used are not highly correlated to each oth
 Correlation matrix is commonly used to visualise the relationships between the independent variables. Beside the *pairs()* of R, there are many packages that support the display of a correlation matrix. In this section, the **corrplot** package will be used.
 
 - To plot a scatterplot matrix of the relationship between the independent variables in condo_resale data.frame.
-- Matrix reorder is very important for mining the hiden structure and patter in the matrix. There are four methods in corrplot (parameter order), namely “**AOE**”, “**FPC**”, “**hclust**”, “**alphabet**”. Alphabet order is used, it orders the variables alphabetically.
+- Cold 5 - 23 to get the independent variables
+- Matrix reorder is very important for mining the hidden structure and patter in the matrix. There are four methods in corrplot (parameter order), namely “**AOE**”, “**FPC**”, “**hclust**”, “**alphabet**”.
+- **AOE** is **Angular order** of the eigenvectors method suggested by Michael Friendly.
+- We use **AOE** as we want to detect multicollinearity; get variables with similar properties
 
 ```{r echo=TRUE, eval=TRUE,  cache=TRUE, fig.width=8, fig.height=8}
 corrplot(cor(condo_resale[, 5:23]), diag = FALSE, order = "AOE",
@@ -301,6 +334,7 @@ corrplot(cor(condo_resale[, 5:23]), diag = FALSE, order = "AOE",
 
 Results above show that:
 
+- Property should either be **Freehold** or **LEASE_99YEAR**
 - **Freehold** is highly correlated to **LEASE_99YEAR**. In view of this, it is wiser to only include either one of them in the subsequent model building. As a result, **LEASE_99YEAR** is excluded in the subsequent model building.
 
 ### 7.2.2 Build a hedonic pricing model using multiple linear regression method
@@ -316,7 +350,9 @@ summary(condo.mlr)
 
 Results above show that:
 
-- Not all the indepent variables are statistically significant. We will revised the model by removing those variables which are not statistically significant.
+- Not all the independent variables are statistically significant. e.g. PROX_HAWKER_MARKET and more
+- We will revised the model by removing those variables which are not statistically significant.
+- **Interpretation of Estimate Std**; Holding every other independent variables constant, 1 unit increase of AGE, price will decrease by -24440.82. 
 
 #### 7.2.2.2 Calibrate the revised model 
 
@@ -387,17 +423,17 @@ ols_test_normality(condo.mlr1)
 
 Results above show that:
 
-- p-values of the four tests are way smaller than the alpha value of 0.05. Hence we will reject the null hypothesis that the residual is NOT resemble normal distribution.
+- p-values of the four tests are way smaller than the alpha value of 0.05. Hence we will reject the null hypothesis that the residual does NOT resemble normal distribution.
 
 ### 7.2.6 Test for Spatial Autocorrelation
 
-The hedonic model we try to build are using geographically referenced attributes, hence it is also important for us to visual the residual of the hedonic pricing model.
+The hedonic model we try to build is using geographically referenced attributes, hence it is also important for us to visualise the residual of the hedonic pricing model.
 
 In order to perform spatial autocorrelation test, we need to convert **condo_resale.sf** simple into a SpatialPointsDataFrame.
 
 #### 7.2.6.1 Export residual of hedonic pricing model
 
-- export the residual of the hedonic pricing model and save it as a data frame.
+- Export the residual of the hedonic pricing model and save it as a data frame.
 
 ```{r echo=TRUE, eval=TRUE,  cache=TRUE}
 mlr.output <- as.data.frame(condo.mlr1$residuals)
@@ -428,7 +464,7 @@ condo_resale.sp
 **Note: it is currently in plot mode**
 
 ```{r echo=TRUE, eval=TRUE,  cache=TRUE}
-tmap_mode("plot")
+tmap_mode("view")
 
 tm_shape(mpsz_svy21)+
   tm_polygons(alpha = 0.4) +
@@ -481,7 +517,7 @@ Results above show that:
 
 # 8 Building Hedonic Pricing Models using GWmodel
 
-Learn how to modelling hedonic pricing using both the fixed and adaptive bandwidth schemes
+Learn how to model hedonic pricing using both the fixed and adaptive bandwidth schemes
 
 ## 8.1 Build Fixed Bandwidth GWR Model
 
@@ -489,15 +525,18 @@ Learn how to modelling hedonic pricing using both the fixed and adaptive bandwid
 
 - *bw.gwr()* of **GWModel** package is used to determine the optimal fixed bandwidth to use in the model. Notice that the argument adaptive is set to FALSE indicates that we are interested to compute the fixed bandwidth.
 - There are two possible approaches  to determine the stopping rule, they are: **CV cross-validation approach** and **AIC corrected (AICc) approach**. We define the stopping rule using approach argument.
+- When we have explicitly used a projection system, we can set longlat = FALSE
 
 ```{r echo=TRUE, eval=TRUE,  cache=TRUE}
-bw.fixed <- bw.gwr(formula = SELLING_PRICE ~ AREA_SQM + AGE  + PROX_CBD + PROX_CHILDCARE + PROX_ELDERLYCARE  + PROX_URA_GROWTH_AREA + PROX_MRT  + PROX_PARK  + PROX_PRIMARY_SCH + PROX_SHOPPING_MALL  + PROX_BUS_STOP  + NO_Of_UNITS + FAMILY_FRIENDLY + FREEHOLD, data=condo_resale.sp, approach="CV", kernel="gaussian", adaptive=FALSE, longlat=FALSE)
+bw.fixed <- bw.gwr(formula = SELLING_PRICE ~ AREA_SQM + AGE  + PROX_CBD + PROX_CHILDCARE + PROX_ELDERLYCARE  + PROX_URA_GROWTH_AREA + PROX_MRT  + PROX_PARK  + PROX_PRIMARY_SCH + PROX_SHOPPING_MALL  + PROX_BUS_STOP  + NO_Of_UNITS + FAMILY_FRIENDLY + FREEHOLD,
+                   data=condo_resale.sp, approach="CV", kernel="gaussian", adaptive=FALSE, longlat=FALSE)
 
 ```
 
 Results above show that:
 
-- The recommended bandwidth is 971.3398 metres.
+- The recommended bandwidth is where the CV score converges.
+- The recommended bandwidth is 971.3793 metres.
 
 Quiz: Why is it in metre?
 
@@ -543,6 +582,8 @@ adaptive=TRUE, longlat=FALSE)
 Results above show that:
 
 - 30 is the recommended data points to be used
+
+**Note: for adaptive kernel, all will have the same number of nearest neighbours**
 
 ### 8.2.2 Construct the adaptive bandwidth gwr model
 
@@ -617,7 +658,7 @@ summary(gwr.adaptive$SDF$yhat)
 - **Note: currently, it is in plot mode**
 
 ```{r echo=TRUE, eval=TRUE,  cache=TRUE}
-tmap_mode("plot")
+tmap_mode("view")
 tm_shape(mpsz_svy21)+
   tm_polygons(alpha = 0.1) +
 tm_shape(condo_resale.sf.adaptive) +  
