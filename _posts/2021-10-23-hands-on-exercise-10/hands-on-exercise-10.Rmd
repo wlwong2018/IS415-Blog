@@ -1,0 +1,319 @@
+---
+title: "Hands-on Exercise 10"
+description: |
+  In Hands-on Exercise 10, I have learnt how to calibrate spatial interaction models by using GLM() of Base R.
+author:
+  - name: Wong Wei Ling
+    url: www.google.com
+date: 10-23-2021
+output:
+  distill::distill_article:
+    self_contained: false
+    toc: true
+    toc_float: true
+    number_sections: true
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+
+# 1 Overview
+
+In this hands-on exercise, I have gained hands-on experience on how to calibrate Spatial Interaction Models (SIM) by using GLM() of Base R. The use case is adapted from Modelling population flows using spatial interaction models by Adam Dennett.
+
+# 2 Data
+
+Two data sets will be used in this hands-on exercise, they are:
+
+- [Greater Capital City Statistical Areas](https://www.abs.gov.au/websitedbs/censushome.nsf/home/factsheetsgeography/$file/Greater%20Capital%20City%20Statistical%20Area%20-%20Fact%20Sheet.pdf), Australia. It is in geojson format.
+- [Migration data from 2011 Australia Census](https://www.abs.gov.au/ausstats/abs@.nsf/ViewContent?readform&view=productsbytopic&Action=Expand&Num=5.5.5). It is in csv file format.
+
+# 3 Install and Launch R Packages
+
+The R packages need for this exercise are as follows:
+
+- Spatial data handling
+
+    + sf, sp, ‘geojsonio’, ‘stplanr’
+
+- Attribute data handling
+
+    + tidyverse, especially readr and dplyr, reshape2,
+
+- Thematic mapping
+
+    + tmap
+
+- Statistical graphic
+
+    + ggplot2
+
+- Statistical analysis
+
+    + caret
+    
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+packages = c('tmap', 'tidyverse',
+             'sp', 'caret',
+             'geojsonio', 'stplanr',
+             'reshape2', 'broom', 'sf')
+
+for(p in packages){
+  if(!require(p, character.only = T)){
+    install.packages(p)
+  }
+  library(p, character.only = T)
+}
+
+```
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+# library(devtools)
+# install_version("sf", version = "0.9-8", repos = "http://cran.us.r-project.org")
+```
+
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+# library(sf)
+```
+
+
+
+# 4 Geospatial Data
+
+## 4.1 Download Data
+- Download a copy of Greater Capital City Statistical Areas boundary layer from a dropbox depository by using geojson_read() of geojsonio package
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+Aus <- geojson_read("https://www.dropbox.com/s/0fg80nzcxcsybii/GCCSA_2016_AUST_New.geojson?raw=1", what = "sp")
+
+```
+
+## 4.2 Extract Data
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+Ausdata <- Aus@data
+```
+
+## 4.3 Convert to sf object and set CRS
+
+- Use *st_as_sf()* of **sf** package to convert to sf object
+- Use *st_set_crs()* of **sf** package to set CRS
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+AusSF <- st_as_sf(Aus) %>% 
+  st_set_crs(4283) 
+```
+
+## 4.4 Check simple features
+
+- Use *st_is_valid()* of **sf** package to check if all the simple features are valid 
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+st_is_valid(AusSF)
+```
+
+Results above show that:
+
+- There are several invalid features
+
+## 4.5 Fix simple features
+
+- Use *st_make_valid()* of **sf** package to fix features
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+AusSF <- st_make_valid(AusSF)
+```
+
+## 4.6 Check simple features again
+
+- Use *st_is_valid()* of **sf** package to ensure that all the simple features are valid 
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+st_is_valid(AusSF)
+```
+
+## 4.7 Display boundary layer
+
+- Use  *qtm()* of **tmap** package to plot AusSF simple feature data.frame
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+tmap_mode("plot")
+qtm(AusSF)
+```
+
+## 4.8 Display Data Table
+
+- Use head to view the first few rows of data table
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+head(AusSF, 10)
+```
+
+Results above show that:
+
+- With close examination, the code is not in order.
+- We have to reorder the code column
+
+## 4.9 Order data table
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+AusSF1 <- AusSF[order(AusSF$GCCSA_CODE),]
+head(AusSF1, 10)
+```
+
+## 4.10 Convert to sp object
+
+- Use *as()* with argument **'Spatial'** to convert to sp object
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+Aus <- as(AusSF1, "Spatial")
+
+```
+
+## 4.11 Calculate Distance Matrix
+
+In our spatial interaction model, space is one of the key predictor variables. In this example we will use a very simple Euclidean distance measure between the centroids of the Greater Capital City Statistical Areas as our measure of space.
+
+Caution note: With some areas being huge, there are obvious potential issues with this (for example we could use the average distance to larger settlements in the noncity areas). However as this is just an example and will proceed with a simple solution for now.
+
+### 4.11.1 Re-project to projected coordinate system
+
+- The original data is in geographical coordinate system and the unit of measurement is in decimal degree, which is not appropriate for distance measurement. Before we compute the distance matrix, we will re-project the Aus into projected coordinate system.
+- Use *spTransform()* of **sp** package
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+AusProj <- spTransform(Aus,"+init=epsg:3112")
+summary(AusProj)
+```
+
+### 4.11.2 Compute distance matrix
+
+- Technically, we can used *st_distance()* of **sf** package to compute the distance matrix.
+- However, since the process took much longer time to complete, *spDist()* of **sp** package is used instead. 
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+dist <- spDists(AusProj)
+dist 
+```
+
+### 4.11.3 Convert dsitance matrix into distance pair list
+
+- In order to integrate the distance matrix with the migration flow data.frame (in the later steps), we need to transform the newly derived distance matrix into a three columns distance values list.
+- Use *melt()* of *reshape2** package of R to complete the task (we can also achieve the same task by using *pivot_longer()* of **dplyr** package).
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+distPair <- melt(dist)
+head(distPair, 10)
+```
+
+### 4.11.4 Convert unit of measurement from metres into km
+
+- The unit of measurement of Australia projected coordinate system is in metre. As a result, the values in the distance matrix are in metres too. -  Convert the distance values into kilometres.
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+distPair$value <- distPair$value / 1000
+head(distPair, 10)
+```
+
+# 5 Interaction Data
+
+## 5.1 Import interaction data
+
+- Use *read_csv()* of **readr** package
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+mdata <- read_csv("https://www.dropbox.com/s/wi3zxlq5pff1yda/AusMig2011.csv?raw=1",col_names = TRUE)
+glimpse(mdata)
+```
+
+## 5.2 Combine the imported migration data
+
+We need to add in our distance data that we generated earlier and create a new column of total flows which excludes flows that occur within areas (we could keep the within-area (intra-area) flows in, but they can cause problems so we will just exclude them  for now ).
+
+### 5.2.1 Create new column and set to small number
+
+- Create a new total column which excludes intra-zone flow totals. Set them to a very very small number to avoid making the intra-zonal distance becoming 0.
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+mdata$FlowNoIntra <- ifelse(mdata$Orig_code == mdata$Dest_code,0,mdata$Flow)
+mdata$offset <- ifelse(mdata$Orig_code == mdata$Dest_code,0.0000000001,1)
+```
+
+### 5.2.2 Join with flow data
+
+- We ordered our spatial data earlier so that our zones are in their code order. We can now easily join these data together with our flow data as they are in the correct order.
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+mdata$dist <- distPair$value 
+
+```
+
+### 5.2.3 Set intra-zonal distances to 0
+
+-  While we are here, rather than setting the intra-zonal distances to 0, we should set them to something small (most intrazonal moves won’t occur over 0 distance)
+- Use *glimpse()* to look at the new data
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+mdata$dist <- ifelse(mdata$dist == 0,5,mdata$dist)
+glimpse(mdata)
+```
+
+# 6 Visualise with Desire Line
+
+In this section, you will learn how to prepare a desire line by using **stplanr** package.
+
+## 6.1 Remove intra-zonal flows
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+mdatasub <- mdata[mdata$Orig_code!=mdata$Dest_code,]
+
+```
+
+## 6.2 Remove columns
+
+- Use the *od2line()* function **stplanr** package to remove all but the origin, destination and flow columns.
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+mdatasub_skinny <- mdatasub[,c(2,4,5)]
+travel_network <- od2line(flow = mdatasub_skinny, zones = Aus)
+```
+
+## 6.3 Convert  flows to WGS84 projection
+
+- Use *spTransform()* of **sp** package
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+travel_networkwgs <- spTransform(travel_network,"+init=epsg:4326" )
+
+```
+
+## 6.4 Convert Aug later to WGS84 projection
+
+- - Use *spTransform()* of **sp** package
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+AusWGS <- spTransform(Aus,"+init=epsg:4326" )
+
+```
+
+## 6.5 Set line widths
+
+- Set the line widths to some sensible value according to the flow
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+w <- mdatasub_skinny$Flow / max(mdatasub_skinny$Flow) * 10
+
+```
+
+## 6.6 Plot desire line map
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+plot(travel_networkwgs, lwd = w)
+plot(AusWGS, add=T)
+```
+
+
