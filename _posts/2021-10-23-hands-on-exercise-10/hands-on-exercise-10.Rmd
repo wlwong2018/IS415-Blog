@@ -317,3 +317,166 @@ plot(AusWGS, add=T)
 ```
 
 
+
+# 7 Build Spatial Interaction Models
+
+Learn how to using R Stat function to calibrate the Spatial Interaction Models. Instead of using *lm()* the *glm()* **function will be used**. This is because *glm()* allows us to **calibrate the model using generalised linear regression methods**.
+
+## 7.1 Unconstrained Spatial Interaction Model
+
+In this section, we will calibrate an unconstrained spatial interaction model by using glm(). The explanatory variables are origin population (i.e. vi1_origpop), destination median income (i.e. wj3_destmedinc) and distance between origin and destination in km (i.e. dist).
+
+### 7.1.1 Caliberate model
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+uncosim <- glm(Flow ~ log(vi1_origpop)+log(wj3_destmedinc)+log(dist), na.action = na.exclude, family = poisson(link = "log"), data = mdatasub)
+summary(uncosim)
+```
+
+Result above show that:
+
+- The parameter estimates of the explanatory variables are significant at alpha value 0.001.
+
+### 7.1.2 Fit the model
+
+- Use *fitted()* of **R** to compute the fitted values to assess the performance of the model
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+mdatasub$fitted <- fitted(uncosim)
+
+```
+
+### 7.1.3 A more difficult way (optional)
+
+Another way to calculate the estimates is to plug all of the parameters back into Equation 6
+
+- Assign the parameter values from the model to the appropriate variables
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+k <- uncosim$coefficients[1]
+mu <- uncosim$coefficients[2]
+alpha <- uncosim$coefficients[3]
+beta <- -uncosim$coefficients[4]
+
+```
+
+- Next, plug everything back into the Equation 6 model (be careful with the positive and negative signing of the parameters as the beta parameter may not have been saved as negative so will need to force negative)
+- Below are 2 ways to do it (1 of them are commented out)
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+mdatasub$unconstrainedEst2 <- exp(k+(mu*log(mdatasub$vi1_origpop))+(alpha*log(mdatasub$wj3_destmedinc))-(beta*log(mdatasub$dist)))
+
+# mdatasub$unconstrainedEst2 <- (exp(k)*exp(mu*log(mdatasub$vi1_origpop))*exp(alpha*log(mdatasub$wj3_destmedinc))*exp(-beta*log(mdatasub$dist)))
+
+```
+
+### 7.1.4 Save the fitted values
+
+#### 7.1.4.1 Run model and save new flow estimates
+
+- Run the model and save all of the new flow estimates in a new column in the dataframe.
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+mdatasub$unconstrainedEst2 <- round(mdatasub$unconstrainedEst2,0)
+sum(mdatasub$unconstrainedEst2)
+```
+
+#### 7.1.4.2 Turn output into matrix
+
+- Use *dcast()* of *maditr** package.
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+mdatasubmat2 <- dcast(mdatasub, Orig_code ~ Dest_code, sum, value.var = "unconstrainedEst2", margins=c("Orig_code", "Dest_code"))
+mdatasubmat2
+```
+
+#### 7.1.4.3 Compare with original matrix
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+mdatasubmat <- dcast(mdatasub, Orig_code ~ Dest_code, sum, value.var = "Flow", margins=c("Orig_code", "Dest_code"))
+mdatasubmat
+```
+
+#### 7.1.4.4 Visualise actual and estiamted flow
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+ggplot(data=mdatasub, 
+       aes(y = `Flow`, 
+           x = `unconstrainedEst2`))+
+  geom_point(color="black", fill="light blue")
+```
+
+### 7.1.5 Assess model performance
+
+- Use *postReSample()* of **caret** package to compute three Goodness-of-Fit statistics To provide a more formal assessment of the model, Goodness-o-Fit statistics 
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+postResample(mdatasub$Flow,mdatasub$unconstrainedEst2)
+
+```
+
+Results above show that:
+
+- R-squared value of 0.32 is relatively low.
+- Seems that the unconstrained model **failed to fit the empirical data well**.
+
+## 7.2 Origin Constrained Spatial Interaction Model
+
+### 7.2.1 Calibrate model
+
+- Calibrate an origin constrained SIM (the “-1” indicates no intercept in the regression model) by using *glm()*
+- *summary()* to look at the summary statistics
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+origSim <- glm(Flow ~ Orig_code+log(wj3_destmedinc)+log(dist)-1, na.action = na.exclude, family = poisson(link = "log"), data = mdatasub)
+
+summary(origSim)
+```
+
+### 7.2.2 Examine how contraints hold for destinations
+
+#### 7.2.2.1 Fit model
+
+- Firstly, we will fitted the model and roundup the estimated values 
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+mdatasub$origSimFitted <- round(fitted(origSim),0)
+
+```
+
+#### 7.2.2.2 Turn paired list into matrix
+
+- To create pivot table to turn paired list into matrix.
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+mdatasubmat3 <- dcast(mdatasub, Orig_code ~ Dest_code, sum, value.var = "origSimFitted", margins=c("Orig_code", "Dest_code"))
+mdatasubmat3
+```
+
+#### 7.2.2.3 Compare with  original observed data
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+mdatasubmat
+```
+
+#### 7.2.2.4 Display actual and estimated flow
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+ggplot(data=mdatasub, 
+       aes(y = `Flow`, 
+           x = `origSimFitted`))+
+  geom_point(color="black", fill="light blue")
+```
+
+### 7.2.3 Assess model
+
+- Compare the fitted values and the actual values by computing Goodness-of-fit statistics.
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+postResample(mdatasub$Flow,mdatasub$origSimFitted)
+
+```
+
+Results above show that:
+
+-  R-squared **improved** considerably from 0.32 in the unconstrained model to 0.43 in this origin constrained model.

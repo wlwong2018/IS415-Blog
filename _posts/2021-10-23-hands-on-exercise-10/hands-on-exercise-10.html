@@ -116,7 +116,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   <!--/radix_placeholder_rmarkdown_metadata-->
   
   <script type="text/json" id="radix-resource-manifest">
-  {"type":"character","attributes":{},"value":["hands-on-exercise-10_files/anchor-4.2.2/anchor.min.js","hands-on-exercise-10_files/bowser-1.9.3/bowser.min.js","hands-on-exercise-10_files/distill-2.2.21/template.v2.js","hands-on-exercise-10_files/figure-html5/unnamed-chunk-10-1.png","hands-on-exercise-10_files/figure-html5/unnamed-chunk-27-1.png","hands-on-exercise-10_files/header-attrs-2.10/header-attrs.js","hands-on-exercise-10_files/jquery-1.11.3/jquery.min.js","hands-on-exercise-10_files/popper-2.6.0/popper.min.js","hands-on-exercise-10_files/tippy-6.2.7/tippy-bundle.umd.min.js","hands-on-exercise-10_files/tippy-6.2.7/tippy-light-border.css","hands-on-exercise-10_files/tippy-6.2.7/tippy.css","hands-on-exercise-10_files/tippy-6.2.7/tippy.umd.min.js","hands-on-exercise-10_files/webcomponents-2.0.0/webcomponents.js"]}
+  {"type":"character","attributes":{},"value":["hands-on-exercise-10_files/anchor-4.2.2/anchor.min.js","hands-on-exercise-10_files/bowser-1.9.3/bowser.min.js","hands-on-exercise-10_files/distill-2.2.21/template.v2.js","hands-on-exercise-10_files/figure-html5/unnamed-chunk-10-1.png","hands-on-exercise-10_files/figure-html5/unnamed-chunk-27-1.png","hands-on-exercise-10_files/figure-html5/unnamed-chunk-35-1.png","hands-on-exercise-10_files/figure-html5/unnamed-chunk-41-1.png","hands-on-exercise-10_files/header-attrs-2.10/header-attrs.js","hands-on-exercise-10_files/jquery-1.11.3/jquery.min.js","hands-on-exercise-10_files/popper-2.6.0/popper.min.js","hands-on-exercise-10_files/tippy-6.2.7/tippy-bundle.umd.min.js","hands-on-exercise-10_files/tippy-6.2.7/tippy-light-border.css","hands-on-exercise-10_files/tippy-6.2.7/tippy.css","hands-on-exercise-10_files/tippy-6.2.7/tippy.umd.min.js","hands-on-exercise-10_files/webcomponents-2.0.0/webcomponents.js"]}
   </script>
   <!--radix_placeholder_navigation_in_header-->
   <!--/radix_placeholder_navigation_in_header-->
@@ -1524,6 +1524,23 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <li><a href="#set-line-widths">6.5 Set line widths</a></li>
 <li><a href="#plot-desire-line-map">6.6 Plot desire line map</a></li>
 </ul></li>
+<li><a href="#build-spatial-interaction-models">7 Build Spatial Interaction Models</a>
+<ul>
+<li><a href="#unconstrained-spatial-interaction-model">7.1 Unconstrained Spatial Interaction Model</a>
+<ul>
+<li><a href="#caliberate-model">7.1.1 Caliberate model</a></li>
+<li><a href="#fit-the-model">7.1.2 Fit the model</a></li>
+<li><a href="#a-more-difficult-way-optional">7.1.3 A more difficult way (optional)</a></li>
+<li><a href="#save-the-fitted-values">7.1.4 Save the fitted values</a></li>
+<li><a href="#assess-model-performance">7.1.5 Assess model performance</a></li>
+</ul></li>
+<li><a href="#origin-constrained-spatial-interaction-model">7.2 Origin Constrained Spatial Interaction Model</a>
+<ul>
+<li><a href="#calibrate-model">7.2.1 Calibrate model</a></li>
+<li><a href="#examine-how-contraints-hold-for-destinations">7.2.2 Examine how contraints hold for destinations</a></li>
+<li><a href="#assess-model">7.2.3 Assess model</a></li>
+</ul></li>
+</ul></li>
 </ul>
 </nav>
 </div>
@@ -2040,7 +2057,389 @@ $ dist            &lt;dbl&gt; 5.0000, 391.4379, 682.7450, 685.8484, 707.90~</cod
 </div>
 <p><img src="hands-on-exercise-10_files/figure-html5/unnamed-chunk-27-1.png" width="624" /></p>
 </div>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<h1 id="build-spatial-interaction-models">7 Build Spatial Interaction Models</h1>
+<p>Learn how to using R Stat function to calibrate the Spatial Interaction Models. Instead of using <em>lm()</em> the <em>glm()</em> <strong>function will be used</strong>. This is because <em>glm()</em> allows us to <strong>calibrate the model using generalised linear regression methods</strong>.</p>
+<h2 id="unconstrained-spatial-interaction-model">7.1 Unconstrained Spatial Interaction Model</h2>
+<p>In this section, we will calibrate an unconstrained spatial interaction model by using glm(). The explanatory variables are origin population (i.e. vi1_origpop), destination median income (i.e. wj3_destmedinc) and distance between origin and destination in km (i.e. dist).</p>
+<h3 id="caliberate-model">7.1.1 Caliberate model</h3>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>uncosim</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/glm.html'>glm</a></span><span class='op'>(</span><span class='va'>Flow</span> <span class='op'>~</span> <span class='fu'><a href='https://rdrr.io/r/base/Log.html'>log</a></span><span class='op'>(</span><span class='va'>vi1_origpop</span><span class='op'>)</span><span class='op'>+</span><span class='fu'><a href='https://rdrr.io/r/base/Log.html'>log</a></span><span class='op'>(</span><span class='va'>wj3_destmedinc</span><span class='op'>)</span><span class='op'>+</span><span class='fu'><a href='https://rdrr.io/r/base/Log.html'>log</a></span><span class='op'>(</span><span class='va'>dist</span><span class='op'>)</span>, na.action <span class='op'>=</span> <span class='va'>na.exclude</span>, family <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/stats/family.html'>poisson</a></span><span class='op'>(</span>link <span class='op'>=</span> <span class='st'>"log"</span><span class='op'>)</span>, data <span class='op'>=</span> <span class='va'>mdatasub</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>uncosim</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>
+Call:
+glm(formula = Flow ~ log(vi1_origpop) + log(wj3_destmedinc) + 
+    log(dist), family = poisson(link = &quot;log&quot;), data = mdatasub, 
+    na.action = na.exclude)
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-177.78   -54.49   -24.50     9.21   470.11  
+
+Coefficients:
+                      Estimate Std. Error z value Pr(&gt;|z|)    
+(Intercept)          7.1953790  0.0248852  289.14   &lt;2e-16 ***
+log(vi1_origpop)     0.5903363  0.0009232  639.42   &lt;2e-16 ***
+log(wj3_destmedinc) -0.1671417  0.0033663  -49.65   &lt;2e-16 ***
+log(dist)           -0.8119316  0.0010157 -799.41   &lt;2e-16 ***
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+(Dispersion parameter for poisson family taken to be 1)
+
+    Null deviance: 2750417  on 209  degrees of freedom
+Residual deviance: 1503573  on 206  degrees of freedom
+AIC: 1505580
+
+Number of Fisher Scoring iterations: 5</code></pre>
+</div>
+<p>Result above show that:</p>
+<ul>
+<li>The parameter estimates of the explanatory variables are significant at alpha value 0.001.</li>
+</ul>
+<h3 id="fit-the-model">7.1.2 Fit the model</h3>
+<ul>
+<li>Use <em>fitted()</em> of <strong>R</strong> to compute the fitted values to assess the performance of the model</li>
+</ul>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>mdatasub</span><span class='op'>$</span><span class='va'>fitted</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/fitted.values.html'>fitted</a></span><span class='op'>(</span><span class='va'>uncosim</span><span class='op'>)</span>
+</code></pre>
+</div>
+</div>
+<h3 id="a-more-difficult-way-optional">7.1.3 A more difficult way (optional)</h3>
+<p>Another way to calculate the estimates is to plug all of the parameters back into Equation 6</p>
+<ul>
+<li>Assign the parameter values from the model to the appropriate variables</li>
+</ul>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>k</span> <span class='op'>&lt;-</span> <span class='va'>uncosim</span><span class='op'>$</span><span class='va'>coefficients</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>]</span>
+<span class='va'>mu</span> <span class='op'>&lt;-</span> <span class='va'>uncosim</span><span class='op'>$</span><span class='va'>coefficients</span><span class='op'>[</span><span class='fl'>2</span><span class='op'>]</span>
+<span class='va'>alpha</span> <span class='op'>&lt;-</span> <span class='va'>uncosim</span><span class='op'>$</span><span class='va'>coefficients</span><span class='op'>[</span><span class='fl'>3</span><span class='op'>]</span>
+<span class='va'>beta</span> <span class='op'>&lt;-</span> <span class='op'>-</span><span class='va'>uncosim</span><span class='op'>$</span><span class='va'>coefficients</span><span class='op'>[</span><span class='fl'>4</span><span class='op'>]</span>
+</code></pre>
+</div>
+</div>
+<ul>
+<li>Next, plug everything back into the Equation 6 model (be careful with the positive and negative signing of the parameters as the beta parameter may not have been saved as negative so will need to force negative)</li>
+<li>Below are 2 ways to do it (1 of them are commented out)</li>
+</ul>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>mdatasub</span><span class='op'>$</span><span class='va'>unconstrainedEst2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/Log.html'>exp</a></span><span class='op'>(</span><span class='va'>k</span><span class='op'>+</span><span class='op'>(</span><span class='va'>mu</span><span class='op'>*</span><span class='fu'><a href='https://rdrr.io/r/base/Log.html'>log</a></span><span class='op'>(</span><span class='va'>mdatasub</span><span class='op'>$</span><span class='va'>vi1_origpop</span><span class='op'>)</span><span class='op'>)</span><span class='op'>+</span><span class='op'>(</span><span class='va'>alpha</span><span class='op'>*</span><span class='fu'><a href='https://rdrr.io/r/base/Log.html'>log</a></span><span class='op'>(</span><span class='va'>mdatasub</span><span class='op'>$</span><span class='va'>wj3_destmedinc</span><span class='op'>)</span><span class='op'>)</span><span class='op'>-</span><span class='op'>(</span><span class='va'>beta</span><span class='op'>*</span><span class='fu'><a href='https://rdrr.io/r/base/Log.html'>log</a></span><span class='op'>(</span><span class='va'>mdatasub</span><span class='op'>$</span><span class='va'>dist</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
+
+<span class='co'># mdatasub$unconstrainedEst2 &lt;- (exp(k)*exp(mu*log(mdatasub$vi1_origpop))*exp(alpha*log(mdatasub$wj3_destmedinc))*exp(-beta*log(mdatasub$dist)))</span>
+</code></pre>
+</div>
+</div>
+<h3 id="save-the-fitted-values">7.1.4 Save the fitted values</h3>
+<h4 id="run-model-and-save-new-flow-estimates">7.1.4.1 Run model and save new flow estimates</h4>
+<ul>
+<li>Run the model and save all of the new flow estimates in a new column in the dataframe.</li>
+</ul>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>mdatasub</span><span class='op'>$</span><span class='va'>unconstrainedEst2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/Round.html'>round</a></span><span class='op'>(</span><span class='va'>mdatasub</span><span class='op'>$</span><span class='va'>unconstrainedEst2</span>,<span class='fl'>0</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span><span class='op'>(</span><span class='va'>mdatasub</span><span class='op'>$</span><span class='va'>unconstrainedEst2</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>[1] 1313517</code></pre>
+</div>
+<h4 id="turn-output-into-matrix">7.1.4.2 Turn output into matrix</h4>
+<ul>
+<li>Use <em>dcast()</em> of *maditr** package.</li>
+</ul>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>mdatasubmat2</span> <span class='op'>&lt;-</span> <span class='fu'>dcast</span><span class='op'>(</span><span class='va'>mdatasub</span>, <span class='va'>Orig_code</span> <span class='op'>~</span> <span class='va'>Dest_code</span>, <span class='va'>sum</span>, value.var <span class='op'>=</span> <span class='st'>"unconstrainedEst2"</span>, margins<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"Orig_code"</span>, <span class='st'>"Dest_code"</span><span class='op'>)</span><span class='op'>)</span>
+<span class='va'>mdatasubmat2</span>
+</code></pre>
+</div>
+<pre><code>   Orig_code 1GSYD  1RNSW  2GMEL  2RVIC 3GBRI 3RQLD 4GADE 4RSAU 5GPER
+1      1GSYD     0  30810  20358  19562 17788 11282 13497 10525  5234
+2      1RNSW 20638      0  15339  16316 12198  9789 12439  9661  4114
+3      2GMEL 17285  19443      0  69923 10043  9071 19565 11595  5685
+4      2RVIC  9053  11272  38111      0  5413  5035 12044  6686  3070
+5      3GBRI 11364  11634   7556   7473     0  9436  6605  6097  3116
+6      3RQLD  6931   8978   6563   6683  9074     0  7227  8378  3783
+7      4GADE  5784   7958   9875  11153  4431  5042     0 10176  3464
+8      4RSAU  2278   3122   2956   3127  2066  2952  5140     0  1878
+9      5GPER  2986   3504   3820   3784  2782  3512  4611  4950     0
+10     5RWAU  1583   1908   1947   1952  1534  2126  2446  3017  3885
+11     6GHOB  2125   2081   3758   3099  1409  1257  2162  1507   919
+12     6RTAS  2653   2642   5282   4230  1724  1549  2801  1894  1119
+13     7GDAR   647    769    711    710   701  1102   815   981   736
+14     7RNTE   678    841    756    765   726  1287   921  1241   713
+15     8ACTE  9191   6703   6720   6227  3186  2396  3526  2523  1242
+16     (all) 93196 111665 123752 155004 73075 65836 93799 79231 38958
+   5RWAU 6GHOB  6RTAS 7GDAR 7RNTE  8ACTE   (all)
+1   5718 13997  14251  5270  7226  39656  215174
+2   4616  9181   9507  4200  6002  19373  153373
+3   5972 21014  24091  4921  6838  24616  250062
+4   3264  9444  10515  2680  3771  12432  132790
+5   3541  5929   5918  3652  4943   8781   96045
+6   4719  5087   5111  5517  8428   6351   92830
+7   3787  6102   6449  2847  4206   6519   87793
+8   2359  2149   2202  1730  2862   2356   37177
+9   8006  3453   3430  3420  4332   3058   55648
+10     0  1676   1673  2380  3215   1599   30941
+11   919     0  13173   753  1004   2535   36701
+12  1125 16150      0   918  1232   3249   46568
+13  1055   609    605     0  2063    627   12131
+14  1090   620    621  1578     0    661   12498
+15  1339  3870   4045  1185  1633      0   53786
+16 47510 99281 101591 41051 57755 131813 1313517</code></pre>
+</div>
+<h4 id="compare-with-original-matrix">7.1.4.3 Compare with original matrix</h4>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>mdatasubmat</span> <span class='op'>&lt;-</span> <span class='fu'>dcast</span><span class='op'>(</span><span class='va'>mdatasub</span>, <span class='va'>Orig_code</span> <span class='op'>~</span> <span class='va'>Dest_code</span>, <span class='va'>sum</span>, value.var <span class='op'>=</span> <span class='st'>"Flow"</span>, margins<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"Orig_code"</span>, <span class='st'>"Dest_code"</span><span class='op'>)</span><span class='op'>)</span>
+<span class='va'>mdatasubmat</span>
+</code></pre>
+</div>
+<pre><code>   Orig_code  1GSYD  1RNSW  2GMEL  2RVIC  3GBRI  3RQLD 4GADE 4RSAU
+1      1GSYD      0  91031  22601   4416  22888  27445  5817   795
+2      1RNSW  53562      0  12407  13084  21300  35189  3617  1591
+3      2GMEL  15560  11095      0  70260  13057  16156  6021  1300
+4      2RVIC   2527  11967  48004      0   4333  10102  3461  2212
+5      3GBRI  12343  16061  13078   4247      0  84649  3052   820
+6      3RQLD  11634  26701  12284   7573  74410      0  3774  1751
+7      4GADE   5421   3518   8810   3186   5447   6173     0 25677
+8      4RSAU    477   1491   1149   2441    820   2633 22015     0
+9      5GPER   6516   4066  11729   2929   5081   7006  2631   867
+10     5RWAU    714   2242   1490   1813   1137   4328   807   982
+11     6GHOB   1224   1000   3016    622   1307   1804   533   106
+12     6RTAS   1024   1866   2639   1636   1543   2883   651   342
+13     7GDAR   1238   2178   1953   1480   2769   5108  2105   641
+14     7RNTE    406   1432    700    792    896   3018  1296   961
+15     8ACTE   6662  15399   5229   1204   4331   3954  1359   134
+16     (all) 119308 190047 145089 115683 159319 210448 57139 38179
+   5GPER 5RWAU 6GHOB 6RTAS 7GDAR 7RNTE 8ACTE   (all)
+1  10574  2128  1644  1996  1985   832 10670  204822
+2   4990  3300   970  1882  2248  1439 15779  171358
+3  10116  2574  2135  2555  2023   996  4724  158572
+4   3459  2601   672  1424  1547   717  1353   94379
+5   4812  1798  1386  2306  1812   909  3134  150407
+6   6588  4690  1499  3089  3127  2140  3115  162375
+7   3829  1228   602   872  1851   921  1993   69528
+8   1052  1350   142   430   681   488   183   35352
+9      0 41320  1018  1805  1300   413  1666   88347
+10 42146     0   277  1163  1090   623   256   59068
+11   899   363     0  5025   190   115   565   16769
+12  1210  1032  7215     0   268   170   292   22771
+13  2152   954   243   335     0  1996   832   23984
+14   699   826    96   213  2684     0   229   14248
+15  1514   285   369   270   617   211     0   41538
+16 94040 64449 18268 23365 21423 11970 44791 1313518</code></pre>
+</div>
+<h4 id="visualise-actual-and-estiamted-flow">7.1.4.4 Visualise actual and estiamted flow</h4>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>ggplot</span><span class='op'>(</span>data<span class='op'>=</span><span class='va'>mdatasub</span>, 
+       <span class='fu'>aes</span><span class='op'>(</span>y <span class='op'>=</span> <span class='va'>`Flow`</span>, 
+           x <span class='op'>=</span> <span class='va'>`unconstrainedEst2`</span><span class='op'>)</span><span class='op'>)</span><span class='op'>+</span>
+  <span class='fu'>geom_point</span><span class='op'>(</span>color<span class='op'>=</span><span class='st'>"black"</span>, fill<span class='op'>=</span><span class='st'>"light blue"</span><span class='op'>)</span>
+</code></pre>
+</div>
+<p><img src="hands-on-exercise-10_files/figure-html5/unnamed-chunk-35-1.png" width="624" /></p>
+</div>
+<h3 id="assess-model-performance">7.1.5 Assess model performance</h3>
+<ul>
+<li>Use <em>postReSample()</em> of <strong>caret</strong> package to compute three Goodness-of-Fit statistics To provide a more formal assessment of the model, Goodness-o-Fit statistics</li>
+</ul>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>postResample</span><span class='op'>(</span><span class='va'>mdatasub</span><span class='op'>$</span><span class='va'>Flow</span>,<span class='va'>mdatasub</span><span class='op'>$</span><span class='va'>unconstrainedEst2</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>        RMSE     Rsquared          MAE 
+1.078917e+04 3.245418e-01 5.054548e+03 </code></pre>
+</div>
+<p>Results above show that:</p>
+<ul>
+<li>R-squared value of 0.32 is relatively low.</li>
+<li>Seems that the unconstrained model <strong>failed to fit the empirical data well</strong>.</li>
+</ul>
+<h2 id="origin-constrained-spatial-interaction-model">7.2 Origin Constrained Spatial Interaction Model</h2>
+<h3 id="calibrate-model">7.2.1 Calibrate model</h3>
+<ul>
+<li>Calibrate an origin constrained SIM (the “-1” indicates no intercept in the regression model) by using <em>glm()</em></li>
+<li><em>summary()</em> to look at the summary statistics</li>
+</ul>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>origSim</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/glm.html'>glm</a></span><span class='op'>(</span><span class='va'>Flow</span> <span class='op'>~</span> <span class='va'>Orig_code</span><span class='op'>+</span><span class='fu'><a href='https://rdrr.io/r/base/Log.html'>log</a></span><span class='op'>(</span><span class='va'>wj3_destmedinc</span><span class='op'>)</span><span class='op'>+</span><span class='fu'><a href='https://rdrr.io/r/base/Log.html'>log</a></span><span class='op'>(</span><span class='va'>dist</span><span class='op'>)</span><span class='op'>-</span><span class='fl'>1</span>, na.action <span class='op'>=</span> <span class='va'>na.exclude</span>, family <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/stats/family.html'>poisson</a></span><span class='op'>(</span>link <span class='op'>=</span> <span class='st'>"log"</span><span class='op'>)</span>, data <span class='op'>=</span> <span class='va'>mdatasub</span><span class='op'>)</span>
+
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>origSim</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>
+Call:
+glm(formula = Flow ~ Orig_code + log(wj3_destmedinc) + log(dist) - 
+    1, family = poisson(link = &quot;log&quot;), data = mdatasub, na.action = na.exclude)
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-225.71   -54.10   -15.94    20.45   374.27  
+
+Coefficients:
+                     Estimate Std. Error z value Pr(&gt;|z|)    
+Orig_code1GSYD      19.541851   0.023767  822.22   &lt;2e-16 ***
+Orig_code1RNSW      19.425497   0.023913  812.35   &lt;2e-16 ***
+Orig_code2GMEL      18.875763   0.023243  812.12   &lt;2e-16 ***
+Orig_code2RVIC      18.335242   0.022996  797.31   &lt;2e-16 ***
+Orig_code3GBRI      19.856564   0.024063  825.20   &lt;2e-16 ***
+Orig_code3RQLD      20.094898   0.024300  826.94   &lt;2e-16 ***
+Orig_code4GADE      18.747938   0.023966  782.28   &lt;2e-16 ***
+Orig_code4RSAU      18.324029   0.024407  750.75   &lt;2e-16 ***
+Orig_code5GPER      20.010551   0.024631  812.43   &lt;2e-16 ***
+Orig_code5RWAU      19.392751   0.024611  787.96   &lt;2e-16 ***
+Orig_code6GHOB      16.802016   0.024282  691.97   &lt;2e-16 ***
+Orig_code6RTAS      17.013981   0.023587  721.33   &lt;2e-16 ***
+Orig_code7GDAR      18.607483   0.025012  743.93   &lt;2e-16 ***
+Orig_code7RNTE      17.798856   0.025704  692.45   &lt;2e-16 ***
+Orig_code8ACTE      17.796693   0.023895  744.79   &lt;2e-16 ***
+log(wj3_destmedinc) -0.272640   0.003383  -80.59   &lt;2e-16 ***
+log(dist)           -1.227679   0.001400 -876.71   &lt;2e-16 ***
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+(Dispersion parameter for poisson family taken to be 1)
+
+    Null deviance: 23087017  on 210  degrees of freedom
+Residual deviance:  1207394  on 193  degrees of freedom
+AIC: 1209427
+
+Number of Fisher Scoring iterations: 6</code></pre>
+</div>
+<h3 id="examine-how-contraints-hold-for-destinations">7.2.2 Examine how contraints hold for destinations</h3>
+<h4 id="fit-model">7.2.2.1 Fit model</h4>
+<ul>
+<li>Firstly, we will fitted the model and roundup the estimated values</li>
+</ul>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>mdatasub</span><span class='op'>$</span><span class='va'>origSimFitted</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/Round.html'>round</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/stats/fitted.values.html'>fitted</a></span><span class='op'>(</span><span class='va'>origSim</span><span class='op'>)</span>,<span class='fl'>0</span><span class='op'>)</span>
+</code></pre>
+</div>
+</div>
+<h4 id="turn-paired-list-into-matrix">7.2.2.2 Turn paired list into matrix</h4>
+<ul>
+<li>To create pivot table to turn paired list into matrix.</li>
+</ul>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>mdatasubmat3</span> <span class='op'>&lt;-</span> <span class='fu'>dcast</span><span class='op'>(</span><span class='va'>mdatasub</span>, <span class='va'>Orig_code</span> <span class='op'>~</span> <span class='va'>Dest_code</span>, <span class='va'>sum</span>, value.var <span class='op'>=</span> <span class='st'>"origSimFitted"</span>, margins<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"Orig_code"</span>, <span class='st'>"Dest_code"</span><span class='op'>)</span><span class='op'>)</span>
+<span class='va'>mdatasubmat3</span>
+</code></pre>
+</div>
+<pre><code>   Orig_code  1GSYD  1RNSW  2GMEL  2RVIC 3GBRI 3RQLD 4GADE 4RSAU
+1      1GSYD      0  36794  19752  18516 15905  8076 10591  7248
+2      1RNSW  29163      0  18862  20620 13173  9548 13715  9329
+3      2GMEL   8501  10243      0  70950  3742  3243 10367  4685
+4      2RVIC   4924   6918  43838      0  2263  2050  7667  3139
+5      3GBRI  21684  22658  11852  11604     0 16555  9653  8526
+6      3RQLD  12057  17984  11248  11511 18128     0 12989 16188
+7      4GADE   4109   6714   9345  11186  2747  3376     0  9731
+8      4RSAU   1922   3122   2887   3130  1659  2876  6653     0
+9      5GPER   3930   5048   5777   5673  3533  5080  7666  8507
+10     5RWAU   2445   3269   3387   3386  2333  3862  4775  6535
+11     6GHOB    619    605   1485   1105   333   283   643   371
+12     6RTAS    827    829   2374   1689   431   371   908   501
+13     7GDAR   1030   1350   1204   1198  1165  2331  1478  1948
+14     7RNTE    644    899    769    779   714  1716  1034  1618
+15     8ACTE   9622   6021   6070   5386  1939  1274  2285  1373
+16     (all) 101477 122454 138850 166733 68065 60641 90424 79699
+   5GPER 5RWAU 6GHOB 6RTAS 7GDAR 7RNTE  8ACTE   (all)
+1   2504  2860 11192 11454  2519  4105  53308  204824
+2   2549  3032  8667  9100  2619  4543  26439  171359
+3   1584  1705 11552 14147  1268  2109  14474  158570
+4    961  1053  5309  6221   779  1320   7935   94377
+5   3069  3722  8200  8144  3886  6207  14647  150407
+6   4832  6746  7639  7664  8515 16335  10539  162375
+7   1895  2167  4506  4879  1403  2558   4912   69528
+8   1438  2028  1780  1840  1264  2736   2017   35352
+9      0 17470  4952  4882  4812  6954   4064   88348
+10  9514     0  2696  2679  4515  7196   2476   59068
+11   175   175     0  9840   129   201    807   16771
+12   225   226 12842     0   166   261   1121   22771
+13  1253  2159   950   937     0  6000    981   23984
+14   695  1321   569   568  2303     0    618   14247
+15   467   523  2631  2802   433   712      0   41538
+16 31161 45187 83485 85157 34611 61237 144338 1313519</code></pre>
+</div>
+<h4 id="compare-with-original-observed-data">7.2.2.3 Compare with original observed data</h4>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>mdatasubmat</span>
+</code></pre>
+</div>
+<pre><code>   Orig_code  1GSYD  1RNSW  2GMEL  2RVIC  3GBRI  3RQLD 4GADE 4RSAU
+1      1GSYD      0  91031  22601   4416  22888  27445  5817   795
+2      1RNSW  53562      0  12407  13084  21300  35189  3617  1591
+3      2GMEL  15560  11095      0  70260  13057  16156  6021  1300
+4      2RVIC   2527  11967  48004      0   4333  10102  3461  2212
+5      3GBRI  12343  16061  13078   4247      0  84649  3052   820
+6      3RQLD  11634  26701  12284   7573  74410      0  3774  1751
+7      4GADE   5421   3518   8810   3186   5447   6173     0 25677
+8      4RSAU    477   1491   1149   2441    820   2633 22015     0
+9      5GPER   6516   4066  11729   2929   5081   7006  2631   867
+10     5RWAU    714   2242   1490   1813   1137   4328   807   982
+11     6GHOB   1224   1000   3016    622   1307   1804   533   106
+12     6RTAS   1024   1866   2639   1636   1543   2883   651   342
+13     7GDAR   1238   2178   1953   1480   2769   5108  2105   641
+14     7RNTE    406   1432    700    792    896   3018  1296   961
+15     8ACTE   6662  15399   5229   1204   4331   3954  1359   134
+16     (all) 119308 190047 145089 115683 159319 210448 57139 38179
+   5GPER 5RWAU 6GHOB 6RTAS 7GDAR 7RNTE 8ACTE   (all)
+1  10574  2128  1644  1996  1985   832 10670  204822
+2   4990  3300   970  1882  2248  1439 15779  171358
+3  10116  2574  2135  2555  2023   996  4724  158572
+4   3459  2601   672  1424  1547   717  1353   94379
+5   4812  1798  1386  2306  1812   909  3134  150407
+6   6588  4690  1499  3089  3127  2140  3115  162375
+7   3829  1228   602   872  1851   921  1993   69528
+8   1052  1350   142   430   681   488   183   35352
+9      0 41320  1018  1805  1300   413  1666   88347
+10 42146     0   277  1163  1090   623   256   59068
+11   899   363     0  5025   190   115   565   16769
+12  1210  1032  7215     0   268   170   292   22771
+13  2152   954   243   335     0  1996   832   23984
+14   699   826    96   213  2684     0   229   14248
+15  1514   285   369   270   617   211     0   41538
+16 94040 64449 18268 23365 21423 11970 44791 1313518</code></pre>
+</div>
+<h4 id="display-actual-and-estimated-flow">7.2.2.4 Display actual and estimated flow</h4>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>ggplot</span><span class='op'>(</span>data<span class='op'>=</span><span class='va'>mdatasub</span>, 
+       <span class='fu'>aes</span><span class='op'>(</span>y <span class='op'>=</span> <span class='va'>`Flow`</span>, 
+           x <span class='op'>=</span> <span class='va'>`origSimFitted`</span><span class='op'>)</span><span class='op'>)</span><span class='op'>+</span>
+  <span class='fu'>geom_point</span><span class='op'>(</span>color<span class='op'>=</span><span class='st'>"black"</span>, fill<span class='op'>=</span><span class='st'>"light blue"</span><span class='op'>)</span>
+</code></pre>
+</div>
+<p><img src="hands-on-exercise-10_files/figure-html5/unnamed-chunk-41-1.png" width="624" /></p>
+</div>
+<h3 id="assess-model">7.2.3 Assess model</h3>
+<ul>
+<li>Compare the fitted values and the actual values by computing Goodness-of-fit statistics.</li>
+</ul>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>postResample</span><span class='op'>(</span><span class='va'>mdatasub</span><span class='op'>$</span><span class='va'>Flow</span>,<span class='va'>mdatasub</span><span class='op'>$</span><span class='va'>origSimFitted</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>        RMSE     Rsquared          MAE 
+9872.6934321    0.4345011 4804.6714286 </code></pre>
+</div>
+<p>Results above show that:</p>
+<ul>
+<li>R-squared <strong>improved</strong> considerably from 0.32 in the unconstrained model to 0.43 in this origin constrained model.</li>
+</ul>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->
 </div>
