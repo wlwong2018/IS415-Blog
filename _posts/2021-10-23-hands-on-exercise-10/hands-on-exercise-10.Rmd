@@ -320,7 +320,7 @@ plot(AusWGS, add=T)
 
 # 7 Build Spatial Interaction Models
 
-Learn how to using R Stat function to calibrate the Spatial Interaction Models. Instead of using *lm()* the *glm()* **function will be used**. This is because *glm()* allows us to **calibrate the model using generalised linear regression methods**.
+Learn how to use R Stat function to calibrate the Spatial Interaction Models. Instead of using *lm()*, *glm()* **function will be used**. This is because *glm()* allows us to **calibrate the model using generalised linear regression methods**.
 
 ## 7.1 Unconstrained Spatial Interaction Model
 
@@ -480,3 +480,123 @@ postResample(mdatasub$Flow,mdatasub$origSimFitted)
 Results above show that:
 
 -  R-squared **improved** considerably from 0.32 in the unconstrained model to 0.43 in this origin constrained model.
+
+
+## 7.3 Destination Constrained Spatial Interaction Model
+
+### 7.3.1 Calibrate model
+
+- Calibrate a destination constrained SIM (the “-1” indicates no intercept in the regression model) by using *glm()*.
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+destSim <- glm(Flow ~ Dest_code+log(vi1_origpop)+log(dist)-1, na.action = na.exclude, family = poisson(link = "log"), data = mdatasub)
+summary(destSim)
+```
+
+### 7.3.2 Examine how contraints hold for destinations
+
+#### 7.3.2.1 Fit model
+
+- Fit the model and roundup the estimated values
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+mdatasub$destSimFitted <- round(fitted(destSim),0)
+```
+
+#### 7.3.2.2 Turn paired list into matrix
+
+- To create pivot table to turn paired list into matrix.
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+mdatasubmat6 <- dcast(mdatasub, Orig_code ~ Dest_code, sum, value.var = "destSimFitted", margins=c("Orig_code", "Dest_code"))
+mdatasubmat6
+```
+
+#### 7.3.2.3 Compare with original observed data
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+mdatasubmat
+```
+
+#### 7.3.2.4 Display actual and estimated flow
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+ggplot(data=mdatasub, 
+       aes(y = `Flow`, 
+           x = `destSimFitted`))+
+  geom_point(color="black", fill="light blue")
+```
+
+### 7.3.3 Assess model
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+postResample(mdatasub$Flow,mdatasub$destSimFitted)
+
+```
+
+Results above show that:
+
+- R-squared **improved further** from 0.43 in the unconstrained model to 0.65 in this origin constrained model
+
+## 7.4 Doubly Constrained Spatial Interaction Model
+
+### 7.4.1 Calibrate model
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+doubSim <- glm(Flow ~ Orig_code+Dest_code+log(dist), na.action = na.exclude, family = poisson(link = "log"), data = mdatasub)
+summary(doubSim)
+```
+
+### 7.4.2 Examine how contraints hold for destinations
+
+#### 7.4.2.1 Fit model
+
+- Fit the model and roundup the estimated values
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+mdatasub$doubsimFitted <- round(fitted(doubSim),0)
+```
+
+#### 7.4.2.2 Turn paired list into matrix
+
+- To create pivot table to turn paired list into matrix.
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+mdatasubmat7 <- dcast(mdatasub, Orig_code ~ Dest_code, sum, value.var = "doubsimFitted", margins=c("Orig_code", "Dest_code"))
+mdatasubmat7
+```
+
+#### 7.4.2.3 Compare with original observed data
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+mdatasubmat
+```
+
+#### 7.4.2.4 Display actual and estimated flow
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+ggplot(data=mdatasub, 
+       aes(y = `Flow`, 
+           x = `doubsimFitted`))+
+  geom_point(color="black", fill="light blue")
+```
+
+Results above show that:
+
+- Fitted values are highly correlated with the actual flow values.
+- This show the Doubly Constrained Spatial Interaction Model is the best fit model among the four spatial interaction models.
+
+### 7.4.3 Assess model
+
+- To provide a quantitative assessment of the model, we can compute the Goodness-of-fit statistics exactly the same way as before.
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+postResample(mdatasub$Flow,mdatasub$doubsimFitted)
+
+```
+
+Results above show that:
+
+- The Goodness-of-fit statistics reveal that the Doubly Constrained Spatial Interaction Model is the **best modell** because it produces the **best R-squared statistic** and **smallest RMSE**.
+
+
