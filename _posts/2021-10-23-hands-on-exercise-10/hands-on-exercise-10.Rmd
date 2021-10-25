@@ -1,7 +1,7 @@
 ---
 title: "Hands-on Exercise 10"
 description: |
-  In Hands-on Exercise 10, I have learnt how to calibrate spatial interaction models by using GLM() of Base R.
+  In Hands-on Exercise 10, I have learnt how to calibrate spatial interaction models by using GLM() of Base R.(contains additional notes taken in class)
 author:
   - name: Wong Wei Ling
     url: www.google.com
@@ -53,7 +53,7 @@ The R packages need for this exercise are as follows:
 
 - Statistical analysis
 
-    + caret
+    + caret (can also be used for data mining techniques)
     
 ```{r echo=TRUE, eval=TRUE,  cache=TRUE}
 packages = c('tmap', 'tidyverse',
@@ -70,14 +70,16 @@ for(p in packages){
 
 ```
 
-```{r echo=TRUE, eval=TRUE,  cache=TRUE}
-# library(devtools)
-# install_version("sf", version = "0.9-8", repos = "http://cran.us.r-project.org")
+```{r echo=TRUE, eval=FALSE,  cache=TRUE}
+library(devtools)
+install_version("sf", version = "0.9-8", repos = "http://cran.us.r-project.org")
 ```
 
+Note: stplanr was removed from cran recently. The latest version is 0.8.4. 
 
-```{r echo=TRUE, eval=TRUE,  cache=TRUE}
-# library(sf)
+```{r echo=TRUE, eval=FALSE,  cache=TRUE}
+library(sf)
+library(stplanr)
 ```
 
 
@@ -192,7 +194,7 @@ summary(AusProj)
 
 ### 4.11.2 Compute distance matrix
 
-- Technically, we can used *st_distance()* of **sf** package to compute the distance matrix.
+- Technically, we can use *st_distance()* of **sf** package to compute the distance matrix.(have to use *st_centroid()* to calculate its centroid first)
 - However, since the process took much longer time to complete, *spDist()* of **sp** package is used instead. 
 
 ```{r echo=TRUE, eval=TRUE,  cache=TRUE}
@@ -200,10 +202,12 @@ dist <- spDists(AusProj)
 dist 
 ```
 
-### 4.11.3 Convert dsitance matrix into distance pair list
+### 4.11.3 Convert distance matrix into distance pair list
 
 - In order to integrate the distance matrix with the migration flow data.frame (in the later steps), we need to transform the newly derived distance matrix into a three columns distance values list.
-- Use *melt()* of *reshape2** package of R to complete the task (we can also achieve the same task by using *pivot_longer()* of **dplyr** package).
+- Use *melt()* of **reshape2** package of R to complete the task (we can also achieve the same task by using *pivot_longer()* of **dplyr** package).
+
+Note: **reshape2** is an old package. Should use **tidyr** or **dplyr** when we can.
 
 ```{r echo=TRUE, eval=TRUE,  cache=TRUE}
 distPair <- melt(dist)
@@ -224,11 +228,13 @@ head(distPair, 10)
 ## 5.1 Import interaction data
 
 - Use *read_csv()* of **readr** package
+- Note: if there are any NA values, do not remove it. Instead, replace it with 0 to retain the flow. 
 
 ```{r echo=TRUE, eval=TRUE,  cache=TRUE}
 mdata <- read_csv("https://www.dropbox.com/s/wi3zxlq5pff1yda/AusMig2011.csv?raw=1",col_names = TRUE)
 glimpse(mdata)
 ```
+
 
 ## 5.2 Combine the imported migration data
 
