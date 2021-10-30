@@ -270,28 +270,107 @@ tm_shape(eldercare) +
   tm_grid(lwd = 0.1, alpha = 0.5)
 ```
 
-```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+## 6.7 Statistical graphic visualisation
 
+### 6.7.1 Add the planning region field
+
+- *st_join()* of **sf** package to add the planning region field into *haxegon_Hansen* simple feature data frame
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+hexagon_Hansen <- st_join(hexagon_Hansen, mpsz, 
+                          join = st_intersects)
 ```
 
-```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+### 6.7.2 Plot distribution
 
+- *ggplot()* of **ggplot2** package to plot distribution 
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+ggplot(data=hexagon_Hansen, 
+       aes(y = log(accHansen), 
+           x= REGION_N)) +
+  geom_boxplot() +
+  geom_point(stat="summary", 
+             fun.y="mean", 
+             colour ="red", 
+             size=2)
 ```
 
-```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+# 7 Modelling and Visualising Accessibility using KD2SFCA Method
 
+## 7.1 Computing KD2SFCA’s accessibility
+
+- The code chunk below calculates Hansen’s accessibility using ac() of SpatialAcc and data.frame() is used to save the output in a data frame called acc_KD2SFCA.
+- Notice that KD2SFCA is used for family argument.
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+acc_KD2SFCA <- data.frame(ac(hexagons$demand,
+                            eldercare$capacity,
+                            distmat_km, 
+                            d0 = 50,
+                            power = 2, 
+                            family = "KD2SFCA"))
+
+colnames(acc_KD2SFCA) <- "accKD2SFCA"
+acc_KD2SFCA <- tbl_df(acc_KD2SFCA)
+hexagon_KD2SFCA <- bind_cols(hexagons, acc_KD2SFCA)
 ```
 
-```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+## 7.2 Visualising KD2SFCA’s accessibility
 
+- The code chunk below uses a collection of mapping fucntions of tmap package to create a high cartographic quality accessibility to eldercare centre in Singapore.
+Notice that mapex is reused for bbox argument.
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+tmap_mode("plot")
+tm_shape(hexagon_KD2SFCA,
+         bbox = mapex) + 
+  tm_fill(col = "accKD2SFCA",
+          n = 10,
+          style = "quantile",
+          border.col = "black",
+          border.lwd = 1) +
+tm_shape(eldercare) +
+  tm_symbols(size = 0.1) +
+  tm_layout(main.title = "Accessibility to eldercare: KD2SFCA method",
+            main.title.position = "center",
+            main.title.size = 2,
+            legend.outside = FALSE,
+            legend.height = 0.45, 
+            legend.width = 3.0,
+            legend.format = list(digits = 6),
+            legend.position = c("right", "top"),
+            frame = TRUE) +
+  tm_compass(type="8star", size = 2) +
+  tm_scale_bar(width = 0.15) +
+  tm_grid(lwd = 0.1, alpha = 0.5)
 ```
 
-```{r echo=TRUE, eval=TRUE,  cache=TRUE}
 
+## 7.2 Statistical graphic visualisation
+
+### 7.2.1 Add the planning region field
+
+- - *st_join()* of **sf** package to add the planning region field into *hexagon_KD2SFCA* simple feature data frame
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+hexagon_KD2SFCA <- st_join(hexagon_KD2SFCA, mpsz, 
+                          join = st_intersects)
 ```
 
-```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+### 7.2.2 Plot distribution
 
+- *ggplot()* of **ggplot2** package to plot distribution 
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+ggplot(data=hexagon_KD2SFCA, 
+       aes(y = accKD2SFCA, 
+           x= REGION_N)) +
+  geom_boxplot() +
+  geom_point(stat="summary", 
+             fun.y="mean", 
+             colour ="red", 
+             size=2)
 ```
 
 ```{r echo=TRUE, eval=TRUE,  cache=TRUE}

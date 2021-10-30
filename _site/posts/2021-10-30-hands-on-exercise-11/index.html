@@ -117,7 +117,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <!--/radix_placeholder_rmarkdown_metadata-->
   
   <script type="text/json" id="radix-resource-manifest">
-  {"type":"character","attributes":{},"value":["data/aspatial/distmat.csv","data/aspatial/hospital.CSV","data/aspatial/OD_Matrix.csv","data/geospatial/ELDERCARE.cpg","data/geospatial/ELDERCARE.dbf","data/geospatial/ELDERCARE.prj","data/geospatial/ELDERCARE.qmd","data/geospatial/ELDERCARE.shp","data/geospatial/ELDERCARE.shp.xml","data/geospatial/ELDERCARE.shx","data/geospatial/hexagons.cpg","data/geospatial/hexagons.dbf","data/geospatial/hexagons.prj","data/geospatial/hexagons.qmd","data/geospatial/hexagons.shp","data/geospatial/hexagons.shx","data/geospatial/MP14_SUBZONE_NO_SEA_PL.dbf","data/geospatial/MP14_SUBZONE_NO_SEA_PL.prj","data/geospatial/MP14_SUBZONE_NO_SEA_PL.sbn","data/geospatial/MP14_SUBZONE_NO_SEA_PL.sbx","data/geospatial/MP14_SUBZONE_NO_SEA_PL.shp","data/geospatial/MP14_SUBZONE_NO_SEA_PL.shp.xml","data/geospatial/MP14_SUBZONE_NO_SEA_PL.shx","data/geospatial/roads.cpg","data/geospatial/roads.dbf","data/geospatial/roads.prj","data/geospatial/roads.qmd","data/geospatial/roads.shp","data/geospatial/roads.shx","hands-on-exercise-11_files/anchor-4.2.2/anchor.min.js","hands-on-exercise-11_files/bowser-1.9.3/bowser.min.js","hands-on-exercise-11_files/distill-2.2.21/template.v2.js","hands-on-exercise-11_files/figure-html5/unnamed-chunk-15-1.png","hands-on-exercise-11_files/header-attrs-2.10/header-attrs.js","hands-on-exercise-11_files/jquery-1.11.3/jquery.min.js","hands-on-exercise-11_files/popper-2.6.0/popper.min.js","hands-on-exercise-11_files/tippy-6.2.7/tippy-bundle.umd.min.js","hands-on-exercise-11_files/tippy-6.2.7/tippy-light-border.css","hands-on-exercise-11_files/tippy-6.2.7/tippy.css","hands-on-exercise-11_files/tippy-6.2.7/tippy.umd.min.js","hands-on-exercise-11_files/webcomponents-2.0.0/webcomponents.js"]}
+  {"type":"character","attributes":{},"value":["data/aspatial/distmat.csv","data/aspatial/hospital.CSV","data/aspatial/OD_Matrix.csv","data/geospatial/ELDERCARE.cpg","data/geospatial/ELDERCARE.dbf","data/geospatial/ELDERCARE.prj","data/geospatial/ELDERCARE.qmd","data/geospatial/ELDERCARE.shp","data/geospatial/ELDERCARE.shp.xml","data/geospatial/ELDERCARE.shx","data/geospatial/hexagons.cpg","data/geospatial/hexagons.dbf","data/geospatial/hexagons.prj","data/geospatial/hexagons.qmd","data/geospatial/hexagons.shp","data/geospatial/hexagons.shx","data/geospatial/MP14_SUBZONE_NO_SEA_PL.dbf","data/geospatial/MP14_SUBZONE_NO_SEA_PL.prj","data/geospatial/MP14_SUBZONE_NO_SEA_PL.sbn","data/geospatial/MP14_SUBZONE_NO_SEA_PL.sbx","data/geospatial/MP14_SUBZONE_NO_SEA_PL.shp","data/geospatial/MP14_SUBZONE_NO_SEA_PL.shp.xml","data/geospatial/MP14_SUBZONE_NO_SEA_PL.shx","data/geospatial/roads.cpg","data/geospatial/roads.dbf","data/geospatial/roads.prj","data/geospatial/roads.qmd","data/geospatial/roads.shp","data/geospatial/roads.shx","hands-on-exercise-11_files/anchor-4.2.2/anchor.min.js","hands-on-exercise-11_files/bowser-1.9.3/bowser.min.js","hands-on-exercise-11_files/distill-2.2.21/template.v2.js","hands-on-exercise-11_files/figure-html5/unnamed-chunk-15-1.png","hands-on-exercise-11_files/figure-html5/unnamed-chunk-17-1.png","hands-on-exercise-11_files/figure-html5/unnamed-chunk-19-1.png","hands-on-exercise-11_files/figure-html5/unnamed-chunk-21-1.png","hands-on-exercise-11_files/header-attrs-2.10/header-attrs.js","hands-on-exercise-11_files/jquery-1.11.3/jquery.min.js","hands-on-exercise-11_files/popper-2.6.0/popper.min.js","hands-on-exercise-11_files/tippy-6.2.7/tippy-bundle.umd.min.js","hands-on-exercise-11_files/tippy-6.2.7/tippy-light-border.css","hands-on-exercise-11_files/tippy-6.2.7/tippy.css","hands-on-exercise-11_files/tippy-6.2.7/tippy.umd.min.js","hands-on-exercise-11_files/webcomponents-2.0.0/webcomponents.js"]}
   </script>
   <!--radix_placeholder_navigation_in_header-->
 <meta name="distill:offset" content="../.."/>
@@ -2508,6 +2508,21 @@ Hands-on Exercise
 <li><a href="#extracting-map-extend">6.6.1 Extracting map extend</a></li>
 <li><a href="#plot-eldercare">6.6.2 Plot eldercare</a></li>
 </ul></li>
+<li><a href="#statistical-graphic-visualisation">6.7 Statistical graphic visualisation</a>
+<ul>
+<li><a href="#add-the-planning-region-field">6.7.1 Add the planning region field</a></li>
+<li><a href="#plot-distribution">6.7.2 Plot distribution</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#modelling-and-visualising-accessibility-using-kd2sfca-method">7 Modelling and Visualising Accessibility using KD2SFCA Method</a>
+<ul>
+<li><a href="#computing-kd2sfcas-accessibility">7.1 Computing KD2SFCA’s accessibility</a></li>
+<li><a href="#visualising-kd2sfcas-accessibility">7.2 Visualising KD2SFCA’s accessibility</a></li>
+<li><a href="#statistical-graphic-visualisation-1">7.2 Statistical graphic visualisation</a>
+<ul>
+<li><a href="#add-the-planning-region-field-1">7.2.1 Add the planning region field</a></li>
+<li><a href="#plot-distribution-1">7.2.2 Plot distribution</a></li>
+</ul></li>
 </ul></li>
 </ul>
 </nav>
@@ -2843,23 +2858,120 @@ PROJCRS[&quot;SVY21 / Singapore TM&quot;,
 </div>
 <p><img src="hands-on-exercise-11_files/figure-html5/unnamed-chunk-15-1.png" width="624" /></p>
 </div>
+<h2 id="statistical-graphic-visualisation">6.7 Statistical graphic visualisation</h2>
+<h3 id="add-the-planning-region-field">6.7.1 Add the planning region field</h3>
+<ul>
+<li><em>st_join()</em> of <strong>sf</strong> package to add the planning region field into <em>haxegon_Hansen</em> simple feature data frame</li>
+</ul>
 <div class="layout-chunk" data-layout="l-body">
-
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>hexagon_Hansen</span> <span class='op'>&lt;-</span> <span class='fu'>st_join</span><span class='op'>(</span><span class='va'>hexagon_Hansen</span>, <span class='va'>mpsz</span>, 
+                          join <span class='op'>=</span> <span class='va'>st_intersects</span><span class='op'>)</span>
+</code></pre>
 </div>
-<div class="layout-chunk" data-layout="l-body">
-
 </div>
+<h3 id="plot-distribution">6.7.2 Plot distribution</h3>
+<ul>
+<li><em>ggplot()</em> of <strong>ggplot2</strong> package to plot distribution</li>
+</ul>
 <div class="layout-chunk" data-layout="l-body">
-
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>ggplot</span><span class='op'>(</span>data<span class='op'>=</span><span class='va'>hexagon_Hansen</span>, 
+       <span class='fu'>aes</span><span class='op'>(</span>y <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/Log.html'>log</a></span><span class='op'>(</span><span class='va'>accHansen</span><span class='op'>)</span>, 
+           x<span class='op'>=</span> <span class='va'>REGION_N</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>+</span>
+  <span class='fu'>geom_boxplot</span><span class='op'>(</span><span class='op'>)</span> <span class='op'>+</span>
+  <span class='fu'>geom_point</span><span class='op'>(</span>stat<span class='op'>=</span><span class='st'>"summary"</span>, 
+             fun.y<span class='op'>=</span><span class='st'>"mean"</span>, 
+             colour <span class='op'>=</span><span class='st'>"red"</span>, 
+             size<span class='op'>=</span><span class='fl'>2</span><span class='op'>)</span>
+</code></pre>
 </div>
-<div class="layout-chunk" data-layout="l-body">
-
+<p><img src="hands-on-exercise-11_files/figure-html5/unnamed-chunk-17-1.png" width="624" /></p>
 </div>
+<h1 id="modelling-and-visualising-accessibility-using-kd2sfca-method">7 Modelling and Visualising Accessibility using KD2SFCA Method</h1>
+<h2 id="computing-kd2sfcas-accessibility">7.1 Computing KD2SFCA’s accessibility</h2>
+<ul>
+<li>The code chunk below calculates Hansen’s accessibility using ac() of SpatialAcc and data.frame() is used to save the output in a data frame called acc_KD2SFCA.</li>
+<li>Notice that KD2SFCA is used for family argument.</li>
+</ul>
 <div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>acc_KD2SFCA</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span><span class='fu'>ac</span><span class='op'>(</span><span class='va'>hexagons</span><span class='op'>$</span><span class='va'>demand</span>,
+                            <span class='va'>eldercare</span><span class='op'>$</span><span class='va'>capacity</span>,
+                            <span class='va'>distmat_km</span>, 
+                            d0 <span class='op'>=</span> <span class='fl'>50</span>,
+                            power <span class='op'>=</span> <span class='fl'>2</span>, 
+                            family <span class='op'>=</span> <span class='st'>"KD2SFCA"</span><span class='op'>)</span><span class='op'>)</span>
 
+<span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>colnames</a></span><span class='op'>(</span><span class='va'>acc_KD2SFCA</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='st'>"accKD2SFCA"</span>
+<span class='va'>acc_KD2SFCA</span> <span class='op'>&lt;-</span> <span class='fu'>tbl_df</span><span class='op'>(</span><span class='va'>acc_KD2SFCA</span><span class='op'>)</span>
+<span class='va'>hexagon_KD2SFCA</span> <span class='op'>&lt;-</span> <span class='fu'>bind_cols</span><span class='op'>(</span><span class='va'>hexagons</span>, <span class='va'>acc_KD2SFCA</span><span class='op'>)</span>
+</code></pre>
 </div>
+</div>
+<h2 id="visualising-kd2sfcas-accessibility">7.2 Visualising KD2SFCA’s accessibility</h2>
+<ul>
+<li>The code chunk below uses a collection of mapping fucntions of tmap package to create a high cartographic quality accessibility to eldercare centre in Singapore. Notice that mapex is reused for bbox argument.</li>
+</ul>
 <div class="layout-chunk" data-layout="l-body">
-
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>tmap_mode</span><span class='op'>(</span><span class='st'>"plot"</span><span class='op'>)</span>
+<span class='fu'>tm_shape</span><span class='op'>(</span><span class='va'>hexagon_KD2SFCA</span>,
+         bbox <span class='op'>=</span> <span class='va'>mapex</span><span class='op'>)</span> <span class='op'>+</span> 
+  <span class='fu'>tm_fill</span><span class='op'>(</span>col <span class='op'>=</span> <span class='st'>"accKD2SFCA"</span>,
+          n <span class='op'>=</span> <span class='fl'>10</span>,
+          style <span class='op'>=</span> <span class='st'>"quantile"</span>,
+          border.col <span class='op'>=</span> <span class='st'>"black"</span>,
+          border.lwd <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span> <span class='op'>+</span>
+<span class='fu'>tm_shape</span><span class='op'>(</span><span class='va'>eldercare</span><span class='op'>)</span> <span class='op'>+</span>
+  <span class='fu'>tm_symbols</span><span class='op'>(</span>size <span class='op'>=</span> <span class='fl'>0.1</span><span class='op'>)</span> <span class='op'>+</span>
+  <span class='fu'>tm_layout</span><span class='op'>(</span>main.title <span class='op'>=</span> <span class='st'>"Accessibility to eldercare: KD2SFCA method"</span>,
+            main.title.position <span class='op'>=</span> <span class='st'>"center"</span>,
+            main.title.size <span class='op'>=</span> <span class='fl'>2</span>,
+            legend.outside <span class='op'>=</span> <span class='cn'>FALSE</span>,
+            legend.height <span class='op'>=</span> <span class='fl'>0.45</span>, 
+            legend.width <span class='op'>=</span> <span class='fl'>3.0</span>,
+            legend.format <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>digits <span class='op'>=</span> <span class='fl'>6</span><span class='op'>)</span>,
+            legend.position <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"right"</span>, <span class='st'>"top"</span><span class='op'>)</span>,
+            frame <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span> <span class='op'>+</span>
+  <span class='fu'>tm_compass</span><span class='op'>(</span>type<span class='op'>=</span><span class='st'>"8star"</span>, size <span class='op'>=</span> <span class='fl'>2</span><span class='op'>)</span> <span class='op'>+</span>
+  <span class='fu'>tm_scale_bar</span><span class='op'>(</span>width <span class='op'>=</span> <span class='fl'>0.15</span><span class='op'>)</span> <span class='op'>+</span>
+  <span class='fu'>tm_grid</span><span class='op'>(</span>lwd <span class='op'>=</span> <span class='fl'>0.1</span>, alpha <span class='op'>=</span> <span class='fl'>0.5</span><span class='op'>)</span>
+</code></pre>
+</div>
+<p><img src="hands-on-exercise-11_files/figure-html5/unnamed-chunk-19-1.png" width="624" /></p>
+</div>
+<h2 id="statistical-graphic-visualisation-1">7.2 Statistical graphic visualisation</h2>
+<h3 id="add-the-planning-region-field-1">7.2.1 Add the planning region field</h3>
+<ul>
+<li><ul>
+<li><em>st_join()</em> of <strong>sf</strong> package to add the planning region field into <em>hexagon_KD2SFCA</em> simple feature data frame</li>
+</ul></li>
+</ul>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>hexagon_KD2SFCA</span> <span class='op'>&lt;-</span> <span class='fu'>st_join</span><span class='op'>(</span><span class='va'>hexagon_KD2SFCA</span>, <span class='va'>mpsz</span>, 
+                          join <span class='op'>=</span> <span class='va'>st_intersects</span><span class='op'>)</span>
+</code></pre>
+</div>
+</div>
+<h3 id="plot-distribution-1">7.2.2 Plot distribution</h3>
+<ul>
+<li><em>ggplot()</em> of <strong>ggplot2</strong> package to plot distribution</li>
+</ul>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>ggplot</span><span class='op'>(</span>data<span class='op'>=</span><span class='va'>hexagon_KD2SFCA</span>, 
+       <span class='fu'>aes</span><span class='op'>(</span>y <span class='op'>=</span> <span class='va'>accKD2SFCA</span>, 
+           x<span class='op'>=</span> <span class='va'>REGION_N</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>+</span>
+  <span class='fu'>geom_boxplot</span><span class='op'>(</span><span class='op'>)</span> <span class='op'>+</span>
+  <span class='fu'>geom_point</span><span class='op'>(</span>stat<span class='op'>=</span><span class='st'>"summary"</span>, 
+             fun.y<span class='op'>=</span><span class='st'>"mean"</span>, 
+             colour <span class='op'>=</span><span class='st'>"red"</span>, 
+             size<span class='op'>=</span><span class='fl'>2</span><span class='op'>)</span>
+</code></pre>
+</div>
+<p><img src="hands-on-exercise-11_files/figure-html5/unnamed-chunk-21-1.png" width="624" /></p>
 </div>
 <div class="layout-chunk" data-layout="l-body">
 
