@@ -50,6 +50,8 @@ navbar:
         href: https://wlwong2018-is415-blog.netlify.app/posts/2021-10-16-hands-on-exercise-9/
       - text: "Hands-on Exercise 10"
         href: https://wlwong2018-is415-blog.netlify.app/posts/2021-10-23-hands-on-exercise-10/
+      - text: "Hands-on Exercise 11"
+        href: 
         
     - text: "About"
       href: about.html
