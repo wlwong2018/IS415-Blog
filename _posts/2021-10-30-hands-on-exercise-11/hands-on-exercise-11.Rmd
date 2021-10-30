@@ -87,60 +87,187 @@ for(p in packages){
 
 Notice that with tidyverse, it also installs other R packages such as readr, dplyr and ggplots, tidyr, stringr, forcats, tibble, purrr and magrittr packages.
 
+# 4 Geospatial Data Wrangling
+
+## 4.1 Import geospatial data
+
+- *st_read()* of **sf** package to import these three data sets 
+
 ```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+mpsz <- st_read(dsn = "data/geospatial", layer = "MP14_SUBZONE_NO_SEA_PL")
+hexagons <- st_read(dsn = "data/geospatial", layer = "hexagons") 
+eldercare <- st_read(dsn = "data/geospatial", layer = "ELDERCARE") 
 
 ```
 
+## 4.2 Update CRS information
+
+### 4.2.1 Assign correct code
+
+- *st_transform()* updates the newly imported mpsz with the correct ESPG code (i.e. 3414)
+
 ```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+mpsz <- st_transform(mpsz, 3414)
+eldercare <- st_transform(eldercare, 3414)
+hexagons <- st_transform(hexagons, 3414)
+```
+
+### 4.2.2 Verify CRS
+
+- *st_crs()* of **sf**  package to verify the projection of the newly transformed mpsz_svy21
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+st_crs(mpsz)
 
 ```
 
+## 4.3 Clean and update attribute fields of the geospatial data
+
+- Exclude redundant fields
+- *mutate()*  of **dplyr** package to create  new field called demand and capacity that will be added into the data table of hexagons and eldercare sf data frame respectively. 
+
 ```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+eldercare <- eldercare %>%
+  select(fid, ADDRESSPOS) %>%
+  mutate(capacity = 100)
+
+hexagons <- hexagons %>%
+  select(fid) %>%
+  mutate(demand = 100)
+```
+
+# 5 Apsaital Data Handling and Wrangling
+
+## 5.1 Import Distance Matrix
+
+-  *read_cvs()* of **readr** package to import OD_Matrix.csv.
+- The imported object is a tibble data.frame called ODMatrix.
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+ODMatrix <- read_csv("data/aspatial/OD_Matrix.csv", skip = 0)
+```
+
+## 5.2 Tidy distance matrix
+
+### 5.2.1 Transform matrix
+
+- The imported ODMatrix organised the distance matrix columnwise.
+- On the other hand, most of the modelling packages in R is expecting where rows represent origins (i.e. also know as from field) and the columns represent destination (i.e. also known as to field.)
+- *spread()* of **tidyr** package is used to transform the O-D matrix from a thin format into a fat format.
+- **Note**: We can also use *pivot_wider()* instead of *spread()*
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+distmat <- ODMatrix %>%
+  select(origin_id, destination_id, total_cost) %>%
+  spread(destination_id, total_cost)%>%
+  select(c(-c('origin_id')))
+```
+
+### 5.2.2 Convert from m to km
+
+- *as.matrix()* of **Base R** to convert unit of measurement from m to km
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+distmat_km<-as.matrix(distmat/1000)
+```
+
+# 6 Modelling and Visualising Accessibility using Hansen Method
+
+## 6.1 Computing Hansen’s accessibility
+
+- *ac()* of **SpatialAcc** package to compute Hansen’s accessibility
+- *data.frame()* is used to save the output in a data frame called acc_Handsen.
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+acc_Hansen <- data.frame(ac(hexcen$demand,
+                            eldercare$capacity,
+                            distmat_km, 
+                            d0 = 50,
+                            power = 2, 
+                            family = "Hansen"))
+```
+
+## 6.2 Rename column name
+
+- *colnames()* of **Base R** to rename column names
+
+```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+colnames(acc_Hansen) <- "accHansen"
 
 ```
 
+## 6.3 Convert to tibble format
+
+- *tbl_df()* of **dplyr** package to convert data table into tibble format
+
 ```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+acc_Hansen <- tbl_df(acc_Hansen)
 
 ```
 
+## 6.4 Join *acc_Hansen* with *hexagons* 
+
+- *bind_cols()* of **dplyr** will be used to join the acc_Hansen tibble data frame with the hexagons simple feature data frame.
+
 ```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+hexagon_Hansen <- bind_cols(hexagons, acc_Hansen)
 
 ```
 
-```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+## 6.5 Compiled version of the above steps
+
+```{r echo=TRUE, eval=FALSE,  cache=TRUE}
+acc_Hansen <- data.frame(ac(hexagons$demand,
+                            eldercare$capacity,
+                            distmat_km, 
+                            d0 = 50,
+                            power = 2, 
+                            family = "Hansen"))
+
+colnames(acc_Hansen) <- "accHansen"
+acc_Hansen <- tbl_df(acc_Hansen)
+hexagon_Hansen <- bind_cols(hexagons, acc_Hansen)
 
 ```
 
+## 6.6 Visualising Hansen’s accessibility
+
+### 6.6.1 Extracting map extend
+
+- *st_bbox()* of **sf** package to extract the extend of hexagons simple feature data frame
+
 ```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+mapex <- st_bbox(hexagons) #view extent
 
 ```
 
-```{r echo=TRUE, eval=TRUE,  cache=TRUE}
+### 6.6.2 Plot eldercare
 
-```
-
-```{r echo=TRUE, eval=TRUE,  cache=TRUE}
-
-```
+- Uses a collection of mapping fucntions of tmap package to create a high cartographic quality accessibility to eldercare centre in Singapore.
 
 ```{r echo=TRUE, eval=TRUE,  cache=TRUE}
-
-```
-
-```{r echo=TRUE, eval=TRUE,  cache=TRUE}
-
-```
-
-```{r echo=TRUE, eval=TRUE,  cache=TRUE}
-
-```
-
-```{r echo=TRUE, eval=TRUE,  cache=TRUE}
-
-```
-
-```{r echo=TRUE, eval=TRUE,  cache=TRUE}
-
+tmap_mode("plot")
+tm_shape(hexagon_Hansen,
+         bbox = mapex) + 
+  tm_fill(col = "accHansen",
+          n = 10,
+          style = "quantile",
+          border.col = "black",
+          border.lwd = 1) +
+tm_shape(eldercare) +
+  tm_symbols(size = 0.1) +
+  tm_layout(main.title = "Accessibility to eldercare: Hansen method",
+            main.title.position = "center",
+            main.title.size = 2,
+            legend.outside = FALSE,
+            legend.height = 0.45, 
+            legend.width = 3.0,
+            legend.format = list(digits = 6),
+            legend.position = c("right", "top"),
+            frame = TRUE) +
+  tm_compass(type="8star", size = 2) +
+  tm_scale_bar(width = 0.15) +
+  tm_grid(lwd = 0.1, alpha = 0.5)
 ```
 
 ```{r echo=TRUE, eval=TRUE,  cache=TRUE}

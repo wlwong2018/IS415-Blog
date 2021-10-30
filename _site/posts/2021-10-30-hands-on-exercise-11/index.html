@@ -117,7 +117,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <!--/radix_placeholder_rmarkdown_metadata-->
   
   <script type="text/json" id="radix-resource-manifest">
-  {"type":"character","attributes":{},"value":["data/aspatial/distmat.csv","data/aspatial/hospital.CSV","data/aspatial/OD_Matrix.csv","data/geospatial/ELDERCARE.cpg","data/geospatial/ELDERCARE.dbf","data/geospatial/ELDERCARE.prj","data/geospatial/ELDERCARE.qmd","data/geospatial/ELDERCARE.shp","data/geospatial/ELDERCARE.shp.xml","data/geospatial/ELDERCARE.shx","data/geospatial/hexagons.cpg","data/geospatial/hexagons.dbf","data/geospatial/hexagons.prj","data/geospatial/hexagons.qmd","data/geospatial/hexagons.shp","data/geospatial/hexagons.shx","data/geospatial/MP14_SUBZONE_NO_SEA_PL.dbf","data/geospatial/MP14_SUBZONE_NO_SEA_PL.prj","data/geospatial/MP14_SUBZONE_NO_SEA_PL.sbn","data/geospatial/MP14_SUBZONE_NO_SEA_PL.sbx","data/geospatial/MP14_SUBZONE_NO_SEA_PL.shp","data/geospatial/MP14_SUBZONE_NO_SEA_PL.shp.xml","data/geospatial/MP14_SUBZONE_NO_SEA_PL.shx","data/geospatial/roads.cpg","data/geospatial/roads.dbf","data/geospatial/roads.prj","data/geospatial/roads.qmd","data/geospatial/roads.shp","data/geospatial/roads.shx"]}
+  {"type":"character","attributes":{},"value":["data/aspatial/distmat.csv","data/aspatial/hospital.CSV","data/aspatial/OD_Matrix.csv","data/geospatial/ELDERCARE.cpg","data/geospatial/ELDERCARE.dbf","data/geospatial/ELDERCARE.prj","data/geospatial/ELDERCARE.qmd","data/geospatial/ELDERCARE.shp","data/geospatial/ELDERCARE.shp.xml","data/geospatial/ELDERCARE.shx","data/geospatial/hexagons.cpg","data/geospatial/hexagons.dbf","data/geospatial/hexagons.prj","data/geospatial/hexagons.qmd","data/geospatial/hexagons.shp","data/geospatial/hexagons.shx","data/geospatial/MP14_SUBZONE_NO_SEA_PL.dbf","data/geospatial/MP14_SUBZONE_NO_SEA_PL.prj","data/geospatial/MP14_SUBZONE_NO_SEA_PL.sbn","data/geospatial/MP14_SUBZONE_NO_SEA_PL.sbx","data/geospatial/MP14_SUBZONE_NO_SEA_PL.shp","data/geospatial/MP14_SUBZONE_NO_SEA_PL.shp.xml","data/geospatial/MP14_SUBZONE_NO_SEA_PL.shx","data/geospatial/roads.cpg","data/geospatial/roads.dbf","data/geospatial/roads.prj","data/geospatial/roads.qmd","data/geospatial/roads.shp","data/geospatial/roads.shx","hands-on-exercise-11_files/anchor-4.2.2/anchor.min.js","hands-on-exercise-11_files/bowser-1.9.3/bowser.min.js","hands-on-exercise-11_files/distill-2.2.21/template.v2.js","hands-on-exercise-11_files/figure-html5/unnamed-chunk-15-1.png","hands-on-exercise-11_files/header-attrs-2.10/header-attrs.js","hands-on-exercise-11_files/jquery-1.11.3/jquery.min.js","hands-on-exercise-11_files/popper-2.6.0/popper.min.js","hands-on-exercise-11_files/tippy-6.2.7/tippy-bundle.umd.min.js","hands-on-exercise-11_files/tippy-6.2.7/tippy-light-border.css","hands-on-exercise-11_files/tippy-6.2.7/tippy.css","hands-on-exercise-11_files/tippy-6.2.7/tippy.umd.min.js","hands-on-exercise-11_files/webcomponents-2.0.0/webcomponents.js"]}
   </script>
   <!--radix_placeholder_navigation_in_header-->
 <meta name="distill:offset" content="../.."/>
@@ -2477,6 +2477,38 @@ Hands-on Exercise
 <li><a href="#introduction">1 Introduction</a></li>
 <li><a href="#data">2 Data</a></li>
 <li><a href="#install-and-launch-r-packages">3 Install and Launch R Packages</a></li>
+<li><a href="#geospatial-data-wrangling">4 Geospatial Data Wrangling</a>
+<ul>
+<li><a href="#import-geospatial-data">4.1 Import geospatial data</a></li>
+<li><a href="#update-crs-information">4.2 Update CRS information</a>
+<ul>
+<li><a href="#assign-correct-code">4.2.1 Assign correct code</a></li>
+<li><a href="#verify-crs">4.2.2 Verify CRS</a></li>
+</ul></li>
+<li><a href="#clean-and-update-attribute-fields-of-the-geospatial-data">4.3 Clean and update attribute fields of the geospatial data</a></li>
+</ul></li>
+<li><a href="#apsaital-data-handling-and-wrangling">5 Apsaital Data Handling and Wrangling</a>
+<ul>
+<li><a href="#import-distance-matrix">5.1 Import Distance Matrix</a></li>
+<li><a href="#tidy-distance-matrix">5.2 Tidy distance matrix</a>
+<ul>
+<li><a href="#transform-matrix">5.2.1 Transform matrix</a></li>
+<li><a href="#convert-from-m-to-km">5.2.2 Convert from m to km</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#modelling-and-visualising-accessibility-using-hansen-method">6 Modelling and Visualising Accessibility using Hansen Method</a>
+<ul>
+<li><a href="#computing-hansens-accessibility">6.1 Computing Hansen’s accessibility</a></li>
+<li><a href="#rename-column-name">6.2 Rename column name</a></li>
+<li><a href="#convert-to-tibble-format">6.3 Convert to tibble format</a></li>
+<li><a href="#join-acc_hansen-with-hexagons">6.4 Join <em>acc_Hansen</em> with <em>hexagons</em></a></li>
+<li><a href="#compiled-version-of-the-above-steps">6.5 Compiled version of the above steps</a></li>
+<li><a href="#visualising-hansens-accessibility">6.6 Visualising Hansen’s accessibility</a>
+<ul>
+<li><a href="#extracting-map-extend">6.6.1 Extracting map extend</a></li>
+<li><a href="#plot-eldercare">6.6.2 Plot eldercare</a></li>
+</ul></li>
+</ul></li>
 </ul>
 </nav>
 </div>
@@ -2542,8 +2574,274 @@ Hands-on Exercise
 </div>
 </div>
 <p>Notice that with tidyverse, it also installs other R packages such as readr, dplyr and ggplots, tidyr, stringr, forcats, tibble, purrr and magrittr packages.</p>
+<h1 id="geospatial-data-wrangling">4 Geospatial Data Wrangling</h1>
+<h2 id="import-geospatial-data">4.1 Import geospatial data</h2>
+<ul>
+<li><em>st_read()</em> of <strong>sf</strong> package to import these three data sets</li>
+</ul>
 <div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>mpsz</span> <span class='op'>&lt;-</span> <span class='fu'>st_read</span><span class='op'>(</span>dsn <span class='op'>=</span> <span class='st'>"data/geospatial"</span>, layer <span class='op'>=</span> <span class='st'>"MP14_SUBZONE_NO_SEA_PL"</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>Reading layer `MP14_SUBZONE_NO_SEA_PL&#39; from data source 
+  `C:\wlwong2018\IS415 Blog\_posts\2021-10-30-hands-on-exercise-11\data\geospatial&#39; 
+  using driver `ESRI Shapefile&#39;
+Simple feature collection with 323 features and 15 fields
+Geometry type: MULTIPOLYGON
+Dimension:     XY
+Bounding box:  xmin: 2667.538 ymin: 15748.72 xmax: 56396.44 ymax: 50256.33
+Projected CRS: SVY21</code></pre>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>hexagons</span> <span class='op'>&lt;-</span> <span class='fu'>st_read</span><span class='op'>(</span>dsn <span class='op'>=</span> <span class='st'>"data/geospatial"</span>, layer <span class='op'>=</span> <span class='st'>"hexagons"</span><span class='op'>)</span> 
+</code></pre>
+</div>
+<pre><code>Reading layer `hexagons&#39; from data source 
+  `C:\wlwong2018\IS415 Blog\_posts\2021-10-30-hands-on-exercise-11\data\geospatial&#39; 
+  using driver `ESRI Shapefile&#39;
+Simple feature collection with 3125 features and 6 fields
+Geometry type: POLYGON
+Dimension:     XY
+Bounding box:  xmin: 2667.538 ymin: 21506.33 xmax: 50010.26 ymax: 50256.33
+Projected CRS: SVY21 / Singapore TM</code></pre>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>eldercare</span> <span class='op'>&lt;-</span> <span class='fu'>st_read</span><span class='op'>(</span>dsn <span class='op'>=</span> <span class='st'>"data/geospatial"</span>, layer <span class='op'>=</span> <span class='st'>"ELDERCARE"</span><span class='op'>)</span> 
+</code></pre>
+</div>
+<pre><code>Reading layer `ELDERCARE&#39; from data source 
+  `C:\wlwong2018\IS415 Blog\_posts\2021-10-30-hands-on-exercise-11\data\geospatial&#39; 
+  using driver `ESRI Shapefile&#39;
+Simple feature collection with 120 features and 19 fields
+Geometry type: POINT
+Dimension:     XY
+Bounding box:  xmin: 14481.92 ymin: 28218.43 xmax: 41665.14 ymax: 46804.9
+Projected CRS: SVY21 / Singapore TM</code></pre>
+</div>
+<h2 id="update-crs-information">4.2 Update CRS information</h2>
+<h3 id="assign-correct-code">4.2.1 Assign correct code</h3>
+<ul>
+<li><em>st_transform()</em> updates the newly imported mpsz with the correct ESPG code (i.e. 3414)</li>
+</ul>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>mpsz</span> <span class='op'>&lt;-</span> <span class='fu'>st_transform</span><span class='op'>(</span><span class='va'>mpsz</span>, <span class='fl'>3414</span><span class='op'>)</span>
+<span class='va'>eldercare</span> <span class='op'>&lt;-</span> <span class='fu'>st_transform</span><span class='op'>(</span><span class='va'>eldercare</span>, <span class='fl'>3414</span><span class='op'>)</span>
+<span class='va'>hexagons</span> <span class='op'>&lt;-</span> <span class='fu'>st_transform</span><span class='op'>(</span><span class='va'>hexagons</span>, <span class='fl'>3414</span><span class='op'>)</span>
+</code></pre>
+</div>
+</div>
+<h3 id="verify-crs">4.2.2 Verify CRS</h3>
+<ul>
+<li><em>st_crs()</em> of <strong>sf</strong> package to verify the projection of the newly transformed mpsz_svy21</li>
+</ul>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>st_crs</span><span class='op'>(</span><span class='va'>mpsz</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>Coordinate Reference System:
+  User input: EPSG:3414 
+  wkt:
+PROJCRS[&quot;SVY21 / Singapore TM&quot;,
+    BASEGEOGCRS[&quot;SVY21&quot;,
+        DATUM[&quot;SVY21&quot;,
+            ELLIPSOID[&quot;WGS 84&quot;,6378137,298.257223563,
+                LENGTHUNIT[&quot;metre&quot;,1]]],
+        PRIMEM[&quot;Greenwich&quot;,0,
+            ANGLEUNIT[&quot;degree&quot;,0.0174532925199433]],
+        ID[&quot;EPSG&quot;,4757]],
+    CONVERSION[&quot;Singapore Transverse Mercator&quot;,
+        METHOD[&quot;Transverse Mercator&quot;,
+            ID[&quot;EPSG&quot;,9807]],
+        PARAMETER[&quot;Latitude of natural origin&quot;,1.36666666666667,
+            ANGLEUNIT[&quot;degree&quot;,0.0174532925199433],
+            ID[&quot;EPSG&quot;,8801]],
+        PARAMETER[&quot;Longitude of natural origin&quot;,103.833333333333,
+            ANGLEUNIT[&quot;degree&quot;,0.0174532925199433],
+            ID[&quot;EPSG&quot;,8802]],
+        PARAMETER[&quot;Scale factor at natural origin&quot;,1,
+            SCALEUNIT[&quot;unity&quot;,1],
+            ID[&quot;EPSG&quot;,8805]],
+        PARAMETER[&quot;False easting&quot;,28001.642,
+            LENGTHUNIT[&quot;metre&quot;,1],
+            ID[&quot;EPSG&quot;,8806]],
+        PARAMETER[&quot;False northing&quot;,38744.572,
+            LENGTHUNIT[&quot;metre&quot;,1],
+            ID[&quot;EPSG&quot;,8807]]],
+    CS[Cartesian,2],
+        AXIS[&quot;northing (N)&quot;,north,
+            ORDER[1],
+            LENGTHUNIT[&quot;metre&quot;,1]],
+        AXIS[&quot;easting (E)&quot;,east,
+            ORDER[2],
+            LENGTHUNIT[&quot;metre&quot;,1]],
+    USAGE[
+        SCOPE[&quot;Cadastre, engineering survey, topographic mapping.&quot;],
+        AREA[&quot;Singapore - onshore and offshore.&quot;],
+        BBOX[1.13,103.59,1.47,104.07]],
+    ID[&quot;EPSG&quot;,3414]]</code></pre>
+</div>
+<h2 id="clean-and-update-attribute-fields-of-the-geospatial-data">4.3 Clean and update attribute fields of the geospatial data</h2>
+<ul>
+<li>Exclude redundant fields</li>
+<li><em>mutate()</em> of <strong>dplyr</strong> package to create new field called demand and capacity that will be added into the data table of hexagons and eldercare sf data frame respectively.</li>
+</ul>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>eldercare</span> <span class='op'>&lt;-</span> <span class='va'>eldercare</span> <span class='op'>%&gt;%</span>
+  <span class='fu'>select</span><span class='op'>(</span><span class='va'>fid</span>, <span class='va'>ADDRESSPOS</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
+  <span class='fu'>mutate</span><span class='op'>(</span>capacity <span class='op'>=</span> <span class='fl'>100</span><span class='op'>)</span>
 
+<span class='va'>hexagons</span> <span class='op'>&lt;-</span> <span class='va'>hexagons</span> <span class='op'>%&gt;%</span>
+  <span class='fu'>select</span><span class='op'>(</span><span class='va'>fid</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
+  <span class='fu'>mutate</span><span class='op'>(</span>demand <span class='op'>=</span> <span class='fl'>100</span><span class='op'>)</span>
+</code></pre>
+</div>
+</div>
+<h1 id="apsaital-data-handling-and-wrangling">5 Apsaital Data Handling and Wrangling</h1>
+<h2 id="import-distance-matrix">5.1 Import Distance Matrix</h2>
+<ul>
+<li><em>read_cvs()</em> of <strong>readr</strong> package to import OD_Matrix.csv.</li>
+<li>The imported object is a tibble data.frame called ODMatrix.</li>
+</ul>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>ODMatrix</span> <span class='op'>&lt;-</span> <span class='fu'>read_csv</span><span class='op'>(</span><span class='st'>"data/aspatial/OD_Matrix.csv"</span>, skip <span class='op'>=</span> <span class='fl'>0</span><span class='op'>)</span>
+</code></pre>
+</div>
+</div>
+<h2 id="tidy-distance-matrix">5.2 Tidy distance matrix</h2>
+<h3 id="transform-matrix">5.2.1 Transform matrix</h3>
+<ul>
+<li>The imported ODMatrix organised the distance matrix columnwise.</li>
+<li>On the other hand, most of the modelling packages in R is expecting where rows represent origins (i.e. also know as from field) and the columns represent destination (i.e. also known as to field.)</li>
+<li><em>spread()</em> of <strong>tidyr</strong> package is used to transform the O-D matrix from a thin format into a fat format.</li>
+<li><strong>Note</strong>: We can also use <em>pivot_wider()</em> instead of <em>spread()</em></li>
+</ul>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>distmat</span> <span class='op'>&lt;-</span> <span class='va'>ODMatrix</span> <span class='op'>%&gt;%</span>
+  <span class='fu'>select</span><span class='op'>(</span><span class='va'>origin_id</span>, <span class='va'>destination_id</span>, <span class='va'>total_cost</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
+  <span class='fu'>spread</span><span class='op'>(</span><span class='va'>destination_id</span>, <span class='va'>total_cost</span><span class='op'>)</span><span class='op'>%&gt;%</span>
+  <span class='fu'>select</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='op'>-</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>'origin_id'</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
+</code></pre>
+</div>
+</div>
+<h3 id="convert-from-m-to-km">5.2.2 Convert from m to km</h3>
+<ul>
+<li><em>as.matrix()</em> of <strong>Base R</strong> to convert unit of measurement from m to km</li>
+</ul>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>distmat_km</span><span class='op'>&lt;-</span><span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>as.matrix</a></span><span class='op'>(</span><span class='va'>distmat</span><span class='op'>/</span><span class='fl'>1000</span><span class='op'>)</span>
+</code></pre>
+</div>
+</div>
+<h1 id="modelling-and-visualising-accessibility-using-hansen-method">6 Modelling and Visualising Accessibility using Hansen Method</h1>
+<h2 id="computing-hansens-accessibility">6.1 Computing Hansen’s accessibility</h2>
+<ul>
+<li><em>ac()</em> of <strong>SpatialAcc</strong> package to compute Hansen’s accessibility</li>
+<li><em>data.frame()</em> is used to save the output in a data frame called acc_Handsen.</li>
+</ul>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>acc_Hansen</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span><span class='fu'>ac</span><span class='op'>(</span><span class='va'>hexcen</span><span class='op'>$</span><span class='va'>demand</span>,
+                            <span class='va'>eldercare</span><span class='op'>$</span><span class='va'>capacity</span>,
+                            <span class='va'>distmat_km</span>, 
+                            d0 <span class='op'>=</span> <span class='fl'>50</span>,
+                            power <span class='op'>=</span> <span class='fl'>2</span>, 
+                            family <span class='op'>=</span> <span class='st'>"Hansen"</span><span class='op'>)</span><span class='op'>)</span>
+</code></pre>
+</div>
+</div>
+<h2 id="rename-column-name">6.2 Rename column name</h2>
+<ul>
+<li><em>colnames()</em> of <strong>Base R</strong> to rename column names</li>
+</ul>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>colnames</a></span><span class='op'>(</span><span class='va'>acc_Hansen</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='st'>"accHansen"</span>
+</code></pre>
+</div>
+</div>
+<h2 id="convert-to-tibble-format">6.3 Convert to tibble format</h2>
+<ul>
+<li><em>tbl_df()</em> of <strong>dplyr</strong> package to convert data table into tibble format</li>
+</ul>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>acc_Hansen</span> <span class='op'>&lt;-</span> <span class='fu'>tbl_df</span><span class='op'>(</span><span class='va'>acc_Hansen</span><span class='op'>)</span>
+</code></pre>
+</div>
+</div>
+<h2 id="join-acc_hansen-with-hexagons">6.4 Join <em>acc_Hansen</em> with <em>hexagons</em></h2>
+<ul>
+<li><em>bind_cols()</em> of <strong>dplyr</strong> will be used to join the acc_Hansen tibble data frame with the hexagons simple feature data frame.</li>
+</ul>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>hexagon_Hansen</span> <span class='op'>&lt;-</span> <span class='fu'>bind_cols</span><span class='op'>(</span><span class='va'>hexagons</span>, <span class='va'>acc_Hansen</span><span class='op'>)</span>
+</code></pre>
+</div>
+</div>
+<h2 id="compiled-version-of-the-above-steps">6.5 Compiled version of the above steps</h2>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>acc_Hansen</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span><span class='fu'>ac</span><span class='op'>(</span><span class='va'>hexagons</span><span class='op'>$</span><span class='va'>demand</span>,
+                            <span class='va'>eldercare</span><span class='op'>$</span><span class='va'>capacity</span>,
+                            <span class='va'>distmat_km</span>, 
+                            d0 <span class='op'>=</span> <span class='fl'>50</span>,
+                            power <span class='op'>=</span> <span class='fl'>2</span>, 
+                            family <span class='op'>=</span> <span class='st'>"Hansen"</span><span class='op'>)</span><span class='op'>)</span>
+
+<span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>colnames</a></span><span class='op'>(</span><span class='va'>acc_Hansen</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='st'>"accHansen"</span>
+<span class='va'>acc_Hansen</span> <span class='op'>&lt;-</span> <span class='fu'>tbl_df</span><span class='op'>(</span><span class='va'>acc_Hansen</span><span class='op'>)</span>
+<span class='va'>hexagon_Hansen</span> <span class='op'>&lt;-</span> <span class='fu'>bind_cols</span><span class='op'>(</span><span class='va'>hexagons</span>, <span class='va'>acc_Hansen</span><span class='op'>)</span>
+</code></pre>
+</div>
+</div>
+<h2 id="visualising-hansens-accessibility">6.6 Visualising Hansen’s accessibility</h2>
+<h3 id="extracting-map-extend">6.6.1 Extracting map extend</h3>
+<ul>
+<li><em>st_bbox()</em> of <strong>sf</strong> package to extract the extend of hexagons simple feature data frame</li>
+</ul>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>mapex</span> <span class='op'>&lt;-</span> <span class='fu'>st_bbox</span><span class='op'>(</span><span class='va'>hexagons</span><span class='op'>)</span> <span class='co'>#view extent</span>
+</code></pre>
+</div>
+</div>
+<h3 id="plot-eldercare">6.6.2 Plot eldercare</h3>
+<ul>
+<li>Uses a collection of mapping fucntions of tmap package to create a high cartographic quality accessibility to eldercare centre in Singapore.</li>
+</ul>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>tmap_mode</span><span class='op'>(</span><span class='st'>"plot"</span><span class='op'>)</span>
+<span class='fu'>tm_shape</span><span class='op'>(</span><span class='va'>hexagon_Hansen</span>,
+         bbox <span class='op'>=</span> <span class='va'>mapex</span><span class='op'>)</span> <span class='op'>+</span> 
+  <span class='fu'>tm_fill</span><span class='op'>(</span>col <span class='op'>=</span> <span class='st'>"accHansen"</span>,
+          n <span class='op'>=</span> <span class='fl'>10</span>,
+          style <span class='op'>=</span> <span class='st'>"quantile"</span>,
+          border.col <span class='op'>=</span> <span class='st'>"black"</span>,
+          border.lwd <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span> <span class='op'>+</span>
+<span class='fu'>tm_shape</span><span class='op'>(</span><span class='va'>eldercare</span><span class='op'>)</span> <span class='op'>+</span>
+  <span class='fu'>tm_symbols</span><span class='op'>(</span>size <span class='op'>=</span> <span class='fl'>0.1</span><span class='op'>)</span> <span class='op'>+</span>
+  <span class='fu'>tm_layout</span><span class='op'>(</span>main.title <span class='op'>=</span> <span class='st'>"Accessibility to eldercare: Hansen method"</span>,
+            main.title.position <span class='op'>=</span> <span class='st'>"center"</span>,
+            main.title.size <span class='op'>=</span> <span class='fl'>2</span>,
+            legend.outside <span class='op'>=</span> <span class='cn'>FALSE</span>,
+            legend.height <span class='op'>=</span> <span class='fl'>0.45</span>, 
+            legend.width <span class='op'>=</span> <span class='fl'>3.0</span>,
+            legend.format <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>digits <span class='op'>=</span> <span class='fl'>6</span><span class='op'>)</span>,
+            legend.position <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"right"</span>, <span class='st'>"top"</span><span class='op'>)</span>,
+            frame <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span> <span class='op'>+</span>
+  <span class='fu'>tm_compass</span><span class='op'>(</span>type<span class='op'>=</span><span class='st'>"8star"</span>, size <span class='op'>=</span> <span class='fl'>2</span><span class='op'>)</span> <span class='op'>+</span>
+  <span class='fu'>tm_scale_bar</span><span class='op'>(</span>width <span class='op'>=</span> <span class='fl'>0.15</span><span class='op'>)</span> <span class='op'>+</span>
+  <span class='fu'>tm_grid</span><span class='op'>(</span>lwd <span class='op'>=</span> <span class='fl'>0.1</span>, alpha <span class='op'>=</span> <span class='fl'>0.5</span><span class='op'>)</span>
+</code></pre>
+</div>
+<p><img src="hands-on-exercise-11_files/figure-html5/unnamed-chunk-15-1.png" width="624" /></p>
 </div>
 <div class="layout-chunk" data-layout="l-body">
 
@@ -2584,46 +2882,7 @@ Hands-on Exercise
 <div class="layout-chunk" data-layout="l-body">
 
 </div>
-<div class="layout-chunk" data-layout="l-body">
-
-</div>
-<div class="layout-chunk" data-layout="l-body">
-
-</div>
-<div class="layout-chunk" data-layout="l-body">
-
-</div>
-<div class="layout-chunk" data-layout="l-body">
-
-</div>
-<div class="layout-chunk" data-layout="l-body">
-
-</div>
-<div class="layout-chunk" data-layout="l-body">
-
-</div>
-<div class="layout-chunk" data-layout="l-body">
-
-</div>
-<div class="layout-chunk" data-layout="l-body">
-
-</div>
-<div class="layout-chunk" data-layout="l-body">
-
-</div>
-<div class="layout-chunk" data-layout="l-body">
-
-</div>
-<div class="layout-chunk" data-layout="l-body">
-
-</div>
-<div class="layout-chunk" data-layout="l-body">
-
-</div>
-<div class="layout-chunk" data-layout="l-body">
-
-</div>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->
 </div>
