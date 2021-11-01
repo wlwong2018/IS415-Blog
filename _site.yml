@@ -27,10 +27,6 @@ navbar:
         href: https://wlwong2018-is415-blog.netlify.app/posts/2021-09-13-in-class-exercise-5/
       - text: "In-Class Exercise 6"
         href: https://wlwong2018-is415-blog.netlify.app/posts/2021-09-20-in-class-exercise-6/
-      - text: "In-Class Exercise 7"
-        href: 
-      - text: "In-Class Exercise 8"
-        href:
       
     - text: "Hands-on Exercise"
       menu: 
@@ -51,7 +47,7 @@ navbar:
       - text: "Hands-on Exercise 10"
         href: https://wlwong2018-is415-blog.netlify.app/posts/2021-10-23-hands-on-exercise-10/
       - text: "Hands-on Exercise 11"
-        href: 
+        href: https://wlwong2018-is415-blog.netlify.app/posts/2021-10-30-hands-on-exercise-11/
         
     - text: "About"
       href: about.html
