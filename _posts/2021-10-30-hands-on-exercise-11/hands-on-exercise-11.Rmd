@@ -142,6 +142,7 @@ hexagons <- hexagons %>%
 
 -  *read_cvs()* of **readr** package to import OD_Matrix.csv.
 - The imported object is a tibble data.frame called ODMatrix.
+- Note: skip = 0 is not exactly important here since we have already prepared the data such that there are rows and columns
 
 ```{r echo=TRUE, eval=TRUE,  cache=TRUE}
 ODMatrix <- read_csv("data/aspatial/OD_Matrix.csv", skip = 0)
@@ -179,7 +180,7 @@ distmat_km<-as.matrix(distmat/1000)
 - *data.frame()* is used to save the output in a data frame called acc_Handsen.
 
 ```{r echo=TRUE, eval=TRUE,  cache=TRUE}
-acc_Hansen <- data.frame(ac(hexcen$demand,
+acc_Hansen <- data.frame(ac(hexagons$demand, # hexcen$demand
                             eldercare$capacity,
                             distmat_km, 
                             d0 = 50,

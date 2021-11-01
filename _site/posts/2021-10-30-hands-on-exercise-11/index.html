@@ -2728,6 +2728,7 @@ PROJCRS[&quot;SVY21 / Singapore TM&quot;,
 <ul>
 <li><em>read_cvs()</em> of <strong>readr</strong> package to import OD_Matrix.csv.</li>
 <li>The imported object is a tibble data.frame called ODMatrix.</li>
+<li>Note: skip = 0 is not exactly important here since we have already prepared the data such that there are rows and columns</li>
 </ul>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
@@ -2770,7 +2771,7 @@ PROJCRS[&quot;SVY21 / Singapore TM&quot;,
 </ul>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>acc_Hansen</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span><span class='fu'>ac</span><span class='op'>(</span><span class='va'>hexcen</span><span class='op'>$</span><span class='va'>demand</span>,
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>acc_Hansen</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span><span class='fu'>ac</span><span class='op'>(</span><span class='va'>hexagons</span><span class='op'>$</span><span class='va'>demand</span>, <span class='co'># hexcen$demand</span>
                             <span class='va'>eldercare</span><span class='op'>$</span><span class='va'>capacity</span>,
                             <span class='va'>distmat_km</span>, 
                             d0 <span class='op'>=</span> <span class='fl'>50</span>,
