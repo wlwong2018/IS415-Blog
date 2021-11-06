@@ -51,3 +51,291 @@ To build hedonic pricing models to explain factors affecting the resale prices o
 
     + Shopping Malls
 
+
+# 3 Install and Load Packages
+
+```{r echo=TRUE, eval=TRUE}
+packages = c('tidyverse', 'sf', 'spdep', 'tmap', 'ggpubr',
+             'corrplot', 'units', 'olsrr', 'plyr',
+             'matrixStats', 'GWmodel', 'httr')
+
+for (p in packages){
+if(!require(p, character.only = T)){
+  install.packages(p)
+}
+  library(p,character.only = T)
+}
+```
+
+Explanation on the uses of each package:
+
+- **tidyverse**: For data import and tidying. It also consist of several other packages specified below. 
+
+    + **readr**: For importing CSV files
+    + **dplyr**: For data manipulation
+    + **ggplot2**: For plotting graphics
+    
+- **sf & spdep:** For spatial data handling
+    
+- **tmap:** For choropleth mapping
+
+- **ggpubr:** For arranging tmaps to be side-by-side for easy visualisation
+
+- **corrplot:** For multivariate data visualisation and analysis
+
+- **matrixStats** &  **units:** For matrix manipulation
+
+- **olsrr:** For building OLS and performing diagnostics tests
+
+- **plyr:** For easy data manipulation
+
+- **GWmodel:** For calibrating geographical weighted family of models
+
+- **httr:** For API calls
+
+# 4 Data Import and Preparation for Geospatial Dataset
+
+In this section, we have to import and ensure that the geospatial data is in a format that we can use to perform analysis. We have to check if it is being assigned the right CRS and code. Also, since we are working in the boundary of Singapore, we have to ensure that it is in SVY21 with the EPSG code of 3414 being assigned as well. 
+
+The datasets that we will prepare in this section are:
+
+- Singapore's boundary: *MP14_SUBZONE_WEB_PL*
+- MRT: *MRTLRTStnPtt*
+- Bus stops: *BusStop*
+
+## 4.1 Import geospatial data set
+
+- All of the datasets are currently in ESRI shapefile format
+- *st_read()* of **sf** package to import the geospatial data set.
+- The imported shapefile will be a simple feature object of sf.
+
+```{r echo=TRUE, eval=TRUE}
+mpsz_sf <- st_read(dsn = "data/geospatial", layer = "MP14_SUBZONE_WEB_PL")
+mrt_sf <- st_read(dsn = "data/geospatial", layer = "MRTLRTStnPtt")
+bus_sf <- st_read(dsn = "data/geospatial", layer = "BusStop")
+```
+
+## 4.2 Look into datasets
+
+- *glimpse()* of **dplyr** package to take a look at our datasets
+
+```{r echo=TRUE, eval=TRUE}
+glimpse(mpsz_sf)
+glimpse(mrt_sf)
+glimpse(bus_sf)
+```
+
+Results above show that: 
+
+- There are **323 multi-polygon features** and **16 fields** in the *mpsz_sf* sf data frame.
+- There are **185 point features** and **4 fields** in the *mrt_sf* sf data frame.
+- There are **5,156 point features** and **4 fields** in the *bus_sf* sf data frame.
+- SVY21 is the Projected Coordinates Reference System for all data sets.
+
+## 4.3 Check for NA values
+
+- *rowSums()* and *is.na()* of **Base R** to check for NA values
+
+```{r echo=TRUE, eval=TRUE}
+mpsz_sf[rowSums(is.na(mpsz_sf))!=0,]
+mrt_sf[rowSums(is.na(mrt_sf))!=0,]
+bus_sf[rowSums(is.na(bus_sf))!=0,]
+```
+
+Results above show that: 
+
+- *mpsz_sf* and *mrt_sf* has no NA values
+- *bus_sf* has 1 NA value
+
+## 4.4 Remove NA values
+
+- *rowSums()* and *is.na()* of **Base R** to remove NA values
+
+```{r echo=TRUE, eval=TRUE}
+bus_sf <- bus_sf[!rowSums(is.na(bus_sf))!=0,]
+```
+
+## 4.5 Check for NA values
+
+- *rowSums()* and *is.na()* of **Base R** to check for NA values
+
+```{r echo=TRUE, eval=TRUE}
+mpsz_sf[rowSums(is.na(mpsz_sf))!=0,]
+mrt_sf[rowSums(is.na(mrt_sf))!=0,]
+bus_sf[rowSums(is.na(bus_sf))!=0,]
+```
+
+Results above show that:
+
+- There are no longer any NA values
+
+## 4.6 Check for duplicate values
+
+- *duplicated()* of **Base R** to check for duplicated values
+
+```{r echo=TRUE, eval=TRUE}
+mrt_sf[duplicated(mrt_sf$STN_NAME),]
+bus_sf[duplicated(bus_sf$BUS_STOP_N),]
+```
+
+Results above show that:
+
+- There are 19 duplicated values in *mrt_sf*
+- There are 16 duplicated values in *bus_sf*
+
+## 4.7 Remove duplicated values
+
+- *duplicated()* of **Base R** to remove duplicated values
+
+```{r echo=TRUE, eval=TRUE}
+mrt_sf <- mrt_sf[!duplicated(mrt_sf$STN_NAME),]
+bus_sf <- bus_sf[!duplicated(bus_sf$BUS_STOP_N),]
+```
+
+## 4.8  Check for duplicated values
+
+- *duplicated()* of **Base R** to check for duplicated values
+
+```{r echo=TRUE, eval=TRUE}
+mrt_sf[duplicated(mrt_sf$STN_NAME),]
+bus_sf[duplicated(bus_sf$BUS_STOP_N),]
+```
+
+Results above show that:
+
+- There are no longer any duplicated values in both datasets.
+
+## 4.9 Check CRS
+
+- Check CRS using *st_crs()* of **sf** package.
+- Singapore is using SVY21. 
+
+```{r echo=TRUE, eval=TRUE}
+st_crs(mpsz_sf)
+st_crs(mrt_sf)
+st_crs(bus_sf)
+```
+
+From the results above:
+
+- Referencing from [epsg.io](https://epsg.io/3414), the EPSG code of SVY21 is supposed to be 3414.
+- The EPSG code shown is 9001 which is incorrect. 
+
+## 4.10 Assign CRS and check again
+
+- *st_set_crs()* of **sf** package to assign correct EPSG code to SpatialPointsDataFrame.
+- Do not have to use *st_transform()* since it is already in SVY21.
+- *st_crs()* of **sf** package to verify the CRS again. 
+
+```{r echo=TRUE, eval=TRUE}
+mpsz_sf <- st_set_crs(mpsz_sf, 3414)
+mrt_sf <- st_set_crs(mrt_sf, 3414)
+bus_sf <- st_set_crs(bus_sf, 3414)
+
+st_crs(mpsz_sf)
+st_crs(mrt_sf)
+st_crs(bus_sf)
+```
+
+Results above show that:
+
+- The correct EPSG code of 3414 is being assigned 
+
+## 4.11 Check for invalid geometries
+
+- *st_is_valid()* of **sf** package is used to check for any invalid geometries.
+- *length()* of **Base R** to count the number of invalid geometries.
+
+```{r echo=TRUE, eval=TRUE}
+length(which(st_is_valid(mpsz_sf) == FALSE))
+length(which(st_is_valid(mrt_sf) == FALSE))
+length(which(st_is_valid(bus_sf) == FALSE))
+``` 
+
+Results above show that:
+
+- *mpsz_sf* has 9 invalid geometries
+- *mrt_sf* and *bus_sf* has 0 invalid geometries
+- Hence, we have to handle these invalid geometries
+
+## 4.12 Handle the invalid geometries and check again
+
+- *st_make_valid()* of **sf** package to handle the invalid geometries in  *mpsz_sf*.
+- *st_is_valid()* of **sf** package is used to verify that there are no longer any invalid geometries.
+
+```{r echo=TRUE, eval=TRUE}
+mpsz_sf <- st_make_valid(mpsz_sf)
+
+length(which(st_is_valid(mpsz_sf) == FALSE))
+length(which(st_is_valid(mrt_sf) == FALSE))
+length(which(st_is_valid(bus_sf) == FALSE))
+```
+
+Results above show that:
+
+- There are no longer any invalid geometries.
+
+## 4.13 Plot geospatial data
+
+- Reveal the distribution of HDB resale units prices in Singapore
+- Create an interactive point symbol map using tmap_mode("view")
+
+- tm_dots():
+    
+    + Set alpha value to 0.4,
+    + colour to blue
+    + size of dots to 0.03
+    
+- Lastly, tmap_mode(“plot”) to display plot mode
+
+```{r echo=TRUE, eval=TRUE}
+tmap_mode('view')
+tm_shape(mpsz_sf) +
+  tm_polygons() +
+tm_shape(bus_sf) +
+  tm_dots(alpha = 0.4,
+          col = "blue",
+          size = 0.03)
+tmap_mode('plot')
+```
+
+Results above show that:
+
+- There are about bus stops that are outside of Singapore's boundary, namely, **46239**, **46609**, **47701**, **46211**, **46219**   
+- There are designated bus stops located at Johor Bahru as we are able to travel to and fro Johor Bahru with specific buses. 
+- Hence, we should remove these bus stops before moving on with our analysis since they are not within Singapore boundary.
+
+## 4.14 Remove bus stops outside of Singapore boundary
+
+### 4.14.1 Inspect names of bus stop
+
+- Save the bus stops identified in **Section 4.13** in a list
+- Inspect names of bus stop
+
+```{r echo=TRUE, eval=TRUE}
+remove_busstop <- list(46211, 46219, 46239, 46609, 47701)
+bus_sf[bus_sf$BUS_STOP_N %in% remove_busstop, ]
+```
+
+Results above show that:
+
+- The names of these bus stops  shows that the bus stops locations indeed are in Johor Bahru.  
+
+### 4.14.2 Remove bus stops from bus stop data
+
+- Remove bus stops as long as they are in *remove_busstop*, identified in **Section 4.14.1**
+
+```{r echo=TRUE, eval=TRUE}
+bus_sf <- bus_sf[!bus_sf$BUS_STOP_N %in% remove_busstop, ]
+```
+
+### 4.14.3 Check if bus stops are removed
+
+```{r echo=TRUE, eval=TRUE}
+bus_sf[bus_sf$BUS_STOP_N %in% remove_busstop, ]
+```
+
+Results above show that:
+
+- The identified bus stops have been removed.
+
