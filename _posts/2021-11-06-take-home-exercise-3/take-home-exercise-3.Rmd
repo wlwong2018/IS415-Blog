@@ -1137,3 +1137,55 @@ Results above show that:
     + Numbers of childcare centres within 350m: It is right-skewed, implying that more HDB flats have less childcare centres within 350m.
     + Numbers of bus stop within 350m: It is slightly right-skewed, implying that slightly more HDB flats have less bus stops within 350m.
     + Numbers of primary school within 1km: It is slightly right-skewed, implying that slightly more HDB flats have less primary schools within 1km. 
+    
+    
+### 7.2.3 Binary variables - Box Plots
+
+#### 7.2.3.1 Function to plot bar charts
+
+- Create function to plot bar chart, *mul_bar_level*
+- *geom_bar()* of **ggplot** package to plot a histogram to see the distribution of the binary variables.
+
+```{r echo=TRUE, eval=TRUE, fig.width=12, fig.height=10}
+mul_bar_level <- function(df, vnam, x_axis){
+  ggplot(data=df, aes(x=factor(vnam))) +
+    geom_bar(color="black", fill="steelblue3") +  
+         scale_x_discrete(name = x_axis) + coord_flip()
+}
+
+```
+
+#### 7.2.3.2 Appply function to plot bar charts
+
+- Use function created in **Section 7.2.3.1** to plot bar charts
+- *ggarrange()* of **ggpubr** package to organise these histogram into a *2 columns* by *9 rows* small multiple plot
+
+```{r echo=TRUE, eval=TRUE, fig.width=12, fig.height=10}
+ggarrange(mul_bar_level(resale_sf, resale_sf$lvl_01_TO_03, "Level 1 to 3"),
+          mul_bar_level(resale_sf, resale_sf$lvl_04_TO_06, "Level 4 to 6"),
+          mul_bar_level(resale_sf, resale_sf$lvl_07_TO_09, "Level 7 to 9"),
+          mul_bar_level(resale_sf, resale_sf$lvl_10_TO_12, "Level 10 to 12"),
+          mul_bar_level(resale_sf, resale_sf$lvl_13_TO_15, "Level 13 to 15"),
+          mul_bar_level(resale_sf, resale_sf$lvl_16_TO_18, "Level 16 to 18"),
+          mul_bar_level(resale_sf, resale_sf$lvl_19_TO_21, "Level 19 to 21"),
+          mul_bar_level(resale_sf, resale_sf$lvl_22_TO_24, "Level 22 to 24"),
+          mul_bar_level(resale_sf, resale_sf$lvl_25_TO_27, "Level 25 to 27"),
+          mul_bar_level(resale_sf, resale_sf$lvl_28_TO_30, "Level 28 to 30"),
+          mul_bar_level(resale_sf, resale_sf$lvl_31_TO_33, "Level 31 to 33"),
+          mul_bar_level(resale_sf, resale_sf$lvl_34_TO_36, "Level 34 to 36"),
+          mul_bar_level(resale_sf, resale_sf$lvl_37_TO_39, "Level 37 to 39"),
+          mul_bar_level(resale_sf, resale_sf$lvl_40_TO_42, "Level 40 to 42"),
+          mul_bar_level(resale_sf, resale_sf$lvl_43_TO_45, "Level 43 to 45"),
+          mul_bar_level(resale_sf, resale_sf$lvl_46_TO_48, "Level 46 to 48"),
+          mul_bar_level(resale_sf, resale_sf$lvl_49_TO_51, "Level 49 to 51"),
+      ncol = 2, nrow = 9)
+
+```
+
+Results above show that:
+
+- **Structural Factor**:
+
+    + Floor levels: There are more HDB resale flats that are on lower levels than higher levels. 
+    
+
