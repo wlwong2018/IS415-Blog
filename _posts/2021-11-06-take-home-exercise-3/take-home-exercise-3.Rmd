@@ -789,3 +789,215 @@ Results above show that:
 
 - There are 8 primary schools that are offered the Gifted Education Programme
 
+
+# 6 Geospatial Wrangling
+
+**Note**: This section will **not be ran** except for **Section 6.5** and **Section 6.6** to save computational time. **Documentation** on the **results** are still **written** even though the **output is not shown**.
+
+The variables that we will prepare in this section are:
+
+**Locational factors**
+
+- Proximity to CBD
+- Proximity to eldercare
+- Proximity to hawker centres
+- Proximity to MRT
+- Proximity to park
+- Proximity to good primary school
+- Proximity to shopping mall
+- Proximity to supermarket 
+- Numbers of kindergartens within 350m
+- Numbers of childcare centres within 350m
+- Numbers of bus stop within 350m
+- Numbers of primary school within 1km
+
+We will then combine the above variables with *resale* dataset which consists of the prepared **Structural factors** such as:
+
+- Area of the unit
+- Floor level
+- Remaining lease
+
+## 6.1 Convert Aspatial Dataframe into a sf object
+
+### 6.1.1 Function to convert aspatial dataframe into a sf object
+
+This function does the following:
+
+- *st_as_sf()* of **sf** package to convert the data frame into a simple feature data frame 
+- *st_transform()* of **sf** package to convert the coordinates from wgs84 (i.e. crs:4326) to svy21 (i.e. crs=3414).
+
+```{r echo=TRUE, eval=FALSE}
+convert_sf <- function(df, x, y) {
+  st_as_sf(df,
+            coords = c(x, y),
+            crs=4326) %>%
+  st_transform(crs=3414)
+}
+
+```
+
+### 6.1.2 Apply function to convert aspatial dataframes into a sf object
+
+- Apply *convert_sf* function defined in **Section 6.1.1** to the data sets
+
+```{r echo=TRUE, eval=FALSE}
+resale_sf <- convert_sf(resale_new, "LONGITUDE", "LATITUDE")
+eldercare_sf <- convert_sf(eldercare, "Lng", "Lat")
+hawker_sf <- convert_sf(hawker, "Lng", "Lat")
+park_sf <- convert_sf(park, "Lng", "Lat")
+gd_prisch_sf <- convert_sf(gd_prisch, "LONGITUDE", "LATITUDE")
+mall_sf <- convert_sf(mall, "longitude", "latitude")
+supermarket_sf <- convert_sf(supermarket, "Lng", "Lat")
+kindergarten_sf <- convert_sf(kindergarten, "Lng", "Lat")
+childcare_sf <- convert_sf(childcare, "Lng", "Lat")
+prisch_sf <- convert_sf(prisch, "LONGITUDE", "LATITUDE")
+```
+
+## 6.2 Prepare Independent Variables
+
+### 6.2.1 Central Business District (CBD) of Singapore
+
+- [Downtown Core](https://www.latlong.net/place/downtown-core-singapore-20616.html) is one of the central districts of Singapore. 
+- Its latitude and longitude are 1.287953 and 103.851784 respectively.
+- *st_as_sf()* of **sf** package to convert the data frame into a simple feature data frame 
+- *st_transform()* of **sf** package to convert the coordinates from wgs84 (i.e. crs:4326) to svy21 (i.e. crs=3414).
+
+```{r echo=TRUE, eval=FALSE}
+longitude <- 103.851784
+latitude <- 1.287953
+
+cbd_coorinates_sf <- data.frame(longitude, latitude) %>%
+  st_as_sf(., coords = c("longitude", "latitude"), crs=4326) %>%
+  st_transform(crs=3414)
+
+```
+
+### 6.2.2 Function to calculate proximity of *variables*
+
+This function does the following:
+
+- *st_distance()* of **sf** package to calculate distance between 2 sf objects, with a matrix being the output
+- *drop_units()* of **units** package to remove the units
+- *data.frame()* of **Base R** to convert matrix into a dataframe
+
+- *rowMins()* of **matrixStats** package to get the minimum value of each row i.e. shortest distance of *variable* to each HDB resale flat.
+
+    + Another method; *apply()* of **Base R**, with argument *MARGIN* = **1** to apply to every row and *FUN* = **min** can also be used to get the minimum value of each row but *rowMins()* is [faster](https://www.rdocumentation.org/packages/rje/versions/1.10.16/topics/rowMins)
+
+```{r echo=TRUE, eval=FALSE}
+calulate_prox <- function(df1, df2, var) {
+  distance_matrix <- st_distance(df1, df2) %>%
+    drop_units()
+  df1[,var] <- rowMins(distance_matrix)
+
+  return(df1)
+}
+```
+
+### 6.2.3 Apply function to calculate proximity
+
+- Apply the function defined in **Section: 6.2.2** to calculate proximity
+
+```{r echo=TRUE, eval=FALSE}
+resale_sf <- calulate_prox(resale_sf, cbd_coorinates_sf, "cbd_prox") %>%
+              calulate_prox(., eldercare_sf, "eldercare_prox") %>%
+              calulate_prox(., hawker_sf, "hawker_prox") %>% 
+              calulate_prox(., mrt_sf, "mrt_prox") %>%
+              calulate_prox(., park_sf, "park_prox") %>%
+              calulate_prox(., gd_prisch_sf, "gd_prisch_prox") %>%
+              calulate_prox(., mall_sf, "mall_prox") %>%
+              calulate_prox(., supermarket_sf, "supermarket_prox") 
+```
+
+### 6.2.4 Function to calculate number of *variables* within a certain distance
+
+This function does the following:
+
+- *st_distance()* of **sf** package to calculate distance between 2 sf objects, with a matrix being the output
+- *drop_units()* of **units** package to remove the units
+- *data.frame()* of **Base R** to convert matrix into a dataframe
+- *rowSums()* of **Base R** to get number of *variables* within a certain distance
+
+```{r echo=TRUE, eval=FALSE}
+calculate_num <- function(df1, df2, distance, var) {
+  distance_matrix <- st_distance(df1, df2) %>% 
+    drop_units()
+  distance_matrix <- data.frame(distance_matrix)
+  df1[,var] <- rowSums(distance_matrix <= distance)
+  
+  return(df1)
+}
+```
+
+
+### 6.2.5 Apply function to calculate number of *variables* within a certain distance
+
+- Apply the function defined in **Section: 6.2.4** to calculate number of *variables* within a certain distance
+
+```{r echo=TRUE, eval=FALSE}
+resale_sf <- calculate_num(resale_sf, kindergarten_sf, 350, "kindergarten_num") %>%
+              calculate_num(., childcare_sf, 350, "childcare_num") %>%
+              calculate_num(., bus_sf, 350, "busstop_num") %>%
+              calculate_num(., prisch_sf, 1000, "prisch_num")
+```
+
+
+## 6.3 Re-arrange columns in *resale_sf*
+
+- Re-arrange columns such that all independent variables are at the back of the data frame.
+- This will aid us in calibrating the model in the later steps.
+
+```{r echo=TRUE, eval=FALSE}
+col_order <- c("month", "town", "flat_type", "remaining_lease", "address",
+              "resale_price", "floor_area_sqm", "remaining_lease_final", 
+              "01 TO 03", "04 TO 06", "07 TO 09", "10 TO 12", "13 TO 15", "16 TO 18",
+              "19 TO 21", "22 TO 24", "25 TO 27", "28 TO 30", "31 TO 33", "34 TO 36",
+              "37 TO 39", "40 TO 42", "43 TO 45", "46 TO 48", "49 TO 51",
+              'cbd_prox', "eldercare_prox", "hawker_prox", "mrt_prox", "park_prox",
+               "gd_prisch_prox", "mall_prox", "supermarket_prox",
+              "kindergarten_num", "childcare_num", "busstop_num", "prisch_num", "geometry")
+resale_sf <- resale_sf[, col_order]
+
+glimpse(resale_sf)
+```
+
+## 6.4 Write to a shp file
+
+- *st_write()* of **sf** package to write into a shp file.
+
+```{r echo=TRUE, eval=FALSE}
+st_write(resale_sf, "data/geospatial/final_resale.shp")
+
+```
+
+## 6.5 Import shp file
+
+- *st_read()* of **sf** package to import the geospatial data set.
+- The imported shapefile will be a simple feature object of sf.
+
+```{r echo=TRUE, eval=TRUE}
+resale_sf <- st_read(dsn="data/geospatial", layer="final_resale")
+
+```
+
+## 6.6 Rename columns
+
+- *rename()* of **dplyr** package to rename columns for easy visualisation.
+
+```{r echo=TRUE, eval=TRUE}
+resale_sf <- resale_sf %>%
+  dplyr::rename(resale_price = rsl_prc, floor_area_sqm = flr_r_s, remaining_lease_final = rmnng__,
+         lvl_01_TO_03 = X01TO03, lvl_04_TO_06 = X04TO06, lvl_07_TO_09 = X07TO09,
+         lvl_10_TO_12 = X10TO12, lvl_13_TO_15 = X13TO15, lvl_16_TO_18 = X16TO18,
+         lvl_19_TO_21 = X19TO21, lvl_22_TO_24 = X22TO24, lvl_25_TO_27 = X25TO27,
+         lvl_28_TO_30 = X28TO30, lvl_31_TO_33 = X31TO33, lvl_34_TO_36 = X34TO36,
+         lvl_37_TO_39 = X37TO39, lvl_40_TO_42 = X40TO42, lvl_43_TO_45 = X43TO45,
+         lvl_46_TO_48 = X46TO48, lvl_49_TO_51 = X49TO51,
+         cbd_prox = cbd_prx, eldercare_prox = eldrcr_, hawker_prox = hwkr_pr,
+         mrt_prox = mrt_prx, park_prox = prk_prx, gd_prisch_prox = gd_prs_,
+         mall_prox = mll_prx, supermarket_prox = sprmrk_, kindergarten_num  = kndrgr_,
+         childcare_num  = chldcr_, busstop_num  = bsstp_n, prisch_num  = prsch_n)
+
+```
+
+
