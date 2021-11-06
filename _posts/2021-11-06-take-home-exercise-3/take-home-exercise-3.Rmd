@@ -1426,4 +1426,165 @@ Results above show that:
 - Since the Observed Global Moran I = *0.3815577* which is *greater than 0*, we can infer that the **residuals resemble cluster distribution**.
 
 
+# 9 Building Hedonic Pricing Models using GWmodel
+
+In this section, we will build a hedonic pricing model using adaptive bandwidth. We will only use adaptive bandwidth here as using fixed bandwidth  means that local regressions for small spatial units may be calibrated on a high number of dissimilar areas, while local regressions for huge areas may be calibrated on very few data points, giving rise to estimates with large standard errors. Hence, to mitigate this potential problem, we will use **adaptive bandwidth** here instead.
+
+## 9.1 Building Adaptive Bandwidth GWR Model
+
+In the adaptive bandwidth GWR model, the factors that are used to calculate the adaptive bandwidth and to calibrate the model are:
+
+- Remaining lease
+- Proximity to CBD
+- Proximity to eldercare
+- Proximity to MRT
+- Proximity to good primary school
+- Proximity to supermarket
+- Numbers of bus stop within 350m
+
+**Note:** Not all of the variables prepared above are used since it takes too long for the computation of adaptive bandwidth.
+
+
+### 9.1.1 Compute adaptive bandwidth
+
+- *bw.gwr()* of **GWmodel** package is used to determine the optimal adaptive bandwidth to use in the model. 
+- The argument *kernel* is set to **gaussian** since in **Section 4.13**, we saw that data points are spread across the whole of Singapore.
+- The argument *adaptive* is set to **TRUE** as we are now interested to compute the adaptive bandwidth.
+
+```{r echo=TRUE, eval=TRUE}
+bw.adaptive <- bw.gwr(formula = resale_price ~ remaining_lease_final +  cbd_prox + eldercare_prox  + mrt_prox  + gd_prisch_prox + supermarket_prox + busstop_num, data=resale_sp, approach="CV", kernel="gaussian", adaptive=TRUE, longlat=FALSE)
+```
+
+Results above show that:
+
+- **45** is the recommended bandwidth to use in the constructing of adaptive bandwidth gwr model.
+
+
+### 9.1.2 Constructing the adaptive bandwidth gwr model
+
+- *gwr.basic()* of **GWmodel** package to calibrate the gwr model using adaptive bandwidth and gaussian kernel.
+
+```{r echo=TRUE, eval=TRUE}
+gwr.adaptive <- gwr.basic(formula = resale_price ~ remaining_lease_final +  cbd_prox + eldercare_prox  + mrt_prox  + gd_prisch_prox + supermarket_prox + busstop_num, data=resale_sp, bw=bw.adaptive, kernel = 'gaussian', adaptive=TRUE, longlat = FALSE)
+
+gwr.adaptive
+```
+
+
+
+Results above show that:
+
+- The adjusted r-square value of **gwr** is **0.925323** which is **significantly better** than the global multiple linear regression model of **0.6471**.
+
+
+
+# 10 Visualising GWR Output
+
+In addition to regression residuals, the output feature class table includes fields such as:
+
+- *Condition Number*: evaluates **local collinearity**. In the presence of strong local collinearity, the results become unstable. Results associated with condition numbers larger than 30, may be unreliable.
+
+- *Local R2*: values range between 0.0 and 1.0 and indicate **how well the local regression model fits observed y values**. Low values indicate the local model is performing poorly.
+
+- *Predicted*: **estimated (or fitted) y values** computed by GWR.
+
+- *Residuals*: to obtain the residual values, the fitted y values are subtracted from the observed y values. Standardized residuals have a mean of zero and a standard deviation of 1. A cold-to-hot rendered map of standardized residuals can be produce by using these values.
+
+- *Coefficient Standard Error*: measures the **reliability of each coefficient estimate**. Confidence in those estimates are higher when standard errors are small in relation to the actual coefficient values. Large standard errors may indicate problems with local collinearity.
+
+They are all stored in a SpatialPointsDataFrame or SpatialPolygonsDataFrame object integrated with fit.points, GWR coefficient estimates, y value, predicted values, coefficient standard errors and t-values in its “data” slot in an object called **SDF** of the output list.
+
+## 10.1 Convert SDF into **sf** data.frame
+
+We have to first convert the SDF to a **simple feature** data frame before visualizing them.
+
+- *st_as_sf()* of **sf** package to convert the data frame into a simple feature data frame 
+- *st_transform()* of **sf** package to convert the coordinates from wgs84 (i.e. crs:4326) to svy21 (i.e. crs=3414).
+
+```{r echo=TRUE, eval=TRUE}
+resale_sf_adaptive <- st_as_sf(gwr.adaptive$SDF) %>%
+  st_transform(crs=3414)
+```
+
+
+## 10.2 Summary statistics
+
+- *summary()* of **Base R** to reveal the summary statistics of the predicted value of resale price, denoted as yhat.
+
+```{r echo=TRUE, eval=TRUE}
+summary(gwr.adaptive$SDF$yhat)
+```
+
+Results above show that:
+
+- The lowest predicted value of a 4-room HDB resale price is $230,357
+- The mean predicted value of a 4-room HDB resale price is $405,707  
+- The highest predicted value of a 4-room HDB resale price is $990,368 
+
+## 10.3 Visualising local R2
+
+To see where GWR predicts well and where it predicts poorly, we can map the Local R2 values. This may also **provide clues** about **important variables** that may be **missing from the regression model**
+
+- Create an interactive point symbol map by using *tmap_mode(“view”)*
+
+    + *tm_dots()* with col = Local_R2
+    + set.zoom.limits argument of tm_view() sets the minimum and maximum zoom level to 11 and 14 respectively.
+
+- Use *tmap_mode(“plot”)* to display plot mode of tmap
+- All of the above are using **tmap** package
+
+```{r echo=TRUE, eval=TRUE}
+tmap_mode("view")
+tm_shape(mpsz_sf)+
+  tm_polygons(alpha = 0.1) +
+tm_shape(resale_sf_adaptive) +
+  tm_dots(col = "Local_R2",
+          border.col = "gray60",
+          border.lwd = 1) +
+  tm_view(set.zoom.limits = c(11,14))
+
+tmap_mode("plot")
+
+```
+
+Results above show that:
+
+- A few areas in the East and North-East region are a lighter shade, implying that the GWR model is unable to predict well in these areas.
+- However, **majority** of the Local_R2 values are **within 0.6 to 1.0** since it is in a darker shade. Hence, we can conclude that the 4-room HDB resales prices **can be explained** by the GWR model.
+
+# 11 Conclusion
+
+To reiterate, the factors used in calibrating the hedonic pricing model are:
+
+- Remaining lease
+- Proximity to CBD
+- Proximity to eldercare
+- Proximity to MRT
+- Proximity to good primary school
+- Proximity to supermarket
+- Numbers of bus stop within 350m
+
+These factors are able to explain majority of **four-room** HDB resale prices from **1st January 2019 to 30th September 2020**. 
+
+# 12 References
+
+[Correlation](https://www.andrews.edu/~calkins/math/edrm611/edrm05.htm#:~:text=Correlation%20coefficients%20whose%20magnitude%20are,can%20be%20considered%20highly%20correlated.)
+
+[Downtown Core](https://www.latlong.net/place/downtown-core-singapore-20616.html)
+
+[epsg.io](https://epsg.io/3414)
+
+[Geographically Weighted Regression](https://gdsl-ul.github.io/san/gwr.html)
+
+[Geographically Weighted Regression Exercise](https://is415.netlify.app/hands-on_ex/hands-on_ex09/hands-on_ex09-gwr)
+
+[Gifted Education Programme](https://www.moe.gov.sg/programmes/gifted-education)
+
+[gps-coordinates.net](https://www.gps-coordinates.net/map/country/SG)
+
+[Michael Friendly](https://www.datavis.ca/papers/corrgram.pdf)
+
+[rowMins](https://www.rdocumentation.org/packages/rje/versions/1.10.16/topics/rowMins)
+
+
 
