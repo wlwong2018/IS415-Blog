@@ -339,3 +339,453 @@ Results above show that:
 
 - The identified bus stops have been removed.
 
+
+
+# 5 Data Import and Preparation of Aspatial Dataset
+
+In this section, we will prepare the aspatial data sets which will be our independent variables for calibrating the hedonic pricing models in the later section. 
+
+**Note**: This section will **not be ran** to save computational time. **Documentation** on the ***results** are still **written** even though the **output is not shown**.
+
+The *datasets* that we will prepare in this section are:
+
+- Resale that consists of preparing floor level and remaining lease.
+- Eldercare
+- Hawker centres
+- Park
+- Primary school
+- Shopping mall
+- Supermarket 
+- Kindergartens
+- Childcare centres
+
+## 5.1 Import aspatial data sets
+
+- *read_csv()* of **readr** package to import the aspatial data sets.
+
+```{r echo=TRUE, eval=FALSE}
+resale <- read_csv("data/aspatial/resale-flat-prices-based-on-registration-date-from-jan-2017-onwards.csv")
+eldercare <- read_csv("data/aspatial/eldercare.csv")
+hawker <- read_csv("data/aspatial/hawkercentre.csv")
+park <- read_csv("data/aspatial/park.csv")
+prisch <- read_csv("data/aspatial/general-information-of-schools.csv")
+mall <- read_csv("data/aspatial/mall.csv")
+supermarket <- read_csv("data/aspatial/supermarkets.csv")
+kindergarten <- read_csv("data/aspatial/kindergarten.csv")
+childcare <- read_csv("data/aspatial/childcare.csv")
+
+```
+
+
+## 5.2 Look into datasets
+
+- *glimpse()* of **dplyr** package to take a look at our datasets
+
+```{r echo=TRUE, eval=FALSE}
+glimpse(resale)
+glimpse(eldercare)
+glimpse(hawker)
+glimpse(park)
+glimpse(prisch)
+glimpse(mall)
+glimpse(supermarket)
+glimpse(kindergarten)
+glimpse(childcare)
+```
+
+Results above show that:
+
+- There are 110,893 rows and 11 columns in *resale* data set.
+- There are 133 rows and 6 columns in *eldercare* data set.
+- There are 125 rows and 24 columns in *hawker* data set.
+- There are 352 rows and 8 columns in *park* data set.
+- There are 346 rows and 31 columns in *prisch* data set.
+- There are 184 rows and 3 columns in *mall* data set.
+- There are 526 rows and 9 columns in *supermarket* data set.
+- There are 448 rows and 7 columns in *kindergarten* data set.
+- There are 1545 rows and 7 columns in *childcare* data set.
+
+## 5.3 Extract and filter necessary columns and data
+
+- *filter()* of **dplyr** package to filter  relevant data from *resale* since this study only focuses on **four-room flat** and transaction period from **1st January 2019 to 30th September 2020**. 
+- *filter()* is used again to filter *prisch* since we are only interested in primary schools.
+- *select()* of **dplyr** package to extract the necessary columns
+
+```{r echo=TRUE, eval=FALSE}
+resale <- resale %>%
+  filter(flat_type == "4 ROOM",
+         month >= "2019-01" & month <= "2020-09")
+
+eldercare <- eldercare %>%
+  select(NAME, Lng, Lat)
+
+hawker <- hawker %>%
+  select(NAME, Lng, Lat)
+
+park <- park %>%
+  select(NAME, Lng, Lat)
+
+prisch <- prisch %>%
+  filter(mainlevel_code == "PRIMARY") %>%
+  select(school_name, address, gifted_ind)
+  
+supermarket <- supermarket %>%
+  select(NAME, Lng, Lat)
+
+kindergarten <- kindergarten %>%
+  select(NAME, Lng, Lat)
+
+childcare <- childcare %>%
+  select(NAME, Lng, Lat)
+```
+
+## 5.4 Look into datasets again
+
+- *glimpse()* of **dplyr** package to take a look at our datasets
+
+```{r echo=TRUE, eval=FALSE}
+glimpse(resale)
+glimpse(eldercare)
+glimpse(hawker)
+glimpse(park)
+glimpse(prisch)
+glimpse(mall)
+glimpse(supermarket)
+glimpse(kindergarten)
+glimpse(childcare)
+# glimpse(bus)
+```
+
+Results above show that:
+
+- Notice that the number of rows and columns have changed after filtering and selecting
+- There are 15901 rows and 11 columns in *resale* data set.
+- There are 133 rows and 3 columns in *eldercare* data set.
+- There are 125 rows and 3 columns in *hawker* data set.
+- There are 352 rows and 3 columns in *park* data set.
+- There are 182 rows and 3 columns in *prisch* data set.
+- There are 184 rows and 3 columns in *mall* data set.
+- There are 526 rows and 3 columns in *supermarket* data set.
+- There are 448 rows and 3 columns in *kindergarten* data set.
+- There are 1545 rows and 3 columns in *childcare* data set.
+
+## 5.5 Check for NA values
+
+- *is.na()* of **Base R** to check for NA values.
+- *rowSums()* of **Base R** to sum the number of NA values. 
+
+```{r echo=TRUE, eval=FALSE}
+resale[rowSums(is.na(resale))!=0,]
+eldercare[rowSums(is.na(eldercare))!=0,]
+hawker[rowSums(is.na(hawker))!=0,]
+park[rowSums(is.na(park))!=0,]
+prisch[rowSums(is.na(prisch))!=0,]
+mall[rowSums(is.na(mall))!=0,]
+supermarket[rowSums(is.na(supermarket))!=0,]
+kindergarten[rowSums(is.na(kindergarten))!=0,]
+childcare[rowSums(is.na(childcare))!=0,]
+
+```
+
+Results above show that:
+
+- All data sets do not contain any NA values
+
+
+## 5.6 Prepare **resale** Dataset
+
+*resale* dataset has a section on its own as there are different preparation steps to be done:
+
+- Geo-code to extract its latitude and longitude
+- Prepare *storey_range* and *remaining_lease* columns
+
+### 5.6.1 Rename value in column
+
+- OneMapApi can only geo code if value is replaced to *SAINT*
+- *gsub()* of **Base R** to replace value in column, *street_name*
+
+```{r echo=TRUE, eval=FALSE}
+resale$street_name <- gsub("ST\\.", "SAINT", resale$street_name)
+```
+
+### 5.6.2 Combine columns for geo-coding
+
+- *mutate()* of **dplyr** package to create a new column namely *address*, containing *block* and *street_name* columns with a space as a separator.
+
+```{r echo=TRUE, eval=FALSE}
+resale <- resale %>%
+  mutate(`address` = paste(`block`, `street_name`, sep=' '))
+```
+
+### 5.6.3 Onemap API for geo-coding
+
+#### 5.6.3.1 Function to geo code
+
+This function does the following:
+
+- Specifies the URL for the API
+- Defines search query
+- *GET()* of **httr** package to extract the request output
+- *content()* of **httr** package to extract content from the request output
+- *as.data.frame()* of **Base R** to convert the request to a dataframe
+- *select()* of **dplyr** package to select the columns: X, Y coordinates, Longitude and Latitude
+- Returns the above as a *datafame* in the *output* variable
+
+```{r echo=TRUE, eval=FALSE}
+library(httr)
+
+geo_code <- function(address) {
+  url <- "https://developers.onemap.sg/commonapi/search"
+  query <- list("searchVal" = address, "returnGeom" = "Y", "getAddrDetails" = "N") #, "pageNum" = "1"
+  res <- GET(url, query = query, verbose())
+
+  output <- content(res) %>%
+    as.data.frame() %>%
+    select(results.X, results.Y, results.LONGITUDE, results.LATITUDE)
+
+  return(output)
+}
+```
+
+#### 5.6.3.2 For loop to apply function (row 1 to 1000)
+
+This code chunk:
+
+- Assigns 0 to the X, Y coordinates, Longitude and Latitude column in *resale*
+- For loop to apply *geo_code* function defined in **Section 5.6.3.1** on the *resale* dataset, from row 1 to 1000
+- Assigns the extracted X, Y coordinates, Longitude and Latitude into the respective columns.
+
+```{r echo=TRUE, eval=FALSE}
+resale$X <- 0
+resale$Y <- 0
+resale$LONGITUDE <- 0 
+resale$LATITUDE <- 0 
+
+for (i in 1:1000) {
+  output <- geo_code(resale$address[i])
+
+  resale$X[i] <- output$results.X
+  resale$Y[i] <- output$results.Y
+  resale$LONGITUDE[i] <- output$results.LONGITUDE
+  resale$LATITUDE[i] <- output$results.LATITUDE
+}
+```
+
+#### 5.6.3.3 For loop to apply function (row 1001 and beyond)
+
+- This code chunk is similar to the one above in **Section 5.6.3.2**. 
+- The only difference is, each time the for loop is ran, we have to change it to an interval of 1000. i.e. 1st run - 1001:2000, 2nd run - 2001:3000, 3rd run - 3001:4000 etc., until 15901
+- We have to run multiple times (with interval of 1000) as Rstudio hangs if the entire 15901 rows are being ran at the same time. 
+- The code chunk below only **shows** the **last run** (15001:15901)
+
+```{r echo=TRUE, eval=FALSE}
+for (i in 15001:15901) {
+  output <- geo_code(resale$address[i])
+  
+  if (resale$X[i] == 0) {
+    resale$X[i] <- output$results.X
+    resale$Y[i] <- output$results.Y
+    resale$LONGITUDE[i] <- output$results.LONGITUDE
+    resale$LATITUDE[i] <- output$results.LATITUDE
+  }
+}
+```
+
+#### 5.6.3.4 Write into .csv file
+
+- *write_CSV()* of **readr** package to write combined data set as a .CSV file
+
+```{r echo=TRUE, eval=FALSE}
+write_csv(resale, "data/aspatial/final_resale_prices_XY_LongLat.csv")
+```
+
+### 5.6.4 Import .csv file
+
+- *read_CSV()* of **readr** package to import the above exported .CSV file
+- *glimpse()* of **dplyr** package to take a look at our dataset
+
+```{r echo=TRUE, eval=FALSE}
+resale_new <- read_csv("data/aspatial/final_resale_prices_XY_LongLat.csv")
+glimpse(resale_new)
+```
+
+Results above show that:
+
+- There are 15901 rows and 16 columns in *resale* dataset.
+
+### 5.6.5 Extract necessary columns
+
+- *select()* of **dplyr** package to extract necessary columns
+
+```{r echo=TRUE, eval=FALSE}
+resale_new <- resale_new %>%
+  select(month, town, flat_type, storey_range, floor_area_sqm, remaining_lease, resale_price, address, LONGITUDE, LATITUDE)
+```
+
+### 5.6.6 Manipulate *storey_range* column
+
+- *mutate()* of **dplyr** package to create yesno column with values 1
+- *pivot_wider()* of **tidyr** package to create columns from *storey_range* and input 1 or 0 (dummy variable)
+
+```{r echo=TRUE, eval=FALSE}
+resale_new <- resale_new %>%
+  mutate(yesno = 1) %>%
+  distinct %>%
+  pivot_wider(names_from = storey_range, values_from = yesno, values_fill = 0)
+```
+
+
+### 5.6.7 Manipulate *remaining_lease* column
+
+- *gsub()* of **Base R** to remove the words *years* and *months* in *remaining_lease* column
+- *substr()* and *substring()* of **Base R** to place years and months in separate columns
+- *as.double()* of **Base R** to convert to a *double* data type
+- *is.na()* of **Base R** to locate NA values. Then, replace the NA values with 0.
+- *mutate()* of **dplyr** to create a new column that contains the *remaining lease calculated in years*.
+
+- Lastly, remove unnecessary columns:
+
+    + *names()* of **Base R** to get names of *resale_new* data frame
+    + Use %in% to drop columns specified in *drop*
+    
+```{r echo=TRUE, eval=FALSE}
+resale_new$remaining_lease_new <- gsub("years", "", paste(resale_new$remaining_lease))
+resale_new$remaining_lease_new <- gsub("month", "", paste(resale_new$remaining_lease_new))
+resale_new$remaining_lease_new <- gsub("s", "", paste(resale_new$remaining_lease_new))
+
+resale_new$remaining_lease_yr <- substr(resale_new$remaining_lease_new, start = 1, stop = 2)
+resale_new$remaining_lease_mth <- substring(resale_new$remaining_lease_new, 5, 6)
+
+resale_new$remaining_lease_yr <- as.double(resale_new$remaining_lease_yr)
+resale_new$remaining_lease_mth <- as.double(resale_new$remaining_lease_mth)
+
+
+resale_new$remaining_lease_mth[is.na(resale_new$remaining_lease_mth)] <- 0
+
+resale_new <- resale_new %>%
+  mutate(`remaining_lease_final` = `remaining_lease_yr` + round((`remaining_lease_mth`/12),2))
+
+drop <- c("remaining_lease_new", "remaining_lease_yr", "remaining_lease_mth")
+resale_new <- resale_new[, !names(resale_new) %in% drop]
+
+```
+
+
+## 5.7 Prepare **prisch** (primary school) Dataset
+
+*prisch* dataset has a section on its own as there are different preparation steps to be done:
+
+- Geo-code to extract its latitude and longitude
+- Verify if all latitude and longitude have been extracted. If not, assign them
+- Filter good primary school
+
+### 5.7.1 Apply *geo_code* function
+
+This code chunk:
+
+- Assigns 0 to Longitude and Latitude column in *prisch*
+- For loop to apply *geo_code* function defined in **Section 5.6.3.1** on the *prisch* dataframe
+- *tryCatch()* of **Base R** for the code to continue running even when there is error in the geo coding.
+- Assigns the extracted longitude and latitude into the respective columns, back to *prisch* dataframe
+
+```{r echo=TRUE, eval=FALSE}
+prisch$LONGITUDE <- 0 
+prisch$LATITUDE <- 0 
+
+count <- 0
+failed_count <- 0
+
+for (i in 1:183){
+  tryCatch( {
+    output <- geo_code(prisch$address[i])
+    count <- count + 1
+    prisch$LONGITUDE[i] <- output$results.LONGITUDE
+    prisch$LATITUDE[i] <- output$results.LATITUDE
+
+  }, error = function(err) {
+      count <- count + 1
+      failed_count <- failed_count + 1
+      cat('Failed to extract',count,'out of',length(prisch$address),'addresses')
+    }
+  )
+}
+```
+
+
+### 5.7.2 Write output into a CSV file
+
+- *write_CSV()* of **readr** package to write combined data set as a .CSV file
+
+```{r echo=TRUE, eval=FALSE}
+write_csv(prisch, "data/aspatial/prisch.csv")
+```
+
+
+### 5.7.3 Import *prisch* Dataset
+
+- *read_CSV()* of **readr** package to import the above exported .CSV file
+- *glimpse()* of **dplyr** package to take a look at our dataset
+
+```{r echo=TRUE, eval=FALSE}
+prisch <- read_csv("data/aspatial/prisch.csv")
+glimpse(prisch)
+```
+
+Results above show that:
+
+- There are 183 rows and 5 columns in *prisch*
+
+### 5.7.4 Verify that all primary schools have Latitude & Longitude
+
+#### 5.7.4.1 Find primary schools with missing Latitude & Longitude
+
+- There might be schools with missing latitude and/or longitude since in **Section 5.7.1**, a tryCatch() is ran.
+- Hence, this code is to check if there are primary schools with missing latitude and/or longitude
+
+```{r echo=TRUE, eval=FALSE}
+prisch$school_name[prisch$LONGITUDE==0.0000]
+```
+
+Results above show that:
+
+- There are indeed 4 schools, namely, HOUGANG PRIMARY SCHOOL, JING SHAN PRIMARY SCHOOL, WEST GROVE PRIMARY SCHOOL and WHITE SANDS PRIMARY SCHOOL with missing Latitude & Longitude.
+
+#### 5.7.4.2 Assign Latitude & Longitude
+
+- Get Latitude & Longitude from: [gps-coordinates.net](https://www.gps-coordinates.net/map/country/SG)
+- HOUGANG PRIMARY SCHOOL's Long & Lat: 103.881072, 1.3783581
+- JING SHAN PRIMARY SCHOOL's Long & Lat: 103.8520152, 1.3722578
+- WEST GROVE PRIMARY SCHOOL's Long & Lat: 103.6989833, 1.3446809
+- WHITE SANDS PRIMARY SCHOOL's Long & Lat: 103.9612546, 1.365473
+- Assign the lat and long to the respective schools.
+
+```{r echo=TRUE, eval=FALSE}
+prisch$LONGITUDE[prisch$school_name == "HOUGANG PRIMARY SCHOOL"] <- 103.881072
+prisch$LATITUDE[prisch$school_name == "HOUGANG PRIMARY SCHOOL"] <- 1.3783581
+
+prisch$LONGITUDE[prisch$school_name == "JING SHAN PRIMARY SCHOOL"] <- 103.8520152
+prisch$LATITUDE[prisch$school_name == "JING SHAN PRIMARY SCHOOL"] <- 1.3722578
+
+prisch$LONGITUDE[prisch$school_name == "WEST GROVE PRIMARY SCHOOL"] <- 103.6989833
+prisch$LATITUDE[prisch$school_name == "WEST GROVE PRIMARY SCHOOL"] <- 1.3446809
+
+prisch$LONGITUDE[prisch$school_name == "HWHITE SANDS PRIMARY SCHOOL"] <- 103.9612546
+prisch$LATITUDE[prisch$school_name == "WHITE SANDS PRIMARY SCHOOL"] <- 1.365473
+
+```
+
+
+### 5.7.5 Filter good primary school
+
+- *filter()* of **dplyr** package to filter out good primary schools using the column *gifted_ind*
+- The *gifted_ind* column refers to the school that are offered the [Gifted Education Programme](https://www.moe.gov.sg/programmes/gifted-education)
+
+```{r echo=TRUE, eval=FALSE}
+gd_prisch <- prisch %>%
+  filter(gifted_ind == "Yes")
+```
+
+Results above show that:
+
+- There are 8 primary schools that are offered the Gifted Education Programme
+
