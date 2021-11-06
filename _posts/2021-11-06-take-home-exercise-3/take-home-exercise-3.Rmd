@@ -1189,3 +1189,57 @@ Results above show that:
     + Floor levels: There are more HDB resale flats that are on lower levels than higher levels. 
     
 
+## 7.3 Drawing Statistical Point Map
+
+- Reveal the geospatial distribution of HDB resale prices (**dependent** variable) in Singapore 
+
+- Create an interactive point symbol map by using *tmap_mode(“view”)*
+
+    + *tm_dots()* with col = resale_price
+    + set.zoom.limits argument of tm_view() sets the minimum and maximum zoom level to 11 and 14 respectively.
+
+- Use *tmap_mode(“plot”)* to display plot mode of tmap
+- All of the above are using **tmap** package
+
+```{r echo=TRUE, eval=TRUE}
+tmap_options(check.and.fix = TRUE)
+
+tmap_mode("view")
+
+tm_shape(mpsz_sf)+
+  tm_polygons() +
+tm_shape(resale_sf) +
+  tm_dots(col = "resale_price",
+          alpha = 0.6,
+          style="quantile") +
+  tm_view(set.zoom.limits = c(11,14))
+
+tmap_mode("plot")
+```
+
+
+Results above show that:
+
+- The **Central** region of Singapore tends to have a **higher** HDB resale prices for 4 room flats since it appears to be darker in that area.
+
+
+# 8 Hedonic Pricing Modelling in R
+
+In this section, we will build hedonic pricing models for HDB resale units using *lm()* of **Base R**.
+
+## 8.1 Multiple Linear Regression Method
+
+### 8.1.1 Visualise relationships of independent variables
+
+Before we start calibrating the Hedonic Pricing Model, we have to ensure that the independent variables used are not highly correlated to each other. This is called **multicollinearity** in statistics.
+
+#### 8.1.1.1 Drop geometry column
+
+- To plot a correlation plot, the geometry column must be dropped.
+- *st_drop_geometry()* of **sf** package to drop the geometry column in *resale_sf*
+
+```{r echo=TRUE, eval=TRUE}
+resale_sf_nogeom <- resale_sf %>%
+  st_drop_geometry()
+```
+
