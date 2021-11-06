@@ -1056,3 +1056,84 @@ Results above show that:
 
 - The distribution is **relatively less skewed after the transformation**.
 
+
+
+## 7.2 Multiple Plots distribution of variables
+
+### 7.2.1 Continuous variables - Histogram
+
+- Apply function created in **Section 7.1.1**  to plot histogram 
+- *ggarrange()* of **ggpubr** package to organise these histogram into a *2 columns* by *5 rows* small multiple plots
+
+```{r echo=TRUE, eval=TRUE, fig.width=10, fig.height=10}
+ggarrange(mul_hist(resale_sf, resale_sf$floor_area_sqm, "Floor Area Sqm"),
+          mul_hist(resale_sf, resale_sf$remaining_lease_final, "Remaining Lease"),
+          mul_hist(resale_sf, resale_sf$cbd_prox, "Proximity to CBD"),
+          mul_hist(resale_sf, resale_sf$eldercare_prox, "Proximity to Eldercare"),
+          mul_hist(resale_sf, resale_sf$hawker_prox, "Proximity to Hawker Centre"),
+          mul_hist(resale_sf, resale_sf$mrt_prox, "Proximity to Mrt"),
+          mul_hist(resale_sf, resale_sf$park_prox, "Proximity to Park"),
+          mul_hist(resale_sf, resale_sf$gd_prisch_prox, "Proximity to Good Pri. School"),
+          mul_hist(resale_sf, resale_sf$mall_prox, "Proximity to Shopping Mall"),
+          mul_hist(resale_sf, resale_sf$supermarket_prox, "Proximity to Supermarket"),
+    ncol = 2, nrow = 5)
+
+```
+
+Results above show that:
+
+- **Structural Factors**:
+
+    + Floor Area Sqm: It is right-skewed, implying that more HDB flats have a smaller floor area of around 90 square metres
+    + Remaining Lease: It is left-skewed, implying that more HDB flats have a higher number of remaining lease period of more than 90 years.
+    
+- **Locational Factors**:
+
+    + Proximity to CBD: It is left-skewed, implying that more HDB flats are further away from the CBD area of Singapore. 
+    + Proximity to eldercare: It is right-skewed, implying that more HDB flats are nearer to an eldercare of less than 500m away.
+    + Proximity to hawker centres: it is right-skewed, implying that more HDB flats are nearer to a hawker centre of 500m away.
+    + Proximity to MRT: It is right-skewed,implying that more HDB flats are nearer to a MRT station of less than 500m away.
+    + Proximity to park: It is right-skewed, implying that more HDB flats are nearer to a park of less than 800m away.
+    + Proximity to good primary school: It is relatively right-skewed, implying that more HDB flats are nearer to a good primiary school of around 2000m to 4000m away.
+    + Proximity to shopping mall: It is right-skewed, implying that more HDB flats are nearer to a shopping mall of less than 600m away.
+    + Proximity to supermarket It is right-skewed, implying that more HDB flats are nearer to  a supermarket of less than 300m away.
+  
+
+### 7.2.2 Discrete variables - Bar Chart
+
+#### 7.2.2.1 Function to plot bar charts
+
+- Create function to plot bar chart, *mul_bar*
+- *geom_bar()* of **ggplot** package to plot a histogram to see the distribution of the discrete variables.
+
+```{r echo=TRUE, eval=TRUE, fig.width=10, fig.height=6}
+mul_bar <- function(df, vnam, x_axis){
+  ggplot(data=df, aes(x=factor(vnam))) +
+    geom_bar(color="black", fill="darkseagreen3")   +
+         scale_x_discrete(name = x_axis)
+}
+
+```
+
+
+#### 7.2.2.2 Apply function to plot bar charts
+
+- Use function created in **Section 7.2.2.1** to plot bar charts
+- *ggarrange()* of **ggpubr** package to organise these histogram into a *2 columns* by *2 rows* small multiple plot
+
+```{r echo=TRUE, eval=TRUE, fig.width=10, fig.height=6}
+ggarrange(mul_bar(resale_sf, resale_sf$kindergarten_num, "No. of Kindergartens (within 350m)"),
+          mul_bar(resale_sf, resale_sf$childcare_num, "No. of Childcare Centres (within 350m)"),
+          mul_bar(resale_sf, resale_sf$busstop_num, "No. of Bus Stops (within 350m)"),
+          mul_bar(resale_sf, resale_sf$prisch_num, "No. of Pri. School (within 1km)"),
+      ncol = 2, nrow = 2)
+```
+
+Results above show that:
+
+- **Locational Factors**:
+
+    + Numbers of kindergartens within 350m: It is right-skewed, implying that more HDB flats have less kindergartens within 350m.
+    + Numbers of childcare centres within 350m: It is right-skewed, implying that more HDB flats have less childcare centres within 350m.
+    + Numbers of bus stop within 350m: It is slightly right-skewed, implying that slightly more HDB flats have less bus stops within 350m.
+    + Numbers of primary school within 1km: It is slightly right-skewed, implying that slightly more HDB flats have less primary schools within 1km. 
