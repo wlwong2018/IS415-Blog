@@ -1243,3 +1243,56 @@ resale_sf_nogeom <- resale_sf %>%
   st_drop_geometry()
 ```
 
+
+#### 8.1.1.2 Plot correlation plot
+
+- *corrplot()* of **corrplot** package to plot a correlation plot
+- The argument *order* is using **AOE** where it orders the variables by using the angular order of the eigenvectors method suggested by [Michael Friendly](https://www.datavis.ca/papers/corrgram.pdf)
+
+```{r echo=TRUE, eval=TRUE, fig.width=12, fig.height=12}
+corrplot(cor(resale_sf_nogeom[, 7:37]), diag = FALSE, order = "AOE",
+         tl.pos = "td", tl.cex = 0.5, method = "number", type = "upper")
+```
+
+Results above show that:
+
+- None of the variables are highly correlated with each other since they are all **lower than 0.7**.
+- The threshold of [highly correlated is >= 0.7](https://www.andrews.edu/~calkins/math/edrm611/edrm05.htm#:~:text=Correlation%20coefficients%20whose%20magnitude%20are,can%20be%20considered%20highly%20correlated.)
+- We will hence not remove any variables
+
+### 8.1.2 Build hedonic pricing model using multiple linear regression method
+
+- *lm()* to calibrate the multiple linear regression model.
+- *summary()* of **Base R** to print summary statistics of model
+
+```{r echo=TRUE, eval=TRUE}
+resale.mlr <- lm(formula = resale_price ~ floor_area_sqm + remaining_lease_final + lvl_01_TO_03 + lvl_04_TO_06 + lvl_07_TO_09 + lvl_10_TO_12 + lvl_13_TO_15 + lvl_16_TO_18 + lvl_19_TO_21 + lvl_22_TO_24 + lvl_25_TO_27 + lvl_28_TO_30 + lvl_31_TO_33 + lvl_34_TO_36 + lvl_37_TO_39 + lvl_40_TO_42 + lvl_43_TO_45 + lvl_46_TO_48 + lvl_49_TO_51 + cbd_prox + eldercare_prox  + hawker_prox  + mrt_prox + park_prox  + gd_prisch_prox + mall_prox + supermarket_prox  + kindergarten_num + childcare_num + busstop_num + prisch_num, data=resale_sf)
+
+summary(resale.mlr)
+```
+
+Results above show that:
+
+- *lvl_19_TO_21* and *lvl_22_TO_24* are **not statistically significant**. 
+- We will hence revise the model by removing these variables.
+
+
+*ols_regress()* to print model summary and parameter estimates.
+
+```{r echo=TRUE, eval=TRUE}
+resale.mlr1 <- lm(formula = resale_price ~ floor_area_sqm + remaining_lease_final + lvl_01_TO_03 + lvl_04_TO_06 + lvl_07_TO_09 + lvl_10_TO_12 + lvl_13_TO_15 + lvl_16_TO_18 + lvl_25_TO_27 + lvl_28_TO_30 + lvl_31_TO_33 + lvl_34_TO_36 + lvl_37_TO_39 + lvl_40_TO_42 + lvl_43_TO_45 + lvl_46_TO_48 + lvl_49_TO_51 + cbd_prox + eldercare_prox  + hawker_prox  + mrt_prox + park_prox  + gd_prisch_prox + mall_prox + supermarket_prox  + kindergarten_num + childcare_num + busstop_num + prisch_num, data=resale_sf)
+
+ols_regress(resale.mlr1)
+```
+
+
+### 8.1.3 Test for Multicollinearity
+
+To perform regression modelling on spatial data, we first have to ensure that the **residuals** are **not correlated** with each other. 
+
+- *ls_vif_tol() *of **olsrr** package is used to test if there are sign of multicollinearity.
+
+```{r echo=TRUE, eval=TRUE}
+ols_vif_tol(resale.mlr1)
+```
+
