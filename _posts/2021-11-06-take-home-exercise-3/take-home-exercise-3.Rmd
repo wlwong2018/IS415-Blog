@@ -1353,3 +1353,77 @@ resale.res.sf <- cbind(resale_sf,
                         resale.mlr1$residuals) %>%
   dplyr::rename("MLR_RES" = "resale.mlr1.residuals")
 ```
+
+
+### 8.1.6.3 Convert to SpatialPointsDataFrame
+
+- *as_Spatial()* of **sp** package to convert resale.res.sf simple feature object into a SpatialPointsDataFrame because spdep package can only process sp conformed spatial data objects
+
+```{r echo=TRUE, eval=TRUE}
+resale_sp <- as_Spatial(resale.res.sf)
+resale_sp
+```
+
+### 8.1.6.4 Display interactive point symbol map
+
+- Create an interactive point symbol map by using *tmap_mode(“view”)*
+
+    + *tm_dots()*  with col = MLR_RES
+    + set.zoom.limits argument of tm_view() sets the minimum and maximum zoom level to 11 and 14 respectively.
+
+- Use *tmap_mode(“plot”)* to display plot mode of tmap
+- All of the above are using **tmap** package
+
+```{r echo=TRUE, eval=TRUE}
+tmap_mode("view")
+
+tm_shape(mpsz_sf)+
+  tm_polygons(alpha = 0.4) +
+tm_shape(resale.res.sf) +  
+  tm_dots(col = "MLR_RES",
+          alpha = 0.6,
+          style="quantile") +
+  tm_view(set.zoom.limits = c(11,14))
+
+tmap_mode("plot")
+
+```
+
+Results above show that:
+
+- There are **signs** of **spatial autocorrelation**.
+- To proof that our observation is indeed true, the Moran’s I test will be performed.
+
+### 8.1.6.5 Compute distance-based weight matrix
+
+- We first have to use *dnearneigh() *of **spdep** package to compute the distance-based weight matrix
+
+```{r echo=TRUE, eval=TRUE}
+nb <- dnearneigh(coordinates(resale_sp), 0, 1500, longlat = FALSE)
+```
+
+
+### 8.1.6.6 Convert to spatial weights
+
+- Then, *nb2listw()* of **spdep** packge will be used to convert the output neighbours lists (i.e. nb) into a spatial weights
+
+```{r echo=TRUE, eval=TRUE}
+nb_lw <- nb2listw(nb, style = 'W')
+```
+
+### 8.1.6.7 Perform Moran's I Test for Residual Spatial Autocorrelation
+
+- Use *lm.morantest()* of **spdep** package to perform Moran's I Test for residual spatial autocorrelation
+
+```{r echo=TRUE, eval=TRUE}
+lm.morantest(resale.mlr1, nb_lw)
+
+```
+
+Results above show that:
+
+- The Global Moran’s I test for residual spatial autocorrelation shows that its *p-value* is *less than 0.00000000000000022* which is less than the alpha value of 0.05. Hence, we will **reject the null hypothesis** that the residuals are randomly distributed.
+- Since the Observed Global Moran I = *0.3815577* which is *greater than 0*, we can infer that the **residuals resemble cluster distribution**.
+
+
+
