@@ -1137,7 +1137,7 @@ Results above show that:
     + *Number of primary schools within 1km*: It is slightly right-skewed, implying that slightly more HDB flats have less primary schools within 1km. 
     
     
-### 7.2.3 Binary variables - Box Plots
+### 7.2.3 Binary variables - Bar Chart
 
 #### 7.2.3.1 Function to plot bar charts
 
