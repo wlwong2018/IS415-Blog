@@ -1,7 +1,7 @@
 ---
 title: "Take-home Exercise 3"
 description: |
-  To explain factors affecting the resale prices of public housing in Singapore.
+  To explain factors affecting the resale prices of public housing in Singapore by building hedonic pricing models using appropriate GWR methods.
 author:
   - name: Wong Wei Ling
     url: www.google.com
@@ -806,10 +806,10 @@ The variables that we will prepare in this section are:
 - Proximity to good primary school
 - Proximity to shopping mall
 - Proximity to supermarket 
-- Numbers of kindergartens within 350m
-- Numbers of childcare centres within 350m
-- Numbers of bus stop within 350m
-- Numbers of primary school within 1km
+- Number of kindergartens within 350m
+- Number of childcare centres within 350m
+- Number of bus stops within 350m
+- Number of primary schools within 1km
 
 We will then combine the above variables with *resale* dataset which consists of the prepared **Structural factors** such as:
 
@@ -957,8 +957,6 @@ col_order <- c("month", "town", "flat_type", "remaining_lease", "address",
                "gd_prisch_prox", "mall_prox", "supermarket_prox",
               "kindergarten_num", "childcare_num", "busstop_num", "prisch_num", "geometry")
 resale_sf <- resale_sf[, col_order]
-
-glimpse(resale_sf)
 ```
 
 ## 6.4 Write to a shp file
@@ -1084,19 +1082,19 @@ Results above show that:
 
 - **Structural Factors**:
 
-    + Floor Area Sqm: It is right-skewed, implying that more HDB flats have a smaller floor area of around 90 square metres
-    + Remaining Lease: It is left-skewed, implying that more HDB flats have a higher number of remaining lease period of more than 90 years.
+    + *Floor Area Sqm*: It is right-skewed, implying that more HDB flats have a smaller floor area of around 90 square metres
+    + *Remaining Lease*: It is left-skewed, implying that more HDB flats have a higher number of remaining lease period of more than 90 years.
     
 - **Locational Factors**:
 
-    + Proximity to CBD: It is left-skewed, implying that more HDB flats are further away from the CBD area of Singapore. 
-    + Proximity to eldercare: It is right-skewed, implying that more HDB flats are nearer to an eldercare of less than 500m away.
-    + Proximity to hawker centres: it is right-skewed, implying that more HDB flats are nearer to a hawker centre of 500m away.
-    + Proximity to MRT: It is right-skewed,implying that more HDB flats are nearer to a MRT station of less than 500m away.
-    + Proximity to park: It is right-skewed, implying that more HDB flats are nearer to a park of less than 800m away.
-    + Proximity to good primary school: It is relatively right-skewed, implying that more HDB flats are nearer to a good primiary school of around 2000m to 4000m away.
-    + Proximity to shopping mall: It is right-skewed, implying that more HDB flats are nearer to a shopping mall of less than 600m away.
-    + Proximity to supermarket It is right-skewed, implying that more HDB flats are nearer to  a supermarket of less than 300m away.
+    + *Proximity to CBD*: It is left-skewed, implying that more HDB flats are further away from the CBD area of Singapore. 
+    + *Proximity to eldercare*: It is right-skewed, implying that more HDB flats are nearer to an eldercare of less than 500m away.
+    + *Proximity to hawker centres*: it is right-skewed, implying that more HDB flats are nearer to a hawker centre of 500m away.
+    + *Proximity to MRT*: It is right-skewed,implying that more HDB flats are nearer to a MRT station of less than 500m away.
+    + *Proximity to park*: It is right-skewed, implying that more HDB flats are nearer to a park of less than 800m away.
+    + *Proximity to good primary school*: It is relatively right-skewed, implying that more HDB flats are nearer to a good primiary school of around 2000m to 4000m away.
+    + *Proximity to shopping mall*: It is right-skewed, implying that more HDB flats are nearer to a shopping mall of less than 600m away.
+    + *Proximity to supermarket*: It is right-skewed, implying that more HDB flats are nearer to  a supermarket of less than 300m away.
   
 
 ### 7.2.2 Discrete variables - Bar Chart
@@ -1133,10 +1131,10 @@ Results above show that:
 
 - **Locational Factors**:
 
-    + Numbers of kindergartens within 350m: It is right-skewed, implying that more HDB flats have less kindergartens within 350m.
-    + Numbers of childcare centres within 350m: It is right-skewed, implying that more HDB flats have less childcare centres within 350m.
-    + Numbers of bus stop within 350m: It is slightly right-skewed, implying that slightly more HDB flats have less bus stops within 350m.
-    + Numbers of primary school within 1km: It is slightly right-skewed, implying that slightly more HDB flats have less primary schools within 1km. 
+    + *Number of kindergartens within 350m*: It is right-skewed, implying that more HDB flats have less kindergartens within 350m.
+    + *Number of childcare centres within 350m*: It is right-skewed, implying that more HDB flats have less childcare centres within 350m.
+    + *Number of bus stops within 350m*: It is slightly right-skewed, implying that slightly more HDB flats have less bus stops within 350m.
+    + *Number of primary schools within 1km*: It is slightly right-skewed, implying that slightly more HDB flats have less primary schools within 1km. 
     
     
 ### 7.2.3 Binary variables - Box Plots
@@ -1186,7 +1184,7 @@ Results above show that:
 
 - **Structural Factor**:
 
-    + Floor levels: There are more HDB resale flats that are on lower levels than higher levels. 
+    + *Floor levels*: There are more HDB resale flats that are on lower levels than higher levels. 
     
 
 ## 7.3 Drawing Statistical Point Map
@@ -1277,7 +1275,7 @@ Results above show that:
 - We will hence revise the model by removing these variables.
 
 
-*ols_regress()* to print model summary and parameter estimates.
+*ols_regress()* to print **revised** model summary and parameter estimates.
 
 ```{r echo=TRUE, eval=TRUE}
 resale.mlr1 <- lm(formula = resale_price ~ floor_area_sqm + remaining_lease_final + lvl_01_TO_03 + lvl_04_TO_06 + lvl_07_TO_09 + lvl_10_TO_12 + lvl_13_TO_15 + lvl_16_TO_18 + lvl_25_TO_27 + lvl_28_TO_30 + lvl_31_TO_33 + lvl_34_TO_36 + lvl_37_TO_39 + lvl_40_TO_42 + lvl_43_TO_45 + lvl_46_TO_48 + lvl_49_TO_51 + cbd_prox + eldercare_prox  + hawker_prox  + mrt_prox + park_prox  + gd_prisch_prox + mall_prox + supermarket_prox  + kindergarten_num + childcare_num + busstop_num + prisch_num, data=resale_sf)
@@ -1428,7 +1426,7 @@ Results above show that:
 
 # 9 Building Hedonic Pricing Models using GWmodel
 
-In this section, we will build a hedonic pricing model using adaptive bandwidth. We will only use adaptive bandwidth here as using fixed bandwidth  means that local regressions for small spatial units may be calibrated on a high number of dissimilar areas, while local regressions for huge areas may be calibrated on very few data points, giving rise to estimates with large standard errors. Hence, to mitigate this potential problem, we will use **adaptive bandwidth** here instead.
+In this section, we will build a hedonic pricing model using adaptive bandwidth. We will only use adaptive bandwidth here as using fixed bandwidth  means that local regressions for small spatial units may be calibrated on a high number of dissimilar areas, while local regressions for huge areas may be calibrated on very few data points. This might lead to estimates with large standard errors. Hence, to mitigate this potential problem, we will use **adaptive bandwidth** here instead.
 
 ## 9.1 Building Adaptive Bandwidth GWR Model
 
@@ -1440,7 +1438,7 @@ In the adaptive bandwidth GWR model, the factors that are used to calculate the 
 - Proximity to MRT
 - Proximity to good primary school
 - Proximity to supermarket
-- Numbers of bus stop within 350m
+- Number of bus stops within 350m
 
 **Note:** Not all of the variables prepared above are used since it takes too long for the computation of adaptive bandwidth.
 
@@ -1488,7 +1486,7 @@ In addition to regression residuals, the output feature class table includes fie
 
 - *Predicted*: **estimated (or fitted) y values** computed by GWR.
 
-- *Residuals*: to obtain the residual values, the fitted y values are subtracted from the observed y values. Standardized residuals have a mean of zero and a standard deviation of 1. A cold-to-hot rendered map of standardized residuals can be produce by using these values.
+- *Residuals*: to obtain the residual values, the fitted y values are subtracted from the observed y values. Standardized residuals have a mean of zero and a standard deviation of 1.
 
 - *Coefficient Standard Error*: measures the **reliability of each coefficient estimate**. Confidence in those estimates are higher when standard errors are small in relation to the actual coefficient values. Large standard errors may indicate problems with local collinearity.
 
@@ -1554,7 +1552,7 @@ Results above show that:
 
 # 11 Conclusion
 
-To reiterate, the factors used in calibrating the hedonic pricing model are:
+To reiterate, the factors used to calibrate the hedonic pricing model are:
 
 - Remaining lease
 - Proximity to CBD
@@ -1562,9 +1560,9 @@ To reiterate, the factors used in calibrating the hedonic pricing model are:
 - Proximity to MRT
 - Proximity to good primary school
 - Proximity to supermarket
-- Numbers of bus stop within 350m
+- Number of bus stops within 350m
 
-These factors are able to explain majority of **four-room** HDB resale prices from **1st January 2019 to 30th September 2020**. 
+These factors are able to explain majority of **four-room** HDB resale prices with transaction period from **1st January 2019 to 30th September 2020**. 
 
 # 12 References
 
@@ -1585,6 +1583,3 @@ These factors are able to explain majority of **four-room** HDB resale prices fr
 [Michael Friendly](https://www.datavis.ca/papers/corrgram.pdf)
 
 [rowMins](https://www.rdocumentation.org/packages/rje/versions/1.10.16/topics/rowMins)
-
-
-
