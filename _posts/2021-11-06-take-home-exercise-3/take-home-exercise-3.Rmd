@@ -1296,3 +1296,60 @@ To perform regression modelling on spatial data, we first have to ensure that th
 ols_vif_tol(resale.mlr1)
 ```
 
+
+Results above show that:
+
+- There are **no signs of multicollinearity** among the independent variables since the VIF of the independent variables are **less than 10**
+
+### 8.1.4 Test for Non-Linearity
+
+- Secondly, we also have to ensure that the **dependent** and **independent** variables are **approximately linear**.
+- We can use *ols_plot_resid_fit()* of **olsrr** package is used to perform linearity assumption test.
+
+```{r echo=TRUE, eval=TRUE}
+ols_plot_resid_fit(resale.mlr1)
+
+```
+
+Results above show that:
+
+- Most of the data points are scattered around the 0 line, hence we can safely conclude that the relationships between the dependent variable and independent variables are **linear**. 
+
+### 8.1.5 Test for Normality Assumption
+
+- Thirdly, the **residuals** are assumed to be **normally distributed**.
+- We can use *ols_plot_resid_hist()* of **olsrr** package to perform the normality assumption test.
+
+```{r echo=TRUE, eval=TRUE}
+ols_plot_resid_hist(resale.mlr1)
+
+```
+
+Results above show that:
+
+- The residual of the multiple linear regression model (i.e. resale.mlr1) resembles **normal distribution**.
+
+### 8.1.6 Test for Spatial Autocorrelation
+
+The hedonic model is using geographically referenced attributes, hence it is also important for us to visualise the residual of the hedonic pricing model.
+
+Since we also have to assume that the residuals are **not distributed randomly**, we need to combine *resale_sf* with **resale.mlr1**, then convert it into a SpatialPointsDataFrame to perform spatial autocorrelation test.
+
+### 8.1.6.1 Export residual of hedonic pricing model
+
+- *as.data.frame()* of **Base R** to export the residual of the hedonic pricing model and save it as a data frame.
+
+```{r echo=TRUE, eval=TRUE}
+mlr.output <- as.data.frame(resale.mlr1$residuals)
+
+```
+
+### 8.1.6.2 Join with resale_sf
+
+- Join the newly created data frame with resale_sf object.
+
+```{r echo=TRUE, eval=TRUE}
+resale.res.sf <- cbind(resale_sf, 
+                        resale.mlr1$residuals) %>%
+  dplyr::rename("MLR_RES" = "resale.mlr1.residuals")
+```
